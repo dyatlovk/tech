@@ -32,14 +32,31 @@ namespace mtEngine {
       void Update() override;
       GLFWwindow *GetWindow() {return window;}
 
+      void SetFullscreen(bool fullscreen);
+
+      void SetPosition(const std::array<int, 2> &pos);
+
+      void SetPositionOnCenter();
+
+      void MaximizeToggle();
+
+      const std::array<int, 2> &GetSize() const { return size; }
+
       Delegate<void()> &OnClose() { return onClose; }
+      Delegate<void(std::array<int, 2>)> &OnSize() { return onSize; }
 
     private:
       GLFWwindow *window = nullptr;
+      std::string title = "";
+      bool fullscreen = false;
+      bool isMaximized = false;
+
       std::array<int, 2> size = {1024, 768};
       friend void CallbackFramebufferSize(GLFWwindow *window, int32_t width, int32_t height);
       friend void CallbackWindowClose(GLFWwindow *window);
+      friend void CallbackWindowSize(GLFWwindow *window, int32_t width, int32_t height);
 
       Delegate<void()> onClose;
+      Delegate<void(std::array<int, 2>)> onSize;
   };
 }
