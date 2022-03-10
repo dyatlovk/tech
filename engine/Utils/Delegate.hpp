@@ -9,226 +9,226 @@
 #include "NonCopyable.hpp"
 
 namespace mtEngine {
-template<typename>
-class Delegate;
+  template<typename>
+    class Delegate;
 
-class Observer {
-public:
-	Observer() :
-		valid(std::make_shared<bool>(true)) {
-	}
+  class Observer {
+    public:
+      Observer() :
+        valid(std::make_shared<bool>(true)) {
+        }
 
-	virtual ~Observer() = default;
+      virtual ~Observer() = default;
 
-	std::shared_ptr<bool> valid;
-};
+      std::shared_ptr<bool> valid;
+  };
 
-template<typename TReturnType, typename ...TArgs>
-class Invoker {
-public:
-	using ReturnType = std::vector<TReturnType>;
+  template<typename TReturnType, typename ...TArgs>
+    class Invoker {
+      public:
+        using ReturnType = std::vector<TReturnType>;
 
-	static ReturnType Invoke(Delegate<TReturnType(TArgs ...)> &delegate, TArgs ... params) {
-		std::lock_guard<std::mutex> lock(delegate.mutex);
-		ReturnType returnValues;
+        static ReturnType Invoke(Delegate<TReturnType(TArgs ...)> &delegate, TArgs ... params) {
+          std::lock_guard<std::mutex> lock(delegate.mutex);
+          ReturnType returnValues;
 
-		for (auto it = delegate.functions.begin(); it != delegate.functions.end();) {
-			if (it->IsExpired()) {
-				it = delegate.functions.erase(it);
-				continue;
-			}
+          for (auto it = delegate.functions.begin(); it != delegate.functions.end();) {
+            if (it->IsExpired()) {
+              it = delegate.functions.erase(it);
+              continue;
+            }
 
-			returnValues.emplace_back((*it->function)(params...));
-			++it;
-		}
+            returnValues.emplace_back((*it->function)(params...));
+            ++it;
+          }
 
-		return returnValues;
-	}
-};
+          return returnValues;
+        }
+    };
 
-template<typename... TArgs>
-class Invoker<void, TArgs...> {
-public:
-	using ReturnType = void;
+  template<typename... TArgs>
+    class Invoker<void, TArgs...> {
+      public:
+        using ReturnType = void;
 
-	static void Invoke(Delegate<void(TArgs ...)> &delegate, TArgs ... params) {
-		std::lock_guard<std::mutex> lock(delegate.mutex);
+        static void Invoke(Delegate<void(TArgs ...)> &delegate, TArgs ... params) {
+          std::lock_guard<std::mutex> lock(delegate.mutex);
 
-		if (delegate.functions.empty()) {
-			return;
-		}
+          if (delegate.functions.empty()) {
+            return;
+          }
 
-		for (auto it = delegate.functions.begin(); it != delegate.functions.end();) {
-			if (it->IsExpired()) {
-				it = delegate.functions.erase(it);
-				continue;
-			}
+          for (auto it = delegate.functions.begin(); it != delegate.functions.end();) {
+            if (it->IsExpired()) {
+              it = delegate.functions.erase(it);
+              continue;
+            }
 
-			it->function(params...);
-			++it;
-		}
-	}
-};
+            it->function(params...);
+            ++it;
+          }
+        }
+    };
 
-template<typename TReturnType, typename ...TArgs>
-class Delegate<TReturnType(TArgs ...)> {
-public:
-	using Invoker = mtEngine::Invoker<TReturnType, TArgs...>;
-	using FunctionType = std::function<TReturnType(TArgs ...)>;
-	using ObserversType = std::vector<std::weak_ptr<bool>>;
+  template<typename TReturnType, typename ...TArgs>
+    class Delegate<TReturnType(TArgs ...)> {
+      public:
+        using Invoker = mtEngine::Invoker<TReturnType, TArgs...>;
+        using FunctionType = std::function<TReturnType(TArgs ...)>;
+        using ObserversType = std::vector<std::weak_ptr<bool>>;
 
-	class FunctionPair {
-	public:
-		bool IsExpired() {
-			for (const auto &observer : observers) {
-				if (observer.expired()) {
-					return true;
-				}
-			}
+        class FunctionPair {
+          public:
+            bool IsExpired() {
+              for (const auto &observer : observers) {
+                if (observer.expired()) {
+                  return true;
+                }
+              }
 
-			return false;
-		}
-		
-		FunctionType function;
-		ObserversType observers;
-	};
+              return false;
+            }
 
-	Delegate() = default;
-	virtual ~Delegate() = default;
+            FunctionType function;
+            ObserversType observers;
+        };
 
-	template<typename ...KArgs>
-	void Add(FunctionType &&function, KArgs ...args) {
-		std::lock_guard<std::mutex> lock(mutex);
-		ObserversType observers;
+        Delegate() = default;
+        virtual ~Delegate() = default;
 
-		if constexpr (sizeof...(args) != 0) {
-			for (const auto &arg : {args...}) {
-				observers.emplace_back(to_address(arg)->valid);
-			}
-		}
+        template<typename ...KArgs>
+          void Add(FunctionType &&function, KArgs ...args) {
+            std::lock_guard<std::mutex> lock(mutex);
+            ObserversType observers;
 
-		functions.emplace_back(FunctionPair{std::move(function), observers});
-	}
+            if constexpr (sizeof...(args) != 0) {
+              for (const auto &arg : {args...}) {
+                observers.emplace_back(to_address(arg)->valid);
+              }
+            }
 
-	void Remove(const FunctionType &function) {
-		std::lock_guard<std::mutex> lock(mutex);
-		functions.erase(std::remove_if(functions.begin(), functions.end(), [function](FunctionPair &f) {
-			return Hash(f.function) == Hash(function);
-		}), functions.end());
-	}
+            functions.emplace_back(FunctionPair{std::move(function), observers});
+          }
 
-	template<typename ...KArgs>
-	void RemoveObservers(KArgs ...args) {
-		ObserversType removes;
+        void Remove(const FunctionType &function) {
+          std::lock_guard<std::mutex> lock(mutex);
+          functions.erase(std::remove_if(functions.begin(), functions.end(), [function](FunctionPair &f) {
+                return Hash(f.function) == Hash(function);
+                }), functions.end());
+        }
 
-		if constexpr (sizeof...(args) != 0) {
-			for (const auto &arg : {args...}) {
-				removes.emplace_back(to_address(arg)->valid);
-			}
-		}
+        template<typename ...KArgs>
+          void RemoveObservers(KArgs ...args) {
+            ObserversType removes;
 
-		for (auto it = functions.begin(); it != functions.end();) {
-			for (auto it1 = it->observers.begin(); it1 != it->observers.end();) {
-				bool erase = false;
-				auto opt = it1->lock();
-				for (const auto &remove : removes) {
-					auto ept = remove.lock();
-					if (opt.get() == ept.get())
-						erase = true;
-				}
-				if (erase)
-					it1 = it->observers.erase(it1);
-				else
-					++it1;
-			}
+            if constexpr (sizeof...(args) != 0) {
+              for (const auto &arg : {args...}) {
+                removes.emplace_back(to_address(arg)->valid);
+              }
+            }
 
-			if (it->observers.empty())
-				it = functions.erase(it);
-			else
-				++it;
-		}
-	}
+            for (auto it = functions.begin(); it != functions.end();) {
+              for (auto it1 = it->observers.begin(); it1 != it->observers.end();) {
+                bool erase = false;
+                auto opt = it1->lock();
+                for (const auto &remove : removes) {
+                  auto ept = remove.lock();
+                  if (opt.get() == ept.get())
+                    erase = true;
+                }
+                if (erase)
+                  it1 = it->observers.erase(it1);
+                else
+                  ++it1;
+              }
 
-	void MoveFunctions(Delegate &from, const ObserversType &exclude = {}) {
-		for (auto it = from.functions.begin(); it < from.functions.end();) {
-			bool move = true;
-			for (const auto &excluded : exclude) {
-				auto ept = excluded.lock();
-				for (const auto &observer : it->observers) {
-					auto opt = observer.lock();
-					if (opt.get() == ept.get())
-						move = false;
-				}
-			}
+              if (it->observers.empty())
+                it = functions.erase(it);
+              else
+                ++it;
+            }
+          }
 
-			if (move) {
-				std::move(from.functions.begin(), it, std::back_inserter(functions));
-				it = from.functions.erase(from.functions.begin(), it);
-			} else {
-				++it;
-			}
-		}
-	}
+        void MoveFunctions(Delegate &from, const ObserversType &exclude = {}) {
+          for (auto it = from.functions.begin(); it < from.functions.end();) {
+            bool move = true;
+            for (const auto &excluded : exclude) {
+              auto ept = excluded.lock();
+              for (const auto &observer : it->observers) {
+                auto opt = observer.lock();
+                if (opt.get() == ept.get())
+                  move = false;
+              }
+            }
 
-	void Clear() {
-		std::lock_guard<std::mutex> lock(mutex);
-		functions.clear();
-	}
+            if (move) {
+              std::move(from.functions.begin(), it, std::back_inserter(functions));
+              it = from.functions.erase(from.functions.begin(), it);
+            } else {
+              ++it;
+            }
+          }
+        }
 
-	typename Invoker::ReturnType Invoke(TArgs ... args) {
-		return Invoker::Invoke(*this, args...);
-	}
+        void Clear() {
+          std::lock_guard<std::mutex> lock(mutex);
+          functions.clear();
+        }
 
-	Delegate &operator+=(FunctionType &&function) {
-		return Add(std::move(function));
-	}
+        typename Invoker::ReturnType Invoke(TArgs ... args) {
+          return Invoker::Invoke(*this, args...);
+        }
 
-	Delegate &operator-=(const FunctionType function) {
-		return Remove(function);
-	}
+        Delegate &operator+=(FunctionType &&function) {
+          return Add(std::move(function));
+        }
 
-	typename Invoker::ReturnType operator()(TArgs ... args) {
-		return Invoker::Invoke(*this, args...);
-	}
+        Delegate &operator-=(const FunctionType function) {
+          return Remove(function);
+        }
 
-private:
-	friend Invoker;
+        typename Invoker::ReturnType operator()(TArgs ... args) {
+          return Invoker::Invoke(*this, args...);
+        }
 
-	static constexpr size_t Hash(const FunctionType &function) {
-		return function.target_type().hash_code();
-	}
+      private:
+        friend Invoker;
 
-	std::mutex mutex;
-	std::vector<FunctionPair> functions;
-};
+        static constexpr size_t Hash(const FunctionType &function) {
+          return function.target_type().hash_code();
+        }
 
-template<typename T>
-class DelegateValue : public Delegate<void(T)>, NonCopyable {
-public:
-	template<typename ...Args>
-	DelegateValue(Args ...args) :
-		value(std::forward<Args>(args)...) {
-	}
+        std::mutex mutex;
+        std::vector<FunctionPair> functions;
+    };
 
-	virtual ~DelegateValue() = default;
+  template<typename T>
+    class DelegateValue : public Delegate<void(T)>, NonCopyable {
+      public:
+        template<typename ...Args>
+          DelegateValue(Args ...args) :
+            value(std::forward<Args>(args)...) {
+            }
 
-	DelegateValue &operator=(T value) {
-		this->value = value;
-		Invoke(this->value);
-		return *this;
-	}
+        virtual ~DelegateValue() = default;
 
-	/**
-	 * Access the stored value.
-	 * @return The value.
-	 */
-	operator const T &() const noexcept { return value; }
+        DelegateValue &operator=(T value) {
+          this->value = value;
+          Invoke(this->value);
+          return *this;
+        }
 
-	const T &get() const { return value; }
-	const T &operator*() const { return value; }
-	const T *operator->() const { return &value; }
+        /**
+         * Access the stored value.
+         * @return The value.
+         */
+        operator const T &() const noexcept { return value; }
 
-protected:
-	T value;
-};
+        const T &get() const { return value; }
+        const T &operator*() const { return value; }
+        const T *operator->() const { return &value; }
+
+      protected:
+        T value;
+    };
 }
