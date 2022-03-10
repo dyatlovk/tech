@@ -9,6 +9,8 @@ configure_file(Config.hpp.in "${PROJECT_SOURCE_DIR}/Config.hpp" @ONLY)
 add_library(${PROJECT_NAME} SHARED 
   Engine/Engine.cpp
   Devices/Window.cpp
+  Devices/Keyboard.cpp
+  Graphics/Graphics.cpp
   )
 add_library(mt::engine ALIAS ${PROJECT_NAME})
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR})
