@@ -40,6 +40,10 @@ namespace mtEngine {
 
       void MaximizeToggle();
 
+      const std::string &GetTitle() const { return title; }
+
+      void SetTitle(const std::string &title);
+
       const std::array<int, 2> &GetSize() const { return size; }
 
       Delegate<void()> &OnClose() { return onClose; }

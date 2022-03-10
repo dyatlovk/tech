@@ -8,6 +8,7 @@
 #include <array>
 #include <iostream>
 #include <memory>
+#include <string>
 
 namespace Editor {
   using namespace mtEngine;
@@ -22,9 +23,15 @@ namespace Editor {
   void EditorApp::Start() {
     Window::Get()->SetPositionOnCenter();
     Graphics::Get()->SetRenderer(std::make_unique<EditorRender>());
+    auto winSize = Window::Get()->GetSize();
+    std::string title = "Demo[" + std::to_string(winSize[0]) + "x" + std::to_string(winSize[1]) + "]";
+    Window::Get()->SetTitle(title);
+    
     Window::Get()->OnSize().Add([](std::array<int, 2> size) {
-      std::cout << "window resized {" << size[0] << ":" << size[1] << "}" << std::endl;
+      std::string title = "Demo[" + std::to_string(size[0]) + "x" + std::to_string(size[1]) + "]";
+      Window::Get()->SetTitle(title);
     });
+    
     Keyboard::Get()->OnKey().Add([](Key key, InputAction action, InputMod mod) {
       if(action == InputAction::Press && key == Key::F10) {
         Engine::Get()->RequestClose();

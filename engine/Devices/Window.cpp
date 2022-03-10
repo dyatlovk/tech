@@ -83,4 +83,10 @@ namespace mtEngine {
     auto size = GetSize();
     SetPosition({videoMode->width / 2 - size[0] / 2, videoMode->height / 2 - size[1] / 2});
   }
+
+  void Window::SetTitle(const std::string &title)
+  {
+    this->title = title;
+    glfwSetWindowTitle(window, title.c_str());
+  }
 }
