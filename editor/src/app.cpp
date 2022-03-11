@@ -5,6 +5,7 @@
 #include "EditorRender.hpp"
 #include "Graphics/Graphics.hpp"
 #include "Engine/Engine.hpp"
+#include "Guis/Gui.hpp"
 #include <array>
 #include <iostream>
 #include <memory>
@@ -23,6 +24,7 @@ namespace Editor {
   void EditorApp::Start() {
     Window::Get()->SetPositionOnCenter();
     Graphics::Get()->SetRenderer(std::make_unique<EditorRender>());
+    Graphics::Get()->SetGui(std::make_unique<Gui>());
     auto winSize = Window::Get()->GetSize();
     std::string title = "Demo[" + std::to_string(winSize[0]) + "x" + std::to_string(winSize[1]) + "]";
     Window::Get()->SetTitle(title);
