@@ -11,6 +11,13 @@ add_library(${PROJECT_NAME} SHARED
   Devices/Window.cpp
   Devices/Keyboard.cpp
   Graphics/Graphics.cpp
+  third_party/imgui/imgui.cpp
+  third_party/imgui/imgui_demo.cpp
+  third_party/imgui/imgui_draw.cpp
+  third_party/imgui/imgui_tables.cpp
+  third_party/imgui/imgui_widgets.cpp
+  third_party/imgui/imgui_impl_opengl3.cpp
+  third_party/imgui/imgui_impl_glfw.cpp
   )
 add_library(mt::engine ALIAS ${PROJECT_NAME})
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR})

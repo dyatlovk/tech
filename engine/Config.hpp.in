@@ -8,9 +8,11 @@ constexpr uint8_t VERSION_MAJOR = @VERSION_MAJOR@;
 constexpr uint8_t VERSION_MINOR = @VERSION_MINOR@;
 constexpr uint8_t VERSION_PATCH = @VERSION_PATCH@;
 
-constexpr std::string_view ACID_COMPILED_COMPILER = "@CMAKE_CXX_COMPILER@";
-constexpr std::string_view ACID_COMPILED_SYSTEM = "@CMAKE_SYSTEM@";
-constexpr std::string_view ACID_COMPILED_GENERATOR = "@CMAKE_GENERATOR@";
-constexpr std::string_view ACID_COMPILED_COMMIT_HASH = "@ACID_GIT_COMMIT_HASH@";
-constexpr std::string_view ACID_COMPILED_BRANCH = "@ACID_GIT_BRANCH@";
+constexpr std::string_view COMPILED_COMPILER = "@CMAKE_CXX_COMPILER@";
+constexpr std::string_view COMPILED_SYSTEM = "@CMAKE_SYSTEM@";
+constexpr std::string_view COMPILED_GENERATOR = "@CMAKE_GENERATOR@";
+constexpr std::string_view COMPILED_COMMIT_HASH = "@GIT_COMMIT_HASH@";
+constexpr std::string_view COMPILED_BRANCH = "@GIT_BRANCH@";
+constexpr std::string_view RESOURCES = "@RESOURCES_DIR@";
+constexpr std::string_view ROOT_DIR = "@ROOT_DIR@";
 }
