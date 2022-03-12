@@ -12,7 +12,6 @@ add_library(${PROJECT_NAME} SHARED
   Devices/Keyboard.cpp
   Graphics/Graphics.cpp
   Inputs/Input.cpp
-  # Inputs/InputScheme.cpp
   Inputs/Buttons/KeyboardInputButton.cpp
   third_party/imgui/imgui.cpp
   third_party/imgui/imgui_demo.cpp
@@ -22,6 +21,7 @@ add_library(${PROJECT_NAME} SHARED
   third_party/imgui/imgui_impl_opengl3.cpp
   third_party/imgui/imgui_impl_glfw.cpp
   Guis/Gui.cpp
+  States/States.cpp
   )
 add_library(mt::engine ALIAS ${PROJECT_NAME})
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR})

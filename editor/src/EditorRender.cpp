@@ -2,6 +2,7 @@
 #include "Devices/Window.hpp"
 #include "Graphics/Graphics.hpp"
 #include <iostream>
+#include "States/States.hpp"
 
 using namespace mtEngine;
 
@@ -15,6 +16,7 @@ namespace Editor {
 
   void EditorRender::Start()
   {
+    std::cout << "render start" << std::endl;
   }
  
   void EditorRender::Update()
