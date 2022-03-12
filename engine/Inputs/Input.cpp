@@ -1,55 +1,22 @@
 #include "Input.hpp"
 
 namespace mtEngine {
-  Input::Input() = default;
+  Input::Input() { };
 
-  void Input::Update()
+  void Input::LoadScheme(const std::filesystem::path &filename)
   {
-
+    maps_m = {filename};
   }
 
-  InputScheme *Input::GetScheme(const std::string &name) const {
-    auto it = schemes.find(name);
-    if (it == schemes.end()) {
-      return nullptr;
+  void Input::Update() { }
+
+  InputButton *Input::GetButton(const std::string &section, const std::string &name) {
+    const auto& keyFound = maps_m.Get<std::string>(section, name);
+    auto it = buttons.find(name);
+    if (it == buttons.end()) {
+      auto key = Keyboard::FromString(keyFound);
+      it = buttons.emplace(name, std::make_unique<KeyboardInputButton>(key)).first;
     }
     return it->second.get();
-  }
-
-  InputScheme *Input::AddScheme(const std::string &name, std::unique_ptr<InputScheme> &&scheme, bool setCurrent) {
-    auto inputScheme = schemes.emplace(name, std::move(scheme)).first->second.get();
-    if (!currentScheme || setCurrent)
-      SetScheme(inputScheme);
-    return inputScheme;
-  }
-
-  void Input::RemoveScheme(const std::string &name) {
-    auto it = schemes.find(name);
-    if (currentScheme == it->second.get())
-      SetScheme(nullptr);
-    if (it != schemes.end())
-      schemes.erase(it);
-    // If we have no current scheme grab some random one from the map.
-    if (!currentScheme && !schemes.empty())
-      currentScheme = schemes.begin()->second.get();
-  }
-
-  void Input::SetScheme(InputScheme *scheme) {
-    if (!scheme) scheme = nullScheme.get();
-    // We want to preserve delegate function pointers from the current scheme to the new one.
-    scheme->MoveDelegateOwnership(currentScheme);
-    currentScheme = scheme;
-  }
-
-  void Input::SetScheme(const std::string &name) {
-    auto scheme = GetScheme(name);
-    if (!scheme) return;
-    SetScheme(scheme);
-  }
-
-  InputButton *Input::GetButton(const std::string &name) const {
-    if (currentScheme)
-      return currentScheme->GetButton(name);
-    return nullptr;
   }
 }

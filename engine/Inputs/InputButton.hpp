@@ -2,9 +2,10 @@
 
 #include "Devices/Window.hpp"
 #include "Utils/Delegate.hpp"
+#include "Utils/Factory.hpp"
 
 namespace mtEngine {
-  class InputButton : public virtual Observer {
+  class InputButton : public Factory<InputButton>,  public virtual Observer {
     public:
       virtual ~InputButton() = default;
 
@@ -20,6 +21,7 @@ namespace mtEngine {
     
     private:
       bool wasDown = false;
+    protected:
       Delegate<void(InputAction, InputMod)> onButton;
   };
 }

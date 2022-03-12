@@ -148,6 +148,7 @@ namespace mtEngine {
     InputAction GetKey(Key key) const;
 
     static std::string ToString(Key key);
+    static Key FromString(const std::string &name);
 
     /**
      * Called when a key changes state.

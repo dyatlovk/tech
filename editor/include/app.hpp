@@ -2,6 +2,10 @@
 #define EDITOR_APP_H
 
 #include "Engine/App.hpp"
+#include <array>
+#include <iostream>
+#include <memory>
+#include <string>
 
 namespace Editor {
   class EditorApp: public mtEngine::App {

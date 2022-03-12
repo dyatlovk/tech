@@ -1,4 +1,5 @@
 #include "Keyboard.hpp"
+#include <iostream>
 
 #include <GLFW/glfw3.h>
 
@@ -24,6 +25,372 @@ namespace mtEngine {
   InputAction Keyboard::GetKey(Key key) const {
     auto state = glfwGetKey(Window::Get()->GetWindow(), static_cast<int32_t>(key));
     return static_cast<InputAction>(state);
+  }
+
+  Key Keyboard::FromString(const std::string &name)
+  {
+    if(name == "Space") {
+      return Key::Space;
+    }
+    if(name == "Apostrophe") {
+      return Key::Apostrophe;
+    }
+    if(name == "Comma") {
+      return Key::Comma;
+    }
+    if(name == "Minus") {
+      return Key::Minus;
+    }
+    if(name == "Period") {
+      return Key::Period;
+    }
+    if(name == "Slash") {
+      return Key::Slash;
+    }
+    if(name == "0") {
+      return Key::_0;
+    }
+    if(name == "1") {
+      return Key::_1;
+    }
+    if(name == "2") {
+      return Key::_2;
+    }
+    if(name == "3") {
+      return Key::_3;
+    }
+    if(name == "4") {
+      return Key::_4;
+    }
+    if(name == "5") {
+      return Key::_5;
+    }
+    if(name == "6") {
+      return Key::_6;
+    }
+    if(name == "7") {
+      return Key::_7;
+    }
+    if(name == "8") {
+      return Key::_8;
+    }
+    if(name == "9") {
+      return Key::_9;
+    }
+    if(name == "Semicolon") {
+      return Key::Semicolon;
+    }
+    if(name == "Equal") {
+      return Key::Equal;
+    }
+    if(name == "A") {
+      return Key::A;
+    }
+    if(name == "B") {
+      return Key::B;
+    }
+    if(name == "C") {
+      return Key::C;
+    }
+    if(name == "D") {
+      return Key::D;
+    }
+    if(name == "E") {
+      return Key::E;
+    }
+    if(name == "F") {
+      return Key::F;
+    }
+    if(name == "G") {
+      return Key::G;
+    }
+    if(name == "H") {
+      return Key::H;
+    }
+    if(name == "I") {
+      return Key::I;
+    }
+    if(name == "J") {
+      return Key::J;
+    }
+    if(name == "K") {
+      return Key::K;
+    }
+    if(name == "L") {
+      return Key::L;
+    }
+    if(name == "M") {
+      return Key::M;
+    }
+    if(name == "N") {
+      return Key::N;
+    }
+    if(name == "O") {
+      return Key::O;
+    }
+    if(name == "P") {
+      return Key::P;
+    }
+    if(name == "Q") {
+      return Key::Q;
+    }
+    if(name == "R") {
+      return Key::R;
+    }
+    if(name == "S") {
+      return Key::S;
+    }
+    if(name == "T") {
+      return Key::T;
+    }
+    if(name == "U") {
+      return Key::U;
+    }
+    if(name == "V") {
+      return Key::V;
+    }
+    if(name == "W") {
+      return Key::W;
+    }
+    if(name == "X") {
+      return Key::X;
+    }
+    if(name == "Y") {
+      return Key::Y;
+    }
+    if(name == "Z") {
+      return Key::Z;
+    }
+    if(name == "Left Bracket") {
+      return Key::LeftBracket;
+    }
+    if(name == "Backslash") {
+      return Key::Backslash;
+    }
+    if(name == "Right Bracket") {
+      return Key::RightBracket;
+    }
+    if(name == "Grave Accent") {
+      return Key::GraveAccent;
+    }
+    if(name == "World1") {
+      return Key::World1;
+    }
+    if(name == "World2") {
+      return Key::World2;
+    }
+    if(name == "Escape") {
+      return Key::Escape;
+    }
+    if(name == "Enter") {
+      return Key::Enter;
+    }
+    if(name == "Tab") {
+      return Key::Tab;
+    }
+    if(name == "Backspace") {
+      return Key::Backspace;
+    }
+    if(name == "Insert") {
+      return Key::Insert;
+    }
+    if(name == "Delete") {
+      return Key::Delete;
+    }
+    if(name == "Right") {
+      return Key::Right;
+    }
+    if(name == "Left") {
+      return Key::Left;
+    }
+    if(name == "Down") {
+      return Key::Down;
+    }
+    if(name == "Up") {
+      return Key::Up;
+    }
+    if(name == "Page Up") {
+      return Key::PageUp;
+    }
+    if(name == "Page Down") {
+      return Key::PageDown;
+    }
+    if(name == "Home") {
+      return Key::Home;
+    }
+    if(name == "End") {
+      return Key::End;
+    }
+    if(name == "Caps Lock") {
+      return Key::CapsLock;
+    }
+    if(name == "Scroll Lock") {
+      return Key::ScrollLock;
+    }
+    if(name == "Num Lock") {
+      return Key::NumLock;
+    }
+    if(name == "Print Screen") {
+      return Key::PrintScreen;
+    }
+    if(name == "Pause") {
+      return Key::Pause;
+    }
+    if(name == "F1") {
+      return Key::F1;
+    }
+    if(name == "F2") {
+      return Key::F2;
+    }
+    if(name == "F3") {
+      return Key::F3;
+    }
+    if(name == "F4") {
+      return Key::F4;
+    }
+    if(name == "F5") {
+      return Key::F5;
+    }
+    if(name == "F6") {
+      return Key::F6;
+    }
+    if(name == "F7") {
+      return Key::F7;
+    }
+    if(name == "F8") {
+      return Key::F8;
+    }
+    if(name == "F9") {
+      return Key::F9;
+    }
+    if(name == "F10") {
+      return Key::F10;
+    }
+    if(name == "F11") {
+      return Key::F11;
+    }
+    if(name == "F12") {
+      return Key::F12;
+    }
+    if(name == "F13") {
+      return Key::F13;
+    }
+    if(name == "F14") {
+      return Key::F14;
+    }
+    if(name == "F15") {
+      return Key::F15;
+    }
+    if(name == "F16") {
+      return Key::F16;
+    }
+    if(name == "F17") {
+      return Key::F17;
+    }
+    if(name == "F18") {
+      return Key::F18;
+    }
+    if(name == "F19") {
+      return Key::F19;
+    }
+    if(name == "F20") {
+      return Key::F20;
+    }
+    if(name == "F21") {
+      return Key::F21;
+    }
+    if(name == "F22") {
+      return Key::F22;
+    }
+    if(name == "F23") {
+      return Key::F23;
+    }
+    if(name == "F24") {
+      return Key::F24;
+    }
+    if(name == "F25") {
+      return Key::F25;
+    }
+    if(name == "Numpad 0") {
+      return Key::Numpad0;
+    }
+    if(name == "Numpad 1") {
+      return Key::Numpad1;
+    }
+    if(name == "Numpad 2") {
+      return Key::Numpad2;
+    }
+    if(name == "Numpad 3") {
+      return Key::Numpad3;
+    }
+    if(name == "Numpad 4") {
+      return Key::Numpad4;
+    }
+    if(name == "Numpad 5") {
+      return Key::Numpad5;
+    }
+    if(name == "Numpad 6") {
+      return Key::Numpad6;
+    }
+    if(name == "Numpad 7") {
+      return Key::Numpad7;
+    }
+    if(name == "Numpad 8") {
+      return Key::Numpad8;
+    }
+    if(name == "Numpad 9") {
+      return Key::Numpad9;
+    }
+    if(name == "Numpad Decimal") {
+      return Key::NumpadDecimal;
+    }
+    if(name == "Numpad Divide") {
+      return Key::NumpadDivide;
+    }
+    if(name == "Numpad Multiply") {
+      return Key::NumpadMultiply;
+    }
+    if(name == "Numpad Subtract") {
+      return Key::NumpadSubtract;
+    }
+    if(name == "Numpad Add") {
+      return Key::NumpadAdd;
+    }
+    if(name == "Numpad Enter") {
+      return Key::NumpadEnter;
+    }
+    if(name == "Numpad Equal") {
+      return Key::NumpadEqual;
+    }
+    if(name == "Shift Left") {
+      return Key::ShiftLeft;
+    }
+    if(name == "Control Left") {
+      return Key::ControlLeft;
+    }
+    if(name == "Alt Left") {
+      return Key::AltLeft;
+    }
+    if(name == "Super Left") {
+      return Key::SuperLeft;
+    }
+    if(name == "Shift Right") {
+      return Key::ShiftRight;
+    }
+    if(name == "Control Right") {
+      return Key::ControlRight;
+    }
+    if(name == "Alt Right") {
+      return Key::AltRight;
+    }
+    if(name == "Super Right") {
+      return Key::SuperRight;
+    }
+    if(name == "Menu") {
+      return Key::Menu;
+    }
+
+    return Key::Unknown;
   }
 
   std::string Keyboard::ToString(Key key) {

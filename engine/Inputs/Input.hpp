@@ -1,28 +1,30 @@
 #pragma once
 
+#include "Devices/Keyboard.hpp"
+#include "InputButton.hpp"
+#include "Buttons/KeyboardInputButton.hpp"
+#include "Utils/Delegate.hpp"
 #include "Engine/Engine.hpp"
-#include "InputScheme.hpp"
+#include "third_party/inicpp/ini.h"
+#include <filesystem>
 
 namespace mtEngine {
   class Input : public Module::Registrar<Input> {
     inline static const bool Registered = Register(Stage::Normal, Requires<Keyboard>());
     public:
+      using ButtonMap = std::map<std::string, std::unique_ptr<InputButton>>;
+
       Input();
 
       void Update() override;
 
-      InputScheme *GetScheme() const { return currentScheme; }
-      InputScheme *GetScheme(const std::string &name) const;
-      InputScheme *AddScheme(const std::string &name, std::unique_ptr<InputScheme> &&scheme, bool setCurrent = false);
-      void RemoveScheme(const std::string &name);
-      void SetScheme(InputScheme *scheme);
-      void SetScheme(const std::string &name);
-
-      InputButton *GetButton(const std::string &name) const;
+      void LoadScheme(const std::filesystem::path &filename);
+      InputButton *GetButton(const std::string &section, const std::string &name);
+      Delegate<void(InputAction, InputMod)> &OnButton(const std::string &name) { return onClick; };
 
     private:
-      std::map<std::string, std::unique_ptr<InputScheme>> schemes;
-      std::unique_ptr<InputScheme> nullScheme;
-      InputScheme *currentScheme = nullptr;
+      inih::INIReader maps_m;
+      ButtonMap buttons;
+      Delegate<void(InputAction, InputMod)> onClick;
   };
 }
