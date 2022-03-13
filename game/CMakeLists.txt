@@ -1,6 +1,10 @@
 project(game)
 
-file(GLOB SOURCES game.cpp)
+file(GLOB SOURCES 
+  game.cpp 
+  app.cpp
+  Render/GameRender.cpp
+  )
 set(GAME_INCLUDE ${PROJECT_SOURCE_DIR}/include)
 add_executable(${PROJECT_NAME} ${SOURCES})
 target_link_libraries(${PROJECT_NAME} mt::engine)

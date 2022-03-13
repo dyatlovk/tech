@@ -16,6 +16,7 @@ namespace Editor {
 
   EditorApp::~EditorApp() {
     Graphics::Get()->SetRenderer(nullptr);
+    Graphics::Get()->SetGui(nullptr);
   }
 
   void EditorApp::Start() {
