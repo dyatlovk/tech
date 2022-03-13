@@ -25,29 +25,43 @@ namespace Editor {
     Graphics::Get()->SetGui(std::make_unique<Gui>());
 
     std::string p(RESOURCES);
-    Input::Get()->LoadScheme(p + "/keysmap.ini");
+    Input::Get()->LoadScheme(p + "/Editor/keysmap.ini");
     static State state;
 
-    States::Get()->OnState().Add([](State st) { state = st; });
+    States::Get()->OnState().Add([](State st) { 
+      state = st; 
+      std::cout << "state change: " << States::ToString(state) << std::endl;
+    });
+    States::Get()->Set(State::GUI);
    
-    Input::Get()->GetButton("Default", "Quit")->OnButton().Add([](InputAction action, InputMod mod) {
-      if(state != State::Default) return;
+    Input::Get()->GetButton("GUI", "Exit")->OnButton().Add([](InputAction action, InputMod mod) {
+      if(state != State::GUI) return;
       if(InputAction::Press == action) Engine::Get()->RequestClose();
     });
     
-    Input::Get()->GetButton("Default", "Fullscreen")->OnButton().Add([](InputAction action, InputMod mod) {
-      if(state != State::Default) return;
+    Input::Get()->GetButton("GUI", "Fullscreen")->OnButton().Add([](InputAction action, InputMod mod) {
+      if(state != State::GUI) return;
       if(InputAction::Press == action) Window::Get()->MaximizeToggle();
     });
     
-    Input::Get()->GetButton("Default", "Player")->OnButton().Add([](InputAction action, InputMod mod) {
-      if(state != State::Default) return;
+    Input::Get()->GetButton("GUI", "Player")->OnButton().Add([](InputAction action, InputMod mod) {
+      if(state != State::GUI) return;
       if(InputAction::Press == action) States::Get()->Set(State::Player);
     });
     
-    Input::Get()->GetButton("Player", "Default")->OnButton().Add([](InputAction action, InputMod mod) {
+    Input::Get()->GetButton("Player", "GUI")->OnButton().Add([](InputAction action, InputMod mod) {
       if(state != State::Player) return;
-      if(InputAction::Press == action) States::Get()->Set(State::Default);
+      if(InputAction::Press == action) States::Get()->Set(State::GUI);
+    });
+    
+    Input::Get()->GetButton("Player", "Inventory")->OnButton().Add([](InputAction action, InputMod mod) {
+      if(state != State::Player) return;
+//       if(InputAction::Press == action) States::Get()->Set(State::GUI);
+    });
+    
+    Input::Get()->GetButton("Inventory", "Player")->OnButton().Add([](InputAction action, InputMod mod) {
+      if(state != State::GUI) return;
+//       if(InputAction::Press == action) States::Get()->Set(State::Player);
     });
   }
 

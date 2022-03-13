@@ -12,10 +12,10 @@ namespace mtEngine {
 
   InputButton *Input::GetButton(const std::string &section, const std::string &name) {
     const auto& keyFound = maps_m.Get<std::string>(section, name);
-    auto it = buttons.find(name);
+    auto it = buttons.find(section + name);
     if (it == buttons.end()) {
       auto key = Keyboard::FromString(keyFound);
-      it = buttons.emplace(name, std::make_unique<KeyboardInputButton>(key)).first;
+      it = buttons.emplace(section + name, std::make_unique<KeyboardInputButton>(key)).first;
     }
     return it->second.get();
   }
