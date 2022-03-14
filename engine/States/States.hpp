@@ -2,16 +2,11 @@
 
 #include "Devices/Keyboard.hpp"
 #include "Engine/Module.hpp"
+#include "States/EnumStates.hpp"
 #include <string>
 #include <iostream>
 
 namespace mtEngine {
-  enum class State : int {
-    Default = 0,
-    Player  = 1,
-    GUI     = 2,
-  };
-
   class States : public Module::Registrar<States> {
     inline static const bool Registered = Register(Stage::Pre, Requires<Keyboard>());
     public:
@@ -19,30 +14,34 @@ namespace mtEngine {
 
       void Update() override;
 
-      void Set(State state);
+      void Set(int state);
 
-      static std::string ToString(State state)
+      static std::string ToString(int state)
       {
-        switch (state) {
-          case State::Player:
-            return "Player";
-          case State::GUI:
-            return "GUI";
-          default:
-            return "Default";
-            break;
+        if(state == EnumStates::Player) {
+          return "Player";
         }
+
+        if(state == EnumStates::GUI) {
+          return "GUI";
+        }
+
+        if(state == EnumStates::Default) {
+          return "Default";
+        }
+
+        return "Default";
       }
       
-      State Current()
+      int Current()
       {
         return current;
       }
       
-      Delegate<void(State)> &OnState() { return onState; }
+      Delegate<void(int)> &OnState() { return onState; }
 
     private:
-      State current;
-      Delegate<void(State)> onState;
+      int current;
+      Delegate<void(int)> onState;
   };
 }

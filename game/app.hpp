@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Engine/App.hpp"
+#include "States/GameStates.hpp"
 
 namespace Game {
   class GameApp : public mtEngine::App {

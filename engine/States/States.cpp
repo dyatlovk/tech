@@ -3,7 +3,8 @@
 namespace mtEngine {
   States::States()
   {
-    Set(State::Default);
+    std::cout << "states constructor" << std::endl;
+    Set(EnumStates::Default);
   };
 
   void States::Update()
@@ -11,7 +12,7 @@ namespace mtEngine {
 
   }
 
-  void States::Set(State state)
+  void States::Set(int state)
   {
     current = state;
     onState(current);
