@@ -39,11 +39,15 @@ namespace mtEngine {
      * Run when switching to this app from another.
      */
     virtual void Start() = 0;
+    
+    virtual void BeforeUpdate() = 0;
 
     /**
      * Run before the module update pass.
      */
     virtual void Update() = 0;
+    
+    virtual void AfterUpdate() = 0;
 
     /**
      * Gets the application's name.

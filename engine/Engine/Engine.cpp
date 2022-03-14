@@ -55,7 +55,6 @@ namespace mtEngine {
           app->Start();
           app->started = true;
         }
-
         app->Update();
       }
 
@@ -73,6 +72,8 @@ namespace mtEngine {
 
       // Render
       UpdateStage(Module::Stage::Render);
+
+      PostUpdate();
     }
 
     return EXIT_SUCCESS;
@@ -82,6 +83,13 @@ namespace mtEngine {
     for (auto &[stageIndex, module] : modules) {
       if (stageIndex.first == stage)
         module->Update();
+    }
+  }
+
+  void Engine::PostUpdate()
+  {
+    for (auto &[stageIndex, module] : modules) {
+      module->AfterUpdate();
     }
   }
 }

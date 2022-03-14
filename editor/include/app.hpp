@@ -15,6 +15,8 @@ namespace Editor {
 
       void Start() override;
       void Update() override;
+      void BeforeUpdate() override;
+      void AfterUpdate() override;
   };
 }
 

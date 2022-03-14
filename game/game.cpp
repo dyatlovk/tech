@@ -11,4 +11,3 @@ int main(int argc, char **argv)
     auto exitCode = engine->Run();
     return exitCode;
 }
-

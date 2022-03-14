@@ -50,10 +50,19 @@ namespace mtEngine {
     glfwDestroyWindow(window);
     glfwTerminate();
   }
+  
+  void Window::BeforeUpdate()
+  {
+  }
 
   void Window::Update()
   {
     glfwPollEvents();
+  }
+  
+  void Window::AfterUpdate()
+  {
+    // glfwSwapBuffers(window);
   }
 
   void Window::SetFullscreen(bool fullscreen)

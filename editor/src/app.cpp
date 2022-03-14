@@ -16,14 +16,12 @@ namespace Editor {
 
   EditorApp::~EditorApp() {
     Graphics::Get()->SetRenderer(nullptr);
-    Graphics::Get()->SetGui(nullptr);
   }
 
   void EditorApp::Start() {
     std::cout << "app start" << std::endl;
     Window::Get()->SetPositionOnCenter();
     Graphics::Get()->SetRenderer(std::make_unique<EditorRender>());
-    Graphics::Get()->SetGui(std::make_unique<Gui>());
 
     std::string p(RESOURCES);
     Input::Get()->LoadScheme(p + "/Editor/keysmap.ini");
@@ -65,8 +63,16 @@ namespace Editor {
 //       if(InputAction::Press == action) States::Get()->Set(State::Player);
     });
   }
+  
+  void EditorApp::BeforeUpdate()
+  {
+  }
 
   void EditorApp::Update()
+  {
+  }
+  
+  void EditorApp::AfterUpdate()
   {
   }
 }

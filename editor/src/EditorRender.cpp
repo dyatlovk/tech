@@ -24,7 +24,6 @@ namespace Editor {
     bool static show_demo_window = false;
     if(States::Get()->Current() == EnumStates::GUI) {
       glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-      ImGui::ShowDemoWindow(&show_demo_window);
     }
     if(States::Get()->Current() == EnumStates::Player) {
       glClearColor(0.3f, 0.3f, 0.3f, 1.0f);

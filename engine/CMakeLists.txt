@@ -20,7 +20,6 @@ add_library(${PROJECT_NAME} SHARED
   third_party/imgui/imgui_widgets.cpp
   third_party/imgui/imgui_impl_opengl3.cpp
   third_party/imgui/imgui_impl_glfw.cpp
-  Guis/Gui.cpp
   States/States.cpp
   Scenes/Scenes.cpp
   )

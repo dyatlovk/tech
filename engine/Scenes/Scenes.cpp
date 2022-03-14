@@ -12,6 +12,8 @@ namespace mtEngine {
       scene->started = true;
     }
       
+    scene->BeforeUpdate();
     scene->Update();
+    scene->AfterUpdate();
   }
 }

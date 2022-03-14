@@ -10,6 +10,8 @@ namespace mtEngine {
 
       virtual void Start() = 0;
       virtual void Update() = 0;
+      virtual void BeforeUpdate() {};
+      virtual void AfterUpdate() {};
       virtual bool IsPaused() const = 0;
 
     private:

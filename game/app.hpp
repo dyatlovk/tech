@@ -12,6 +12,8 @@ namespace Game {
       ~GameApp();
              
       void Start() override;
+      void BeforeUpdate() override;
       void Update() override;
+      void AfterUpdate() override;
     };
 }

@@ -29,7 +29,10 @@ namespace mtEngine {
       Window();
       ~Window();
 
+      void BeforeUpdate() override;
       void Update() override;
+      void AfterUpdate() override;
+      
       GLFWwindow *GetWindow() {return window;}
 
       void SetFullscreen(bool fullscreen);

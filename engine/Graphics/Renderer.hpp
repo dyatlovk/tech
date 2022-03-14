@@ -14,15 +14,15 @@ namespace mtEngine {
       virtual void Start() = 0;
       virtual void Update() = 0;
 
-      virtual void BeforeUpdate()
+      void BeforeUpdate()
       {
         glClear(GL_COLOR_BUFFER_BIT);
         glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
       };
 
-      virtual void AfterUpdate()
+      void AfterUpdate()
       {
-        glfwSwapBuffers(Window::Get()->GetWindow());
+        // glfwSwapBuffers(Window::Get()->GetWindow());
       };
 
     private:
