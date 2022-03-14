@@ -13,5 +13,9 @@ namespace Game {
       void AfterUpdate() override;
 
       bool IsPaused() const override { return false; }
+
+    private:
+      void Inventory();
+      void Dock();
   };
 }

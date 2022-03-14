@@ -43,6 +43,9 @@ namespace mtEngine {
     glfwSetWindowCloseCallback(window, CallbackWindowClose);
     glfwSetFramebufferSizeCallback(window, CallbackFramebufferSize);
     glfwSetWindowSizeCallback(window, CallbackWindowSize);
+
+    if (glfwRawMouseMotionSupported())
+      glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
   }
 
   Window::~Window()
