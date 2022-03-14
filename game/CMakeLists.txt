@@ -4,6 +4,7 @@ file(GLOB SOURCES
   game.cpp 
   app.cpp
   Render/GameRender.cpp
+  Scenes/GameScene.cpp
   )
 set(GAME_INCLUDE ${PROJECT_SOURCE_DIR}/include)
 add_executable(${PROJECT_NAME} ${SOURCES})

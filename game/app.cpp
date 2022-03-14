@@ -1,4 +1,5 @@
 #include "app.hpp"
+#include <memory>
 #include "Config.hpp"
 #include "Devices/Window.hpp"
 #include "Graphics/Graphics.hpp"
@@ -17,6 +18,7 @@ namespace Game {
   void GameApp::Start() {
     Window::Get()->SetPositionOnCenter();
     Graphics::Get()->SetRenderer(std::make_unique<GameRender>());
+    Scenes::Get()->SetScene(std::make_unique<GameScene>());
     Graphics::Get()->SetGui(std::make_unique<Gui>());
     std::string p(RESOURCES);
     Input::Get()->LoadScheme(p + "/Game/keysmap.ini");

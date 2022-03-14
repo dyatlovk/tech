@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Graphics/Renderer.hpp"
+#include "../States/GameStates.hpp"
+
 using namespace mtEngine;
 
 namespace Game {
