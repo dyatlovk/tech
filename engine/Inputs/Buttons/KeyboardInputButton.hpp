@@ -8,7 +8,7 @@ namespace mtEngine {
   class KeyboardInputButton : public InputButton::Registrar<KeyboardInputButton> {
     inline static const bool Registered = Register("keyboard");
     public:
-      explicit KeyboardInputButton(Key key = Key::Unknown);
+      explicit KeyboardInputButton(Key key = Key::Unknown, const std::string &sectionName = "Global");
 
       Key GetKey() const { return key; };
 
@@ -16,5 +16,6 @@ namespace mtEngine {
 
     private:
       Key key;
+      std::string section;
   };
 }

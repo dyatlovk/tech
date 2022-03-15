@@ -80,6 +80,16 @@ namespace Game {
       }
       if(InputAction::Press == action) States::Get()->Set(GameStates::Player);
     });
+    
+    Input::Get()->GetButton("Inventory", "Close")->OnButton().Add([&](InputAction action, InputMod mod) {
+      if(state != GameStates::Inventory) return;
+      ++listeners;
+      if(listeners > 1) {
+        listeners = 0;
+        return;
+      }
+      if(InputAction::Press == action) States::Get()->Set(GameStates::Player);
+    });
 
     Input::Get()->GetButton("Player", "PauseMenu")->OnButton().Add([&](InputAction action, InputMod mod) {
       if(state != GameStates::Player) return;

@@ -15,7 +15,7 @@ namespace mtEngine {
     auto it = buttons.find(section + name);
     if (it == buttons.end()) {
       auto key = Keyboard::FromString(keyFound);
-      it = buttons.emplace(section + name, std::make_unique<KeyboardInputButton>(key)).first;
+      it = buttons.emplace(section + name, std::make_unique<KeyboardInputButton>(key, section)).first;
     }
     return it->second.get();
   }

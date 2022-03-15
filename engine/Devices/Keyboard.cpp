@@ -161,16 +161,16 @@ namespace mtEngine {
     if(name == "Z") {
       return Key::Z;
     }
-    if(name == "Left Bracket") {
+    if(name == "LeftBracket") {
       return Key::LeftBracket;
     }
     if(name == "Backslash") {
       return Key::Backslash;
     }
-    if(name == "Right Bracket") {
+    if(name == "RightBracket") {
       return Key::RightBracket;
     }
-    if(name == "Grave Accent") {
+    if(name == "GraveAccent") {
       return Key::GraveAccent;
     }
     if(name == "World1") {
@@ -209,10 +209,10 @@ namespace mtEngine {
     if(name == "Up") {
       return Key::Up;
     }
-    if(name == "Page Up") {
+    if(name == "PageUp") {
       return Key::PageUp;
     }
-    if(name == "Page Down") {
+    if(name == "PageDown") {
       return Key::PageDown;
     }
     if(name == "Home") {
@@ -221,16 +221,16 @@ namespace mtEngine {
     if(name == "End") {
       return Key::End;
     }
-    if(name == "Caps Lock") {
+    if(name == "CapsLock") {
       return Key::CapsLock;
     }
-    if(name == "Scroll Lock") {
+    if(name == "ScrollLock") {
       return Key::ScrollLock;
     }
-    if(name == "Num Lock") {
+    if(name == "NumLock") {
       return Key::NumLock;
     }
-    if(name == "Print Screen") {
+    if(name == "PrintScreen") {
       return Key::PrintScreen;
     }
     if(name == "Pause") {
@@ -311,79 +311,79 @@ namespace mtEngine {
     if(name == "F25") {
       return Key::F25;
     }
-    if(name == "Numpad 0") {
+    if(name == "Numpad0") {
       return Key::Numpad0;
     }
-    if(name == "Numpad 1") {
+    if(name == "Numpad1") {
       return Key::Numpad1;
     }
-    if(name == "Numpad 2") {
+    if(name == "Numpad2") {
       return Key::Numpad2;
     }
-    if(name == "Numpad 3") {
+    if(name == "Numpad3") {
       return Key::Numpad3;
     }
-    if(name == "Numpad 4") {
+    if(name == "Numpad4") {
       return Key::Numpad4;
     }
-    if(name == "Numpad 5") {
+    if(name == "Numpad5") {
       return Key::Numpad5;
     }
-    if(name == "Numpad 6") {
+    if(name == "Numpad6") {
       return Key::Numpad6;
     }
-    if(name == "Numpad 7") {
+    if(name == "Numpad7") {
       return Key::Numpad7;
     }
-    if(name == "Numpad 8") {
+    if(name == "Numpad8") {
       return Key::Numpad8;
     }
-    if(name == "Numpad 9") {
+    if(name == "Numpad9") {
       return Key::Numpad9;
     }
-    if(name == "Numpad Decimal") {
+    if(name == "NumpadDecimal") {
       return Key::NumpadDecimal;
     }
-    if(name == "Numpad Divide") {
+    if(name == "NumpadDivide") {
       return Key::NumpadDivide;
     }
-    if(name == "Numpad Multiply") {
+    if(name == "NumpadMultiply") {
       return Key::NumpadMultiply;
     }
-    if(name == "Numpad Subtract") {
+    if(name == "NumpadSubtract") {
       return Key::NumpadSubtract;
     }
-    if(name == "Numpad Add") {
+    if(name == "NumpadAdd") {
       return Key::NumpadAdd;
     }
-    if(name == "Numpad Enter") {
+    if(name == "NumpadEnter") {
       return Key::NumpadEnter;
     }
-    if(name == "Numpad Equal") {
+    if(name == "NumpadEqual") {
       return Key::NumpadEqual;
     }
-    if(name == "Shift Left") {
+    if(name == "ShiftLeft") {
       return Key::ShiftLeft;
     }
-    if(name == "Control Left") {
+    if(name == "ControlLeft") {
       return Key::ControlLeft;
     }
-    if(name == "Alt Left") {
+    if(name == "AltLeft") {
       return Key::AltLeft;
     }
-    if(name == "Super Left") {
+    if(name == "SuperLeft") {
       return Key::SuperLeft;
     }
-    if(name == "Shift Right") {
+    if(name == "ShiftRight") {
       return Key::ShiftRight;
     }
-    if(name == "Control Right") {
+    if(name == "ControlRight") {
       return Key::ControlRight;
     }
-    if(name == "Alt Right") {
+    if(name == "AltRight") {
       return Key::AltRight;
     }
-    if(name == "Super Right") {
+    if(name == "SuperRight") {
       return Key::SuperRight;
     }
     if(name == "Menu") {

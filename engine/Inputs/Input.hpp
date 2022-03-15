@@ -19,6 +19,8 @@ namespace mtEngine {
       void Update() override;
 
       void LoadScheme(const std::filesystem::path &filename);
+      void EnableScheme(bool status = true) { isSchemeEnabled = status; };
+      bool IsSchemeEnabled() { return isSchemeEnabled; };
       InputButton *GetButton(const std::string &section, const std::string &name);
       Delegate<void(InputAction, InputMod)> &OnButton(const std::string &name) { return onClick; };
 
@@ -26,5 +28,6 @@ namespace mtEngine {
       inih::INIReader maps_m;
       ButtonMap buttons;
       Delegate<void(InputAction, InputMod)> onClick;
+      bool isSchemeEnabled = true;
   };
 }

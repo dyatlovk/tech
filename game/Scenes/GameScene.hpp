@@ -16,6 +16,10 @@ namespace Game {
 
     private:
       void Inventory();
+      void Info();
       void Dock();
+      void Console();
+
+      bool show_console = false;
   };
 }
