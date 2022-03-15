@@ -38,7 +38,11 @@ namespace Game {
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
 
+    float rounding = 1.0f;
     ImVec4* colors = ImGui::GetStyle().Colors;
+    ImGui::GetStyle().ScrollbarRounding = rounding;
+    ImGui::GetStyle().TabRounding = rounding;
+    ImGui::GetStyle().ScrollbarSize = 16.0f;
     colors[ImGuiCol_Text]                   = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
     colors[ImGuiCol_TextDisabled]           = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
     colors[ImGuiCol_WindowBg]               = ImVec4(0.06f, 0.06f, 0.06f, 1.00f);
@@ -100,6 +104,12 @@ namespace Game {
         show_console = !show_console;
       };
     });
+    
+    Input::Get()->GetButton("Global", "UIDemo")->OnButton().Add([&](InputAction action, InputMod mod) {
+      if(InputAction::Press == action) {
+        show_demo = !show_demo;
+      };
+    });
   }
 
   void GameScene::BeforeUpdate()
@@ -111,7 +121,7 @@ namespace Game {
 
   void GameScene::Update()
   {
-    ImGui::ShowDemoWindow();
+    if (show_demo) ImGui::ShowDemoWindow();
     int state = States::Get()->Current();
     Info();
 
@@ -146,7 +156,8 @@ namespace Game {
   void GameScene::Info()
   {
     int state = States::Get()->Current();
-    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBackground;
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+    window_flags |= ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMouseInputs;
     static bool p_open = true;
     auto viewport = ImGui::GetMainViewport()->Size;
     ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
@@ -154,21 +165,22 @@ namespace Game {
     if (ImGui::Begin("Left", &p_open, window_flags)) {
       ImGui::Text("%s", GameStates::ToString(state).c_str());
       ImGui::Separator();
-      ImGui::Text("%s",   "Console:     ~");
+      ImGui::Text("%s",   "Console: ~");
+      ImGui::Text("%s",   "UI Demo: F12");
       if(state == GameStates::MainMenu) {
-        ImGui::Text("%s", "Start:       Enter");
-        ImGui::Text("%s", "Fullscreen:  F");
-        ImGui::Text("%s", "Exit:        F10");
+        ImGui::Text("%s", "Start: Enter");
+        ImGui::Text("%s", "Fullscreen: F");
+        ImGui::Text("%s", "Exit: F10");
       }
       if(state == GameStates::Player) {
-        ImGui::Text("%s", "Inventory:  I");
+        ImGui::Text("%s", "Inventory: I");
         ImGui::Text("%s", "Pause menu: Esc");
       }
       if(state == GameStates::Inventory) {
         ImGui::Text("%s", "Close: Esc, I");
       }
       if(state == GameStates::PauseMenu) {
-        ImGui::Text("%s", "Resume:    Esc");
+        ImGui::Text("%s", "Resume: Esc");
         ImGui::Text("%s", "Main menu: F10");
       }
     }
@@ -197,7 +209,10 @@ namespace Game {
       {
         ImGui::EndPopup();
       }
-      ImGui::TextUnformatted("Console item");
+      ImVector<char*> Items;
+      for (int i = 0; i < 20; i++) {
+        ImGui::TextUnformatted("Console item");
+      }
       ImGui::EndChild();
     }
 

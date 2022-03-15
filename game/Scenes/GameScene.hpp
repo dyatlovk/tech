@@ -21,5 +21,6 @@ namespace Game {
       void Console();
 
       bool show_console = false;
+      bool show_demo = false;
   };
 }
