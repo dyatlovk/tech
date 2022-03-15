@@ -205,6 +205,7 @@ namespace Game {
     ImGui::SetNextWindowSize(ImVec2(viewport.x, viewport.y / 100 * height));
     ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
     ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.9f));
+    static bool scrollDown;
     if (ImGui::Begin("Console", &show_console, window_flags)) {
       const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();              // 1 separator, 1 input text
       ImGui::BeginChild("ConsoleContent", ImVec2(0, -footer_height_to_reserve), false, ImGuiWindowFlags_HorizontalScrollbar);  // Leave room for 1 separator + 1 InputText
@@ -217,7 +218,8 @@ namespace Game {
       for (const auto &list : logList) {
         ImGui::Text("%s", list.c_str());
       }
-      ImGui::SetScrollHereY(1.0f);
+      if(scrollDown) ImGui::SetScrollHereY(1.0f);
+      scrollDown = false;
       ImGui::EndChild();
     }
     ImGui::PopStyleColor();
@@ -238,6 +240,7 @@ namespace Game {
     ImGuiInputTextFlags inputFlags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory;
     if (ImGui::InputText(title, &text, inputFlags)) {
       PLOGD << text;
+      scrollDown = true;
     }
     ImGui::PopStyleColor();
     ImGui::End();
