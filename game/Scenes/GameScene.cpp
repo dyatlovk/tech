@@ -4,6 +4,7 @@
 #include "Inputs/Input.hpp"
 
 #include "third_party/imgui/imgui.h"
+#include "third_party/imgui/imgui_stdlib.h"
 #include "third_party/imgui/imgui_impl_glfw.h"
 #include "third_party/imgui/imgui_impl_opengl3.h"
 #include "third_party/imgui/imgui_internal.h"
@@ -185,8 +186,35 @@ namespace Game {
     ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
     ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.9f));
     if (ImGui::Begin("Console", &show_console, window_flags)) {
-
+      const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();              // 1 separator, 1 input text
+      ImGui::BeginChild("ConsoleContent", ImVec2(0, -footer_height_to_reserve), false, ImGuiWindowFlags_HorizontalScrollbar);  // Leave room for 1 separator + 1 InputText
+      if (ImGui::BeginPopupContextWindow())
+      {
+        ImGui::EndPopup();
+      }
+      ImGui::TextUnformatted("Console item");
+      ImGui::EndChild();
     }
+
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+    const char *helperTitle = "##ConsoleInputHelper";
+    std::string helperText = ">>";
+    float textboxSize = ImGui::CalcTextSize(helperText.c_str()).x + (ImGui::GetStyle().FramePadding.x);
+    ImGui::SetNextItemWidth(textboxSize);
+    ImGuiInputTextFlags helperFlags = ImGuiInputTextFlags_ReadOnly;
+    ImGui::InputText(helperTitle, &helperText, helperFlags); ImGui::SameLine(0.0f, -1.0f);
+    ImGui::PopStyleColor();
+    
+    std::string text = "";
+    const char *title = "##ConsoleInput";
+    ImGui::SetKeyboardFocusHere();
+    ImGuiInputTextFlags inputFlags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory;
+    if (ImGui::InputText(title, &text, inputFlags)) {
+    }
+    ImGui::End();
+    ImGui::PopStyleColor();
+
     ImGui::End();
     ImGui::PopStyleColor();
   }
