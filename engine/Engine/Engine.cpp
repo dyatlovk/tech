@@ -1,4 +1,5 @@
 #include "Engine.hpp"
+#include <memory>
 
 #include "Config.hpp"
 
@@ -10,6 +11,8 @@ namespace mtEngine {
     version{VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH},
     fpsLimit(-1.0f),
     running(true) {
+      logger = std::make_shared<Log>();
+      PLOGD << "start engine";
       Instance = this;
 
       // TODO: Optimize and clean up!

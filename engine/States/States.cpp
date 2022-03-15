@@ -3,7 +3,7 @@
 namespace mtEngine {
   States::States()
   {
-    std::cout << "states constructor" << std::endl;
+    PLOGD << "states construct";
     Set(EnumStates::Default);
   };
 

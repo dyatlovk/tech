@@ -1,7 +1,9 @@
 #include "GameScene.hpp"
+
 #include "Config.hpp"
 #include "../States/GameStates.hpp"
 #include "Devices/Window.hpp"
+#include "Engine/Engine.hpp"
 #include "Inputs/Input.hpp"
 
 #include "third_party/imgui/imgui.h"
@@ -24,6 +26,7 @@ namespace Game {
 
   void GameScene::Start()
   {
+    PLOGD << "game scene started";
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -209,12 +212,15 @@ namespace Game {
       {
         ImGui::EndPopup();
       }
-      ImVector<char*> Items;
-      for (int i = 0; i < 20; i++) {
-        ImGui::TextUnformatted("Console item");
+
+      auto logList = Engine::Get()->GetLogger()->GetMomory();
+      for (const auto &list : logList) {
+        ImGui::Text("%s", list.c_str());
       }
+      ImGui::SetScrollHereY(1.0f);
       ImGui::EndChild();
     }
+    ImGui::PopStyleColor();
 
     ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
@@ -231,11 +237,9 @@ namespace Game {
     ImGui::SetKeyboardFocusHere();
     ImGuiInputTextFlags inputFlags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory;
     if (ImGui::InputText(title, &text, inputFlags)) {
+      PLOGD << text;
     }
-    ImGui::End();
     ImGui::PopStyleColor();
-
     ImGui::End();
-    ImGui::PopStyleColor();
   }
 }

@@ -15,6 +15,7 @@ namespace mtEngine {
   }
 
   Keyboard::Keyboard() {
+    PLOGD << "keyboard start";
     glfwSetKeyCallback(Window::Get()->GetWindow(), CallbackKey);
     glfwSetCharCallback(Window::Get()->GetWindow(), CallbackChar);
   }

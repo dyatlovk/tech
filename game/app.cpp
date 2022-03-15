@@ -1,5 +1,4 @@
 #include "app.hpp"
-#include <memory>
 #include "Config.hpp"
 #include "Devices/Window.hpp"
 #include "Graphics/Graphics.hpp"
@@ -8,7 +7,8 @@
 
 namespace Game {
   using namespace mtEngine;
-  GameApp::GameApp(): App("Game") { }
+  GameApp::GameApp(): App("Game") {
+  }
 
   GameApp::~GameApp() {
     Graphics::Get()->SetRenderer(nullptr);
@@ -16,7 +16,7 @@ namespace Game {
   }
 
   void GameApp::Start() {
-    std::cout << "start game app" << std::endl;
+    PLOGD << "app start";
     Window::Get()->SetPositionOnCenter();
     Graphics::Get()->SetRenderer(std::make_unique<GameRender>());
     Scenes::Get()->SetScene(std::make_unique<GameScene>());
@@ -26,7 +26,7 @@ namespace Game {
     static int state;
     States::Get()->OnState().Add([&](int st) {
       state = st;
-      std::cout << "on state: " << GameStates::ToString(state) << std::endl;
+      PLOGD << "On state: " << GameStates::ToString(state);
     });
     States::Get()->Set(GameStates::MainMenu);
 

@@ -13,7 +13,7 @@ namespace Game {
 
   void GameRender::Start()
   {
-
+    PLOGD << "app render start";
   }
 
   void GameRender::Update()

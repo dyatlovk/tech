@@ -26,7 +26,7 @@ namespace mtEngine {
 
   Window::Window(): title("Demo")
   {
-    std::cout << "start window" << std::endl;
+    PLOGD << "window started";
     if (glfwInit() == GLFW_FALSE)
       throw std::runtime_error("GLFW failed to initialize");
 
