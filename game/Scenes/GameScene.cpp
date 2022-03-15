@@ -1,4 +1,5 @@
 #include "GameScene.hpp"
+#include "Config.hpp"
 #include "../States/GameStates.hpp"
 #include "Devices/Window.hpp"
 #include "Inputs/Input.hpp"
@@ -27,6 +28,10 @@ namespace Game {
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
+
+    std::string p(RESOURCES);
+    std::string fontPath = p + "/Game/fonts/Roboto-Regular.ttf";
+    io.Fonts->AddFontFromFileTTF(fontPath.c_str(), 17.0f);
 
     const char* glsl_version = "#version 130";
     auto window = mtEngine::Window::Get()->GetWindow();
