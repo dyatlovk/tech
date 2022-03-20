@@ -7,10 +7,10 @@ namespace Game {
   {
     public:
       enum {
-        Player  = 0,
-        PauseMenu = 1,
-        MainMenu = 2,
-        Inventory = 3,
+        Player    = 5,
+        PauseMenu = 6,
+        MainMenu  = 7,
+        Inventory = 8,
       };
       
       static std::string ToString(int state)

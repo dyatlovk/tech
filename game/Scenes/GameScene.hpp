@@ -1,6 +1,11 @@
 #pragma once
 
 #include "Scenes/Scene.hpp"
+#include "../Gui/GameGui.hpp"
+#include "Graphics/Graphics.hpp"
+
+using namespace mtEngine;
+
 namespace Game {
   class GameScene : public mtEngine::Scene {
     public:
@@ -13,14 +18,5 @@ namespace Game {
       void AfterUpdate() override;
 
       bool IsPaused() const override { return false; }
-
-    private:
-      void Inventory();
-      void Info();
-      void Dock();
-      void Console();
-
-      bool show_console = false;
-      bool show_demo = false;
   };
 }

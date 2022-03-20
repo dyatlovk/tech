@@ -8,6 +8,7 @@ namespace mtEngine {
         Default = 0,
         Player  = 1,
         GUI     = 2,
+        Console = 4,
       };
       EnumStates() {};
       ~EnumStates() {};

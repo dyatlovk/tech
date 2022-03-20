@@ -88,6 +88,7 @@ namespace mtEngine {
     private:
       void UpdateStage(Module::Stage stage);
       void PostUpdate();
+      void ModuleShutdown();
 
       static Engine *Instance;
 

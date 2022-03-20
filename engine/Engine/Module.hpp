@@ -87,6 +87,7 @@ namespace mtEngine {
       virtual void BeforeUpdate() {};
       virtual void Update() = 0;
       virtual void AfterUpdate() {};
+      virtual void Shutdown() {};
   };
 
   template class TypeInfo<Module>;

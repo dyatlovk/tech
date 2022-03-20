@@ -24,7 +24,7 @@ namespace Editor {
     Graphics::Get()->SetRenderer(std::make_unique<EditorRender>());
 
     std::string p(RESOURCES);
-    Input::Get()->LoadScheme(p + "/Editor/keysmap.ini");
+    Input::Get()->LoadConfig(p + "/Editor/keysmap.ini");
     static int state;
 
     States::Get()->OnState().Add([](int st) { 
@@ -32,36 +32,6 @@ namespace Editor {
       std::cout << "state change: " << States::ToString(state) << std::endl;
     });
     States::Get()->Set(EnumStates::GUI);
-   
-    Input::Get()->GetButton("GUI", "Exit")->OnButton().Add([](InputAction action, InputMod mod) {
-      if(state != EnumStates::GUI) return;
-      if(InputAction::Press == action) Engine::Get()->RequestClose();
-    });
-    
-    Input::Get()->GetButton("GUI", "Fullscreen")->OnButton().Add([](InputAction action, InputMod mod) {
-      if(state != EnumStates::GUI) return;
-      if(InputAction::Press == action) Window::Get()->MaximizeToggle();
-    });
-    
-    Input::Get()->GetButton("GUI", "Player")->OnButton().Add([](InputAction action, InputMod mod) {
-      if(state != EnumStates::GUI) return;
-      if(InputAction::Press == action) States::Get()->Set(EnumStates::Player);
-    });
-    
-    Input::Get()->GetButton("Player", "GUI")->OnButton().Add([](InputAction action, InputMod mod) {
-      if(state != EnumStates::Player) return;
-      if(InputAction::Press == action) States::Get()->Set(EnumStates::GUI);
-    });
-    
-    Input::Get()->GetButton("Player", "Inventory")->OnButton().Add([](InputAction action, InputMod mod) {
-      if(state != EnumStates::Player) return;
-//       if(InputAction::Press == action) States::Get()->Set(State::GUI);
-    });
-    
-    Input::Get()->GetButton("Inventory", "Player")->OnButton().Add([](InputAction action, InputMod mod) {
-      if(state != EnumStates::GUI) return;
-//       if(InputAction::Press == action) States::Get()->Set(State::Player);
-    });
   }
   
   void EditorApp::BeforeUpdate()

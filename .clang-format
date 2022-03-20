@@ -30,7 +30,7 @@ IncludeCategories:
     Priority: 1
   - Regex: '.*'
     Priority: 3
-IndentWidth: 4
+IndentWidth: 2
 Language: Cpp
 MaxEmptyLinesToKeep: 2
 NamespaceIndentation: All

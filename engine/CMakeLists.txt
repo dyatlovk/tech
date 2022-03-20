@@ -23,6 +23,8 @@ add_library(${PROJECT_NAME} SHARED
   third_party/imgui/imgui_stdlib.cpp
   States/States.cpp
   Scenes/Scenes.cpp
+  Guis/Gui.cpp
+  Guis/Console.cpp
   )
 add_library(mt::engine ALIAS ${PROJECT_NAME})
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR})

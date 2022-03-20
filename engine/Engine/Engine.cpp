@@ -47,6 +47,7 @@ namespace mtEngine {
     }
 
   Engine::~Engine() {
+    ModuleShutdown();
     app = nullptr;
     Module::Registry().clear();
   }
@@ -58,6 +59,7 @@ namespace mtEngine {
           app->Start();
           app->started = true;
         }
+        app->BeforeUpdate();
         app->Update();
       }
 
@@ -77,6 +79,8 @@ namespace mtEngine {
       UpdateStage(Module::Stage::Render);
 
       PostUpdate();
+
+      app->AfterUpdate();
     }
 
     return EXIT_SUCCESS;
@@ -93,6 +97,13 @@ namespace mtEngine {
   {
     for (auto &[stageIndex, module] : modules) {
       module->AfterUpdate();
+    }
+  }
+  
+  void Engine::ModuleShutdown()
+  {
+    for (auto &[stageIndex, module] : modules) {
+      module->Shutdown();
     }
   }
 }

@@ -1,13 +1,15 @@
 #pragma once
 
 #include "Devices/Window.hpp"
-#include "Engine/Module.hpp"
 
 namespace mtEngine {
   class Renderer  {
     friend class Graphics;
     public:
-      Renderer() = default;
+      Renderer()
+      {
+        // gui = std::make_unique<Gui>();
+      };
 
       virtual ~Renderer() = default;
 
@@ -22,7 +24,6 @@ namespace mtEngine {
 
       void AfterUpdate()
       {
-        // glfwSwapBuffers(Window::Get()->GetWindow());
       };
 
     private:

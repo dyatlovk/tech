@@ -13,7 +13,7 @@ namespace Game {
              
       void Start() override;
       void BeforeUpdate() override;
-      void Update() override;
+      virtual void Update() override;
       void AfterUpdate() override;
     };
 }
