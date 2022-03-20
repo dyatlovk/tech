@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <map>
 #include <any>
 #include <string>
@@ -11,12 +12,15 @@ namespace mtEngine
 {
   class CVars : public NonCopyable
   {
+    constexpr static std::string_view COMMAND_FLAG = "command";
+
     struct Value {
       std::any val;
       std::any def_value;
       std::string help;
       bool readOnly = false;
       std::string type;
+      std::function<void()> command;
     } t_values;
     public:
       CVars();
@@ -26,16 +30,25 @@ namespace mtEngine
       static CVars* Get() { return Instance; }
 
       template< typename T >
-        void Add(const std::string& name, T value, T defaultValue, const std::string& help, const bool readOnly = false)
+        void Add(const std::string& name, const T &value, const T &defaultValue, const std::string& help, const bool readOnly = false)
         {
+          std::string type = Demangle(typeid(T).name());
+          if(type.find("char") != std::string::npos) {
+            type = "char";
+          }
           t_values.val = value;
           t_values.help = help;
-          t_values.def_value = defaultValue;
+          t_values.def_value = value;
           t_values.readOnly = readOnly;
-          t_values.type = Demangle(typeid(T).name());
+          t_values.type = type;
           m_cvars.emplace(std::make_pair(name, t_values));
-          PLOGD << "cvar add: {" << name << ", " << value << ", " << defaultValue << "}";
+          PLOGD << "cvar add: {" << name << ", " << value << ", " << defaultValue << ", " << t_values.type << "}";
         }
+      
+      void Add(const std::string& name, std::function<void()> callback, const std::string& help);
+
+      void Exec(const std::string &name);
+
       template< typename T >
         void Update(const std::string& name, T value)
         {

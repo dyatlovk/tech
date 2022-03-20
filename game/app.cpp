@@ -17,6 +17,7 @@ namespace Game {
     Window::Get()->SetPositionOnCenter();
     Graphics::Get()->SetRenderer(std::make_unique<GameRender>());
     Scenes::Get()->SetScene(std::make_unique<GameScene>());
+    CVars::Get()->Add<std::string>("app", "1", "1", "Default app");
   }
 
   void GameApp::BeforeUpdate() {

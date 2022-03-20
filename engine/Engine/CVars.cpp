@@ -1,4 +1,6 @@
 #include "CVars.hpp"
+#include <any>
+#include <string>
 
 namespace mtEngine {
   CVars *CVars::Instance = nullptr;
@@ -9,6 +11,55 @@ namespace mtEngine {
   };
 
   CVars::~CVars() = default;
+
+  void CVars::Add(const std::string& name, std::function<void()> callback, const std::string& help)
+  {
+    t_values.val = "";
+    t_values.help = help;
+    t_values.readOnly = true;
+    t_values.type = COMMAND_FLAG;
+    t_values.def_value = "";
+    t_values.command = callback;
+    m_cvars.emplace(std::make_pair(name, t_values));
+    PLOGD << "cvar add: {" << name << ", " << help << ", command}";
+  }
+
+  void CVars::Exec(const std::string &name)
+  {
+    if(!find(name)) {
+      PLOGD << "vars: " << name << " not found";
+      return;
+    }
+    auto found = m_find->second;
+    // found command
+    if(found.type == COMMAND_FLAG) {
+      found.command();
+      return;
+    }
+    // find var
+    if(t_values.type.find("char") != std::string::npos) {
+      PLOGD << name << " " << std::any_cast<std::string>(found.val) << "(" << found.help << ")";
+      return;
+    }
+    if(t_values.type == "char") {
+      PLOGD << name << " " << std::any_cast<char>(found.val) << " (" << found.help << ")";
+      return;
+    }
+    if(t_values.type == "int") {
+      PLOGD << name << " " << std::any_cast<int>(found.val) << " (" << found.help << ")";
+      return;
+    }
+    if(t_values.type == "float") {
+      PLOGD << name << " " << std::any_cast<float>(found.val) << "(" << found.help << ")";
+      return;
+    }
+    if(t_values.type == "double") {
+      PLOGD << name << " " << std::any_cast<double>(found.val) << "(" << found.help << ")";
+      return;
+    }
+
+    PLOGD << "var: " << name << " unknown type: ["  << t_values.type << "]";
+  }
 
   std::string CVars::GetHelp(const std::string &name)
   {

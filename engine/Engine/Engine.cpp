@@ -1,5 +1,6 @@
 #include "Engine.hpp"
 #include <memory>
+#include "Commands.hpp"
 
 #include "Config.hpp"
 
@@ -45,6 +46,7 @@ namespace mtEngine {
         if (!postponed)
           break;
       }
+      std::make_unique<Commands>();
     }
 
   Engine::~Engine() {

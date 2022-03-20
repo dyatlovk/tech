@@ -59,13 +59,14 @@ namespace mtEngine
     ImGui::SameLine(0.0f, -1.0f);
     ImGui::PopStyleColor();
 
-    std::string text = "";
+    std::string command = "";
     const char *title = "##ConsoleInput";
     ImGui::SetKeyboardFocusHere();
     ImGuiInputTextFlags inputFlags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory;
-    if (ImGui::InputText(title, &text, inputFlags))
+    if (ImGui::InputText(title, &command, inputFlags))
     {
-      PLOGD << text;
+      //TODO: command exec
+      CVars::Get()->Exec(command);
       scrollDown = true;
     }
     ImGui::PopStyleColor();
