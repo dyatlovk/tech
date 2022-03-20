@@ -1,6 +1,5 @@
 #include "Gui.hpp"
 #include "Config.hpp"
-#include "Graphics/Graphics.hpp"
 
 namespace mtEngine {
   Gui::Gui()
