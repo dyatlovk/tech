@@ -4,6 +4,7 @@
 #include <bitset>
 #include <memory>
 
+#include "CVars.hpp"
 #include "Utils/NonCopyable.hpp"
 #include "Module.hpp"
 #include "App.hpp"
@@ -102,5 +103,6 @@ namespace mtEngine {
       float fpsLimit;
       bool running;
       std::shared_ptr<Log> logger;
+      std::unique_ptr<CVars> cvars;
   };
 }

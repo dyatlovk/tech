@@ -12,6 +12,7 @@ namespace mtEngine {
     fpsLimit(-1.0f),
     running(true) {
       logger = std::make_shared<Log>();
+      cvars = std::make_unique<CVars>();
       PLOGD << "start engine";
       Instance = this;
 
