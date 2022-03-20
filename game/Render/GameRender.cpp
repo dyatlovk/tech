@@ -13,10 +13,13 @@ namespace Game {
 
   void GameRender::Start()
   {
+    GameUI = std::make_unique<GameGui>();
     PLOGD << "app render start";
   }
 
   void GameRender::Update()
   {
+    GameUI->Inventory();
+    GameUI->Info();
   }
 }

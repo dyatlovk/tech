@@ -93,6 +93,13 @@ namespace mtEngine {
     colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
 
     console = std::make_unique<Console>();
+    
+    Keyboard::Get()->OnKey().Add([&](Key key, InputAction action, InputMod mods) {
+      if(action != InputAction::Press) return; 
+      if(key == Key::F12) {
+        showDemo = !showDemo;
+      }
+    });
   }
 
   void Gui::NewFrame()
@@ -105,6 +112,7 @@ namespace mtEngine {
 
   void Gui::Update()
   {
+    if(showDemo) ImGui::ShowDemoWindow(&showDemo);
   }
 
   void Gui::Render()

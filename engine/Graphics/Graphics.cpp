@@ -28,6 +28,7 @@ namespace mtEngine {
 
     renderer->BeforeUpdate();
     gui->NewFrame();
+    gui->Update();
     renderer->Update();
     renderer->AfterUpdate();
     gui->Render();

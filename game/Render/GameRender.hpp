@@ -2,6 +2,7 @@
 
 #include "Graphics/Renderer.hpp"
 #include "../States/GameStates.hpp"
+#include "../Gui/GameGui.hpp"
 
 using namespace mtEngine;
 
@@ -13,5 +14,7 @@ namespace Game {
 
       void Start() override;
       void Update() override;
+    private:
+      std::unique_ptr<GameGui> GameUI;
   };
 }

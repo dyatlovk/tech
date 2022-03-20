@@ -26,5 +26,6 @@ namespace mtEngine {
       void Shutdown();
       bool started = false;
       std::unique_ptr<Console> console;
+      bool showDemo = false;
   };
 }

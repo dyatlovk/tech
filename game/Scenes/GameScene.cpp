@@ -15,7 +15,7 @@ namespace Game {
   void GameScene::Start()
   {
     PLOGD << "game scene started";
-    
+
     States::Get()->Set(GameStates::MainMenu);
  
     Keyboard::Get()->OnKey().Add([&](Key key, InputAction action, InputMod mods) {
