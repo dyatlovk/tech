@@ -49,7 +49,7 @@ namespace mtEngine
       
       void Add(const std::string& name, std::function<void()> callback, const std::string& help);
 
-      void Exec(const std::string &name);
+      void Exec(const std::string &args);
 
       template< typename T >
         void Update(const std::string& name, T value)
@@ -94,7 +94,7 @@ namespace mtEngine
       std::string Demangle(const char* mangled);
       bool find(const std::string &name);
       void ExecCommand(const std::string &name, const Value &found);
-      void ExecVar(const std::string &name, const Value &found);
+      void ExecVar(const std::string &name, Value &found, std::vector<std::string> newVal);
       
       std::map<std::string, Value> m_cvars;
       std::map<std::string, Value>::iterator m_find;

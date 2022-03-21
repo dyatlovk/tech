@@ -1,4 +1,5 @@
 #include "Console.hpp"
+#include "Utils/String.hpp"
 
 namespace mtEngine
 {

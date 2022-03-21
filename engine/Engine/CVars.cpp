@@ -1,6 +1,9 @@
 #include "CVars.hpp"
 #include <any>
+#include <cstdarg>
+#include <sstream>
 #include <string>
+#include "Utils/String.hpp"
 
 namespace mtEngine {
   CVars *CVars::Instance = nullptr;
@@ -25,8 +28,11 @@ namespace mtEngine {
     PLOGD << "cvar add: {" << name << ", " << help << ", command}";
   }
 
-  void CVars::Exec(const std::string &name)
+  void CVars::Exec(const std::string &args)
   {
+    auto tokens = Split(args, " ");
+    if(tokens.size() == 0) return;
+    auto name = tokens.at(0);
     if(name.compare("") == 0) return;
     if(!find(name)) {
       PLOGD << "vars: " << name << " not found";
@@ -38,9 +44,10 @@ namespace mtEngine {
       ExecCommand(name, found);
       return;
     }
-    // find var
+    // found var
     if(found.type != COMMAND_FLAG) {
-      ExecVar(name, found);
+      tokens.erase(tokens.begin()); // keep args, remove name
+      ExecVar(name, found, tokens);
       return;
     }
     PLOGD << "var: " << name << " unknown type: ["  << t_values.type << "]";
@@ -95,26 +102,39 @@ namespace mtEngine {
     found.command();
   }
 
-  void CVars::ExecVar(const std::string &name, const Value &found)
+  void CVars::ExecVar(const std::string &name, Value &found, std::vector<std::string> newVal)
   {
-    if(t_values.type.find("char") != std::string::npos) {
-      PLOGD << name << " " << std::any_cast<std::string>(found.val) << "(" << found.help << ")";
-      return;
+    const char *readOnlyMgs = " [RW]";
+    if(found.readOnly) {
+      readOnlyMgs = " [R]"; 
     }
-    if(t_values.type == "char") {
-      PLOGD << name << " " << std::any_cast<char>(found.val) << " (" << found.help << ")";
+    if(t_values.type.find("char") != std::string::npos) {
+      std::ostringstream ss;
+      if(newVal.size() > 0 && !found.readOnly) {
+        for(auto it = newVal.begin(); it != newVal.end(); ++it) {
+          if(it == newVal.begin()) {
+            ss << it->data() << " ";
+          } else if(it == newVal.end()) {
+            ss << " " << it->data();
+          } else {
+            ss << it->data();
+          }
+        } 
+        m_find->second.val = ss.str();
+      }
+      PLOGD << name << ": \"" << std::any_cast<std::string>(m_find->second.val) << "\"" << readOnlyMgs;
       return;
     }
     if(t_values.type == "int") {
-      PLOGD << name << " " << std::any_cast<int>(found.val) << " (" << found.help << ")";
+      PLOGD << name << ": \"" << std::any_cast<int>(m_find->second.val) << "\"" << readOnlyMgs;
       return;
     }
     if(t_values.type == "float") {
-      PLOGD << name << " " << std::any_cast<float>(found.val) << "(" << found.help << ")";
+      PLOGD << name << ": \"" << std::any_cast<float>(m_find->second.val) << "\"" << readOnlyMgs;
       return;
     }
     if(t_values.type == "double") {
-      PLOGD << name << " " << std::any_cast<double>(found.val) << "(" << found.help << ")";
+      PLOGD << name << ": \"" << std::any_cast<double>(m_find->second.val) << "\"" << readOnlyMgs;
       return;
     }
   }
