@@ -17,6 +17,10 @@ compile:
 	cmake --configure build
 	cmake --build build
 	notify-send "Tech demo compiled"
+configure:
+	cd $$pwd
+	cmake --configure build
+	notify-send "Tech demo configured"
 install:
 	cd $$pwd
 	cmake --install build

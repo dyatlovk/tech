@@ -10,10 +10,13 @@ namespace mtEngine {
     fpsLimit(-1.0f),
     running(true) {
       Instance = this;
-      log = Log::Init();
-      cvars = CVars::Init();
-      commands = Commands::Init();
-      PLOGD << "start engine";
+
+      log       = Log::Init();
+      cvars     = CVars::Init();
+      commands  = Commands::Init();
+      iniParser = IniParser::Init();
+      
+      PLOGD << "starting engine...";
 
       // TODO: Optimize and clean up!
       std::vector<TypeId> created;
@@ -44,6 +47,7 @@ namespace mtEngine {
         if (!postponed)
           break;
       }
+      PLOGD << "Engine modules initialized";
     }
 
   Engine::~Engine() {
@@ -59,6 +63,7 @@ namespace mtEngine {
         if (!app->started) {
           app->Start();
           app->started = true;
+          PLOGD << "App started";
         }
         app->BeforeUpdate();
         app->Update();

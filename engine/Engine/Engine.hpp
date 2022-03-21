@@ -11,6 +11,7 @@
 #include "CVars.hpp"
 #include "Log.hpp"
 #include "Commands.hpp"
+#include "IniParser.hpp"
 
 namespace mtEngine {
 
@@ -105,5 +106,6 @@ namespace mtEngine {
       std::unique_ptr<Log> log;
       std::unique_ptr<CVars> cvars;
       std::unique_ptr<Commands> commands;
+      std::unique_ptr<IniParser> iniParser;
   };
 }

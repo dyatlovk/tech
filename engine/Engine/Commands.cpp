@@ -24,12 +24,14 @@ namespace mtEngine
 
     CVars::Get()->Add<std::string>("debug", "0", "0", "Switch debug mode");
     CVars::Get()->Add("version", [](){
-      PLOGD << "===========";
+      auto const build = IniParser::Get()->Read("Build", "Build");
+      auto const date = IniParser::Get()->Read("Build", "CompileDate");
+      PLOGD << "=============================";
       PLOGD << "Engine: " << VERSION << "." << COMPILED_COMMIT_HASH;
-      PLOGD << "Build: " << BUILD_NO << " (" << COMPILE_TIME << ")";
+      PLOGD << "Build: " << build << " (" << date << ")";
       PLOGD << "Compiler: " << COMPILED_COMPILER << " [" << COMPILED_GENERATOR << "]";
       PLOGD << "System: " << COMPILED_SYSTEM;
-      PLOGD << "===========";
+      PLOGD << "=============================";
     }, "Engine version");
   }
 } // namespace mtEngine
