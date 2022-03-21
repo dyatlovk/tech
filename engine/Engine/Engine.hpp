@@ -4,11 +4,13 @@
 #include <bitset>
 #include <memory>
 
-#include "CVars.hpp"
+#include "Config.hpp"
 #include "Utils/NonCopyable.hpp"
 #include "Module.hpp"
 #include "App.hpp"
+#include "CVars.hpp"
 #include "Log.hpp"
+#include "Commands.hpp"
 
 namespace mtEngine {
 
@@ -84,8 +86,6 @@ namespace mtEngine {
        */
       void RequestClose() { running = false; }
 
-      std::shared_ptr<Log> GetLogger() { return logger; };
-
     private:
       void UpdateStage(Module::Stage stage);
       void PostUpdate();
@@ -102,7 +102,8 @@ namespace mtEngine {
 
       float fpsLimit;
       bool running;
-      std::shared_ptr<Log> logger;
+      std::unique_ptr<Log> log;
       std::unique_ptr<CVars> cvars;
+      std::unique_ptr<Commands> commands;
   };
 }

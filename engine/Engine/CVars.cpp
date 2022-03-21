@@ -8,6 +8,7 @@ namespace mtEngine {
   CVars::CVars()
   {
     Instance = this;
+    PLOGD << "cvars start";
   };
 
   CVars::~CVars() = default;
@@ -26,6 +27,7 @@ namespace mtEngine {
 
   void CVars::Exec(const std::string &name)
   {
+    if(name.compare("") == 0) return;
     if(!find(name)) {
       PLOGD << "vars: " << name << " not found";
       return;
@@ -33,31 +35,14 @@ namespace mtEngine {
     auto found = m_find->second;
     // found command
     if(found.type == COMMAND_FLAG) {
-      found.command();
+      ExecCommand(name, found);
       return;
     }
     // find var
-    if(t_values.type.find("char") != std::string::npos) {
-      PLOGD << name << " " << std::any_cast<std::string>(found.val) << "(" << found.help << ")";
+    if(found.type != COMMAND_FLAG) {
+      ExecVar(name, found);
       return;
     }
-    if(t_values.type == "char") {
-      PLOGD << name << " " << std::any_cast<char>(found.val) << " (" << found.help << ")";
-      return;
-    }
-    if(t_values.type == "int") {
-      PLOGD << name << " " << std::any_cast<int>(found.val) << " (" << found.help << ")";
-      return;
-    }
-    if(t_values.type == "float") {
-      PLOGD << name << " " << std::any_cast<float>(found.val) << "(" << found.help << ")";
-      return;
-    }
-    if(t_values.type == "double") {
-      PLOGD << name << " " << std::any_cast<double>(found.val) << "(" << found.help << ")";
-      return;
-    }
-
     PLOGD << "var: " << name << " unknown type: ["  << t_values.type << "]";
   }
 
@@ -103,5 +88,34 @@ namespace mtEngine {
     int status; 
     std::unique_ptr<char[], void (*)(void*)> result( abi::__cxa_demangle(mangled, 0, 0, &status), std::free); 
     return result.get() ? std::string(result.get()) : "error occurred";
+  }
+
+  void CVars::ExecCommand(const std::string &name, const Value &found)
+  {
+    found.command();
+  }
+
+  void CVars::ExecVar(const std::string &name, const Value &found)
+  {
+    if(t_values.type.find("char") != std::string::npos) {
+      PLOGD << name << " " << std::any_cast<std::string>(found.val) << "(" << found.help << ")";
+      return;
+    }
+    if(t_values.type == "char") {
+      PLOGD << name << " " << std::any_cast<char>(found.val) << " (" << found.help << ")";
+      return;
+    }
+    if(t_values.type == "int") {
+      PLOGD << name << " " << std::any_cast<int>(found.val) << " (" << found.help << ")";
+      return;
+    }
+    if(t_values.type == "float") {
+      PLOGD << name << " " << std::any_cast<float>(found.val) << "(" << found.help << ")";
+      return;
+    }
+    if(t_values.type == "double") {
+      PLOGD << name << " " << std::any_cast<double>(found.val) << "(" << found.help << ")";
+      return;
+    }
   }
 }

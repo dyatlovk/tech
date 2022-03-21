@@ -1,5 +1,9 @@
 project(engine)
 
+file (STRINGS "build.in" BUILD_NO)
+math(EXPR BUILD_NO "${BUILD_NO}+1")
+file(WRITE "build.in" "${BUILD_NO}")
+
 find_package(glfw3 3.3 REQUIRED) 
 find_package(OpenGL REQUIRED)
 find_package(Threads REQUIRED)
@@ -9,6 +13,8 @@ configure_file(Config.hpp.in "${PROJECT_SOURCE_DIR}/Config.hpp" @ONLY)
 add_library(${PROJECT_NAME} SHARED 
   Engine/Engine.cpp
   Engine/CVars.cpp
+  Engine/Log.cpp
+  Engine/Commands.cpp
   Devices/Window.cpp
   Devices/Keyboard.cpp
   Graphics/Graphics.cpp

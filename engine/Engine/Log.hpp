@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Utils/NonCopyable.hpp"
 #include "third_party/plog/Log.h"
 #include "third_party/plog/Init.h"
 #include "third_party/plog/Appenders/ColorConsoleAppender.h"
@@ -30,20 +31,21 @@ namespace mtEngine {
       std::list<util::nstring> m_messageList;
   };
 
-  class Log {
+  class Log :public NonCopyable
+  {
     private:
       MemoryAppender<plog::MessageOnlyFormatter> memAppender;
     public:
-      Log() {
-        static plog::ColorConsoleAppender<plog::TxtFormatter> consoleAppender;
-        static MemoryAppender<plog::MessageOnlyFormatter> mem;
-        memAppender = mem;
-        plog::init(plog::verbose, &consoleAppender).addAppender(&memAppender);
-        PLOGD << "log start";
-      };
+      Log();
+      ~Log();
 
-      ~Log() {};
+      std::list<util::nstring> GetMomory() { return memAppender.getMessageList(); }
 
-       std::list<util::nstring> GetMomory() { return memAppender.getMessageList(); }
+      static Log* Get() { return Instance; }
+
+      static std::unique_ptr<Log> Init() { return std::make_unique<Log>(); }
+
+    private:
+      static Log *Instance;
   };
 }

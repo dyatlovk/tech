@@ -1,26 +1,25 @@
 #pragma once
 
-#include "Engine/CVars.hpp"
-#include "Engine/Engine.hpp"
+#include "CVars.hpp"
 
-namespace mtEngine {
+namespace mtEngine
+{
   class Commands : public NonCopyable
   {
-    public:
-      Commands()
-      {
-        Register();
-      };
-      
-      void Register()
-      {
-        CVars::Get()->Add("quit", []() {
-            Engine::Get()->RequestClose();
-        }, "Quit app");
-        
-        CVars::Get()->Add("help", []() {
-          PLOGD << "help test";
-        }, "Vars list");
-      }
+  public:
+    Commands();
+    ~Commands();
+
+    static std::unique_ptr<Commands> Init()
+    {
+      auto com = std::make_unique<Commands>();
+      com->Register();
+
+      return com;
+    }
+
+  private:
+    void Register();
+    static Commands *Instance;
   };
-}
+} // namespace mtEngine

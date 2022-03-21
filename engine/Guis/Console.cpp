@@ -36,7 +36,7 @@ namespace mtEngine
         ImGui::EndPopup();
       }
 
-      auto logList = Engine::Get()->GetLogger()->GetMomory();
+      auto logList = Log::Get()->GetMomory();
       for (const auto &list : logList)
       {
         ImGui::Text("%s", list.c_str());

@@ -27,6 +27,8 @@ namespace mtEngine
 
       ~CVars();
 
+      static std::unique_ptr<CVars> Init() { return std::make_unique<CVars>(); }
+
       static CVars* Get() { return Instance; }
 
       template< typename T >
@@ -88,9 +90,11 @@ namespace mtEngine
       std::string getType(const std::string &name);
 
     private:
+      static CVars *Instance;
       std::string Demangle(const char* mangled);
       bool find(const std::string &name);
-      static CVars *Instance;
+      void ExecCommand(const std::string &name, const Value &found);
+      void ExecVar(const std::string &name, const Value &found);
       
       std::map<std::string, Value> m_cvars;
       std::map<std::string, Value>::iterator m_find;

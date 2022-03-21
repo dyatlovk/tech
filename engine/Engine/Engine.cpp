@@ -1,8 +1,5 @@
 #include "Engine.hpp"
 #include <memory>
-#include "Commands.hpp"
-
-#include "Config.hpp"
 
 namespace mtEngine {
   Engine *Engine::Instance = nullptr;
@@ -12,10 +9,11 @@ namespace mtEngine {
     version{VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH},
     fpsLimit(-1.0f),
     running(true) {
-      logger = std::make_shared<Log>();
-      cvars = std::make_unique<CVars>();
-      PLOGD << "start engine";
       Instance = this;
+      log = Log::Init();
+      cvars = CVars::Init();
+      commands = Commands::Init();
+      PLOGD << "start engine";
 
       // TODO: Optimize and clean up!
       std::vector<TypeId> created;
@@ -46,10 +44,10 @@ namespace mtEngine {
         if (!postponed)
           break;
       }
-      std::make_unique<Commands>();
     }
 
   Engine::~Engine() {
+    CVars::Get()->clearStorage();
     ModuleShutdown();
     app = nullptr;
     Module::Registry().clear();
