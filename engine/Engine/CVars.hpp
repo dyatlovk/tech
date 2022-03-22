@@ -5,6 +5,7 @@
 #include <any>
 #include <string>
 #include <cxxabi.h>
+#include "Utils/Delegate.hpp"
 #include "Utils/NonCopyable.hpp"
 #include "Engine/Log.hpp"
 
@@ -89,6 +90,8 @@ namespace mtEngine
 
       std::string getType(const std::string &name);
 
+      Delegate<void(std::string name, std::vector<std::string> values)> &OnUpdate() { return onUpdate; }
+
     private:
       static CVars *Instance;
       std::string Demangle(const char* mangled);
@@ -98,5 +101,7 @@ namespace mtEngine
       
       std::map<std::string, Value> m_cvars;
       std::map<std::string, Value>::iterator m_find;
+
+      Delegate<void(std::string name, std::vector<std::string> values)> onUpdate;
   };
 }

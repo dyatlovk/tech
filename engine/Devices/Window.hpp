@@ -42,6 +42,7 @@ namespace mtEngine {
       void SetPositionOnCenter();
 
       void MaximizeToggle();
+      void Maximize(bool state);
 
       const std::string &GetTitle() const { return title; }
 

@@ -30,7 +30,7 @@ namespace mtEngine {
 
   void CVars::Exec(const std::string &args)
   {
-    auto tokens = Split(args, " ");
+    auto tokens = String::Split(args, " ");
     if(tokens.size() == 0) return;
     auto name = tokens.at(0);
     if(name.compare("") == 0) return;
@@ -108,32 +108,48 @@ namespace mtEngine {
     if(found.readOnly) {
       readOnlyMgs = " [R]"; 
     }
-    if(t_values.type.find("char") != std::string::npos) {
-      std::ostringstream ss;
+    if(found.type == "char") {
       if(newVal.size() > 0 && !found.readOnly) {
-        for(auto it = newVal.begin(); it != newVal.end(); ++it) {
-          if(it == newVal.begin()) {
-            ss << it->data() << " ";
-          } else if(it == newVal.end()) {
-            ss << " " << it->data();
-          } else {
-            ss << it->data();
-          }
+        std::ostringstream ss;
+        for(auto const it : newVal) {
+          ss << " " << it;
         } 
-        m_find->second.val = ss.str();
+        m_find->second.val = String::trim(ss.str());
       }
       PLOGD << name << ": \"" << std::any_cast<std::string>(m_find->second.val) << "\"" << readOnlyMgs;
+      onUpdate(name, newVal);
       return;
     }
-    if(t_values.type == "int") {
+    if(found.type == "bool") {
+      if(newVal.size() > 0 && !found.readOnly) {
+        bool value = std::stoi(newVal.at(0));
+        m_find->second.val = value;
+        onUpdate(name, newVal);
+      }
+      PLOGD << name << ": \"" << std::any_cast<bool>(m_find->second.val) << "\"" << readOnlyMgs;
+      return;
+    }
+    if(found.type == "int") {
+      if(newVal.size() > 0 && !found.readOnly) {
+        m_find->second.val = std::stoi(newVal.at(0));
+        onUpdate(name, newVal);
+      }
       PLOGD << name << ": \"" << std::any_cast<int>(m_find->second.val) << "\"" << readOnlyMgs;
       return;
     }
-    if(t_values.type == "float") {
+    if(found.type == "float") {
+      if(newVal.size() > 0 && !found.readOnly) {
+        m_find->second.val = std::stof(newVal.at(0));
+        onUpdate(name, newVal);
+      }
       PLOGD << name << ": \"" << std::any_cast<float>(m_find->second.val) << "\"" << readOnlyMgs;
       return;
     }
-    if(t_values.type == "double") {
+    if(found.type == "double") {
+      if(newVal.size() > 0 && !found.readOnly) {
+        m_find->second.val = std::stod(newVal.at(0));
+        onUpdate(name, newVal);
+      }
       PLOGD << name << ": \"" << std::any_cast<double>(m_find->second.val) << "\"" << readOnlyMgs;
       return;
     }
