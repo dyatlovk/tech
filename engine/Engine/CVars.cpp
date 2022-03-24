@@ -16,10 +16,13 @@ namespace mtEngine
 
   CVars::~CVars() = default;
 
-  void CVars::Add(const std::string &group, const std::string &name,
-      const std::vector<std::string> &args, const std::string &description,
-      const std::string &help, std::function<void(ClientArgs &args, InputArgs &input)> callback,
-      bool readOnly)
+  void CVars::Add(const std::string &group,
+      const std::string &name,
+      const std::vector<std::string> &args,
+      const std::string &description,
+      const std::string &help,
+      std::function<void(ClientArgs &args, InputArgs &input, bool &isValid)> callback,
+      const std::string &type, bool readOnly)
   {
     auto foundGroup = findGroup(group);
     auto isCommandExist = containCommand(name, foundGroup);
@@ -29,17 +32,18 @@ namespace mtEngine
       foundGroup = addGroup(group);
     }
 
-    t_values.args = args;
-    t_values.name = name;
-    t_values.group = group;
+    t_values.args        = args;
+    t_values.name        = name;
+    t_values.group       = group;
     t_values.description = description;
-    t_values.help = help;
-    t_values.callback = callback;
-    t_values.readOnly = readOnly;
+    t_values.help        = help;
+    t_values.callback    = callback;
+    t_values.readOnly    = readOnly;
+    t_values.type        = type;
 
     foundGroup->second.push_back(t_values);
 
-    PLOGD << "cvars registered: " << group << "::" << name << "{" << description << "}";
+    PLOGD << "cvars add: " << group << "::" << name << "{" << description << "}";
     return;
   }
 
@@ -68,15 +72,22 @@ namespace mtEngine
     // print all commands in group
     if (commands->name.compare("") == 0)
     {
-      PLOGD << commands->group << " " << commands->name;
+      PLOGD << "[" << commands->group << "] " << commands->name;
       for (const auto &f : groupCommands)
       {
-        PLOGD << "\t - " << f.name << ": " << String::dump(f.args);
+        PLOGD << f.name << ": " << String::dump(f.args);
       }
       return;
     }
 
     Value &foundCommand = getCommand(commands->name, foundGroup);
+
+    // exec command firstly
+    bool isValid = false;
+    if(foundCommand.type == COMMAND_FLAG) {
+      foundCommand.callback(foundCommand.args, commands->args, isValid);
+      return;
+    }
     
     // check args
     if(foundCommand.args.size() == 0) {
@@ -85,12 +96,18 @@ namespace mtEngine
     }
     
     ClientArgs clientArgs;
-    // foundCommand.callback(foundCommand.args, commands->args);
     if(commands->args.size() == 0) {
       PLOGD << foundCommand.group << "::" << foundCommand.name << " \"" << String::dump(foundCommand.args) << "\"";
       return;
     }
 
+    foundCommand.callback(foundCommand.args, commands->args, isValid);
+    if(foundCommand.readOnly) {
+      PLOGD << foundCommand.group << "::" << foundCommand.name << " \"" << String::dump(foundCommand.args) << "\"";
+      return;
+    }
+    if(!isValid) return;
+    PLOGD << "callback: " << String::dump(commands->args);
     foundCommand.args = commands->args;
 
     PLOGD << foundCommand.group << "::" << foundCommand.name << " \"" << String::dump(foundCommand.args) << "\"";

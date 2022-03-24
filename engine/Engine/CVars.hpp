@@ -12,6 +12,7 @@ namespace mtEngine
   class CVars : public NonCopyable
   {
     constexpr static std::string_view COMMAND_FLAG = "command";
+    constexpr static std::string_view VAR_FLAG = "var";
 
     using ClientArgs = std::vector<std::string>;
     using InputArgs = std::vector<std::string>;
@@ -25,14 +26,14 @@ namespace mtEngine
 
     struct Value
     {
-      std::string group       = ""                   ;
-      std::string name        = ""                   ;
-      std::string description = ""                   ;
-      std::string help        = ""                   ;
-      ClientArgs args                                ;
-      bool readOnly           = false                ;
-      std::string type        = ""                   ;
-      std::function<void(ClientArgs &args, InputArgs &input)> callback ;
+      std::string group       = ""                                     ;
+      std::string name        = ""                                     ;
+      std::string description = ""                                     ;
+      std::string help        = ""                                     ;
+      ClientArgs args                                                  ;
+      bool readOnly           = false                                  ;
+      std::string type        = ""                                     ;
+      std::function<void(ClientArgs &args, InputArgs &input, bool &isValid)> callback ;
     } t_values;
 
     // {group, {values...}}
@@ -48,10 +49,15 @@ namespace mtEngine
 
     static CVars *Get() { return Instance; }
 
-    void Add(const std::string &group, const std::string &name,
-        const std::vector<std::string> &args, const std::string &description,
-        const std::string &help, std::function<void(ClientArgs &args, InputArgs &input)> callback,
+    void Add(const std::string &group,
+        const std::string &name,
+        const std::vector<std::string> &args,
+        const std::string &description,
+        const std::string &help,
+        std::function<void(ClientArgs &args, InputArgs &input, bool &isValid)> callback,
+        const std::string &type = "var",
         bool readOnly = false);
+
     void Exec(const std::string &args);
 
     void Update(const std::string &group, const std::string &name);
