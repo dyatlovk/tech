@@ -18,27 +18,26 @@ namespace mtEngine
 
     struct Commands
     {
-      std::string group;
-      std::string name;
-      std::vector<std::string> args;
+      std::string group = "" ;
+      std::string name  = "" ;
+      ClientArgs args        ;
     } t_commands;
 
     struct Value
     {
-      std::string group;
-      std::string name;
-      std::string val;
-      std::string description;
-      std::string def_val = val;
-      std::string help;
-      std::vector<std::string> args;
-      bool readOnly = false;
-      std::string type;
-      std::function<void(ClientArgs &args)> callback;
+      std::string group       = ""                   ;
+      std::string name        = ""                   ;
+      std::string description = ""                   ;
+      std::string help        = ""                   ;
+      ClientArgs args                                ;
+      bool readOnly           = false                ;
+      std::string type        = ""                   ;
+      std::function<void(ClientArgs &args)> callback ;
     } t_values;
 
-    using VarsMap = std::multimap<std::string, Value>;
-    using FoundContainer = std::vector<Value>;
+    // {group, {values...}}
+    using VarsCommands = std::vector<Value>;
+    using VarsMap = std::map<std::string, VarsCommands>;
 
   public:
     CVars();
@@ -72,11 +71,15 @@ namespace mtEngine
   private:
     static CVars *Instance;
     std::string Demangle(const char *mangled);
-    void find(const std::string &group, const std::string &name);
+    VarsMap::iterator find(const std::string &group, const std::string &name);
+    VarsMap::iterator findGroup(const std::string &group);
+    bool containCommand(const std::string &name, VarsMap::iterator &group);
+    Value getCommand(const std::string &name, const VarsMap::iterator &group) const;
     Commands *parse(const std::string &args);
 
+    VarsMap::iterator addGroup(const std::string &name);
+
     VarsMap m_cvars;
-    FoundContainer m_found;
 
     Delegate<void(std::string name, std::vector<std::string> values)> onUpdate;
   };

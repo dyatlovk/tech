@@ -1,4 +1,9 @@
 #include "CVars.hpp"
+
+#include <algorithm>
+#include <iterator>
+#include <stdexcept>
+
 #include "Utils/String.hpp"
 
 namespace mtEngine
@@ -18,6 +23,14 @@ namespace mtEngine
       const std::string &help, std::function<void(ClientArgs &args)> callback,
       bool readOnly)
   {
+    auto foundGroup = findGroup(group);
+    auto isCommandExist = containCommand(name, foundGroup);
+
+    if (foundGroup == m_cvars.end())
+    {
+      foundGroup = addGroup(group);
+    }
+
     t_values.args = args;
     t_values.name = name;
     t_values.group = group;
@@ -26,8 +39,10 @@ namespace mtEngine
     t_values.callback = callback;
     t_values.readOnly = readOnly;
 
-    m_cvars.emplace(group, t_values);
+    foundGroup->second.push_back(t_values);
+
     PLOGD << "cvars add: " << name << ": {" << description << ", " << help << "}";
+    return;
   }
 
   /**
@@ -42,58 +57,107 @@ namespace mtEngine
       return;
     };
 
-    find(commands->group, commands->name);
-    if (m_found.size() == 0)
+    // group found
+    auto foundGroup = findGroup(commands->group);
+    if (foundGroup == m_cvars.end())
     {
-      PLOGD << "cvar: " << commands->name << " not found";
+      PLOGE << "cvar: " << commands->group << " not found";
       return;
     }
 
-    if (m_found.size() > 1)
+    VarsCommands groupCommands = foundGroup->second;
+
+    // no command name
+    // print all commands in group
+    if (commands->name.compare("") == 0)
     {
       PLOGD << commands->group << " " << commands->name;
-      for (const auto &f : m_found)
+      for (const auto &f : groupCommands)
       {
         PLOGD << "\t - " << f.name;
       }
       return;
     }
 
-    auto com = m_found.at(0);
-    com.callback(commands->args);
-    if(commands->args.size() > 0) {
-      com.args = commands->args;
+    // check args
+    Value foundCommand;
+    try
+    {
+      foundCommand = getCommand(commands->name, foundGroup);
     }
-    PLOGD << com.group << "::" << com.name << " " << String::dump(com.args);
+    catch (const std::exception& e)
+    {
+      PLOGE << e.what();
+      return;
+    }
+
+    PLOGD << "found command: " << foundCommand.name << " args: " << String::dump(foundCommand.args);
   }
 
   void CVars::Update(const std::string &group, const std::string &name)
   {
-      for (auto it = m_cvars.find(group); it != m_cvars.end(); it++) {
-
-      }
-  }
-
-  void CVars::find(const std::string &group, const std::string &name)
-  {
-    m_found.clear();
-    if (name == "")
-    {
-      for (auto it = m_cvars.find(group); it != m_cvars.end(); it++)
-      {
-        m_found.push_back(it->second);
-      }
-      return;
-    }
-
     for (auto it = m_cvars.find(group); it != m_cvars.end(); it++)
     {
-      if (name == it->second.name)
+    }
+  }
+
+  CVars::VarsMap::iterator CVars::find(
+      const std::string &group, const std::string &name)
+  {
+    auto foundGroup = findGroup(group);
+
+    if (foundGroup == m_cvars.end())
+    {
+      return m_cvars.end();
+    }
+
+    return m_cvars.begin();
+  }
+
+  CVars::VarsMap::iterator CVars::findGroup(const std::string &group)
+  {
+    auto found = m_cvars.find(group);
+    if (found != m_cvars.end())
+      return m_cvars.begin();
+
+    return m_cvars.end();
+  }
+
+  bool CVars::containCommand(const std::string &name, VarsMap::iterator &group)
+  {
+    auto values = group->second;
+
+    for (const auto v : values)
+    {
+      if (v.name == name)
       {
-        m_found.push_back(it->second);
-        return;
+        return true;
       }
     }
+    return false;
+  }
+
+  CVars::Value CVars::getCommand(const std::string &name, const VarsMap::iterator &group) const
+  {
+    auto values = group->second;
+    for (auto v : values)
+    {
+      if (v.name == name)
+      {
+        return v;
+      }
+    }
+
+    std::string exceptionMsg = "command" + name + " not found";
+    throw std::invalid_argument(exceptionMsg);
+  }
+
+  CVars::VarsMap::iterator CVars::addGroup(const std::string &name)
+  {
+    VarsCommands commands;
+    auto it = m_cvars.emplace(name, commands);
+
+    return it.first;
   }
 
   /**
