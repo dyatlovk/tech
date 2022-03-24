@@ -51,7 +51,7 @@ namespace mtEngine {
     }
 
   Engine::~Engine() {
-    CVars::Get()->clearStorage();
+    CVars::Get()->ClearStorage();
     ModuleShutdown();
     app = nullptr;
     Module::Registry().clear();

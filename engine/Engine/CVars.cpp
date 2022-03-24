@@ -1,11 +1,8 @@
 #include "CVars.hpp"
-#include <any>
-#include <cstdarg>
-#include <sstream>
-#include <string>
 #include "Utils/String.hpp"
 
-namespace mtEngine {
+namespace mtEngine
+{
   CVars *CVars::Instance = nullptr;
 
   CVars::CVars()
@@ -16,142 +13,126 @@ namespace mtEngine {
 
   CVars::~CVars() = default;
 
-  void CVars::Add(const std::string& name, std::function<void()> callback, const std::string& help)
+  void CVars::Add(const std::string &group, const std::string &name,
+      const std::vector<std::string> &args, const std::string &description,
+      const std::string &help, std::function<void(ClientArgs &args)> callback,
+      bool readOnly)
   {
-    t_values.val = "";
+    t_values.args = args;
+    t_values.name = name;
+    t_values.group = group;
+    t_values.description = description;
     t_values.help = help;
-    t_values.readOnly = true;
-    t_values.type = COMMAND_FLAG;
-    t_values.def_value = "";
-    t_values.command = callback;
-    m_cvars.emplace(std::make_pair(name, t_values));
-    PLOGD << "cvar add: {" << name << ", " << help << ", command}";
+    t_values.callback = callback;
+    t_values.readOnly = readOnly;
+
+    m_cvars.emplace(group, t_values);
+    PLOGD << "cvars add: " << name << ": {" << description << ", " << help << "}";
   }
 
-  void CVars::Exec(const std::string &args)
+  /**
+   * Command template <group var args...>
+   */
+  void CVars::Exec(const std::string &command)
   {
-    auto tokens = String::Split(args, " ");
-    if(tokens.size() == 0) return;
-    auto name = tokens.at(0);
-    if(name.compare("") == 0) return;
-    if(!find(name)) {
-      PLOGD << "vars: " << name << " not found";
-      return;
-    }
-    auto found = m_find->second;
-    // found command
-    if(found.type == COMMAND_FLAG) {
-      ExecCommand(name, found);
-      return;
-    }
-    // found var
-    if(found.type != COMMAND_FLAG) {
-      tokens.erase(tokens.begin()); // keep args, remove name
-      ExecVar(name, found, tokens);
-      return;
-    }
-    PLOGD << "var: " << name << " unknown type: ["  << t_values.type << "]";
-  }
-
-  std::string CVars::GetHelp(const std::string &name)
-  {
-    if(find(name)) {
-      return m_find->second.help;
-    }
-
-    return "";
-  }
-
-  void CVars::Reset(const std::string &name)
-  {
-    if(find(name)) {
-      m_find->second.val = m_find->second.def_value;
-    }
-  }
-
-  std::string CVars::getType(const std::string &name)
-  {
-    if(find(name))
+    auto commands = parse(command);
+    if (!commands)
     {
-      return m_find->second.type;
+      PLOGD << "cvar require group and name";
+      return;
+    };
+
+    find(commands->group, commands->name);
+    if (m_found.size() == 0)
+    {
+      PLOGD << "cvar: " << commands->name << " not found";
+      return;
     }
 
-    return "undefined";
+    if (m_found.size() > 1)
+    {
+      PLOGD << commands->group << " " << commands->name;
+      for (const auto &f : m_found)
+      {
+        PLOGD << "\t - " << f.name;
+      }
+      return;
+    }
+
+    auto com = m_found.at(0);
+    com.callback(commands->args);
+    if(commands->args.size() > 0) {
+      com.args = commands->args;
+    }
+    PLOGD << com.group << "::" << com.name << " " << String::dump(com.args);
   }
 
-  bool CVars::find(const std::string &name)
+  void CVars::Update(const std::string &group, const std::string &name)
   {
-    auto search = m_cvars.find(name);
-    if(search != m_cvars.end()) {
-      m_find = search;
-      return true;
-    }
+      for (auto it = m_cvars.find(group); it != m_cvars.end(); it++) {
 
-    return false;
+      }
   }
 
-  std::string CVars::Demangle(const char *mangled)
+  void CVars::find(const std::string &group, const std::string &name)
   {
-    int status; 
-    std::unique_ptr<char[], void (*)(void*)> result( abi::__cxa_demangle(mangled, 0, 0, &status), std::free); 
-    return result.get() ? std::string(result.get()) : "error occurred";
+    m_found.clear();
+    if (name == "")
+    {
+      for (auto it = m_cvars.find(group); it != m_cvars.end(); it++)
+      {
+        m_found.push_back(it->second);
+      }
+      return;
+    }
+
+    for (auto it = m_cvars.find(group); it != m_cvars.end(); it++)
+    {
+      if (name == it->second.name)
+      {
+        m_found.push_back(it->second);
+        return;
+      }
+    }
   }
 
-  void CVars::ExecCommand(const std::string &name, const Value &found)
+  /**
+   * index0: group
+   * index1: name
+   * other index: args
+   */
+  CVars::Commands *CVars::parse(const std::string &args)
   {
-    found.command();
-  }
+    auto tokens = String::Split(args);
+    if (tokens.size() == 0)
+      return nullptr; // group required
 
-  void CVars::ExecVar(const std::string &name, Value &found, std::vector<std::string> newVal)
-  {
-    const char *readOnlyMgs = " [RW]";
-    if(found.readOnly) {
-      readOnlyMgs = " [R]"; 
+    t_commands.group = "";
+    t_commands.name = "";
+    t_commands.args = {};
+
+    // group only
+    if (tokens.size() == 1)
+    {
+      t_commands.group = tokens.at(0);
+      return &t_commands;
     }
-    if(found.type == "char") {
-      if(newVal.size() > 0 && !found.readOnly) {
-        std::ostringstream ss;
-        for(auto const it : newVal) {
-          ss << " " << it;
-        } 
-        m_find->second.val = String::trim(ss.str());
-      }
-      PLOGD << name << ": \"" << std::any_cast<std::string>(m_find->second.val) << "\"" << readOnlyMgs;
-      onUpdate(name, newVal);
-      return;
+
+    // group and name
+    if (tokens.size() == 2)
+    {
+      t_commands.group = tokens.at(0);
+      t_commands.name = tokens.at(1);
+      tokens.erase(tokens.begin(), tokens.begin() + 2);
+      return &t_commands;
     }
-    if(found.type == "bool") {
-      if(newVal.size() > 0 && !found.readOnly) {
-        bool value = std::stoi(newVal.at(0));
-        m_find->second.val = value;
-        onUpdate(name, newVal);
-      }
-      PLOGD << name << ": \"" << std::any_cast<bool>(m_find->second.val) << "\"" << readOnlyMgs;
-      return;
-    }
-    if(found.type == "int") {
-      if(newVal.size() > 0 && !found.readOnly) {
-        m_find->second.val = std::stoi(newVal.at(0));
-        onUpdate(name, newVal);
-      }
-      PLOGD << name << ": \"" << std::any_cast<int>(m_find->second.val) << "\"" << readOnlyMgs;
-      return;
-    }
-    if(found.type == "float") {
-      if(newVal.size() > 0 && !found.readOnly) {
-        m_find->second.val = std::stof(newVal.at(0));
-        onUpdate(name, newVal);
-      }
-      PLOGD << name << ": \"" << std::any_cast<float>(m_find->second.val) << "\"" << readOnlyMgs;
-      return;
-    }
-    if(found.type == "double") {
-      if(newVal.size() > 0 && !found.readOnly) {
-        m_find->second.val = std::stod(newVal.at(0));
-        onUpdate(name, newVal);
-      }
-      PLOGD << name << ": \"" << std::any_cast<double>(m_find->second.val) << "\"" << readOnlyMgs;
-      return;
-    }
+
+    // group, name, args
+    t_commands.group = tokens.at(0);
+    t_commands.name = tokens.at(1);
+    tokens.erase(tokens.begin(), tokens.begin() + 2);
+    t_commands.args = tokens;
+
+    return &t_commands;
   }
-}
+} // namespace mtEngine

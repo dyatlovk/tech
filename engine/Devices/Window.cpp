@@ -46,18 +46,6 @@ namespace mtEngine {
 
     if (glfwRawMouseMotionSupported())
       glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
-
-    CVars::Get()->Add<bool>("win_maximized", isMaximized, isMaximized, "Switch window maximized");
-    CVars::Get()->Add<std::string>("win_title", title, title, "Window title");
-    CVars::Get()->OnUpdate().Add([this](std::string name, std::vector<std::string> values) {
-      if(name == "win_maximized" && values.size() > 0) {
-        bool state = std::stoi(values.at(0));
-        Maximize(state);
-      }
-      if(name == "win_title" && values.size() > 0) {
-        SetTitle(values.at(0));
-      }
-    });
   }
 
   Window::~Window()

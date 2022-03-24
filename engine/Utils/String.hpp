@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <string>
+#include <sstream>
 #include <vector>
 
 namespace mtEngine
@@ -44,5 +45,17 @@ namespace mtEngine
     }
 
     static std::string &trim(std::string s) { return ltrim(rtrim(s)); }
+
+    static std::string dump(std::vector<std::string> val)
+    {
+      if(val.size() == 0) return "";
+
+      std::ostringstream ss;
+      for(const auto i : val) {
+        ss << " " << i;
+      }
+
+      return trim(ss.str());
+    }
   } // namespace String
 } // namespace mtEngine

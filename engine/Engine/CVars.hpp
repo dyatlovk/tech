@@ -1,13 +1,12 @@
 #pragma once
 
-#include <functional>
-#include <map>
 #include <any>
-#include <string>
 #include <cxxabi.h>
+#include <functional>
+
+#include "Engine/Log.hpp"
 #include "Utils/Delegate.hpp"
 #include "Utils/NonCopyable.hpp"
-#include "Engine/Log.hpp"
 
 namespace mtEngine
 {
@@ -15,93 +14,70 @@ namespace mtEngine
   {
     constexpr static std::string_view COMMAND_FLAG = "command";
 
-    struct Value {
-      std::any val;
-      std::any def_value;
+    using ClientArgs = std::vector<std::string>;
+
+    struct Commands
+    {
+      std::string group;
+      std::string name;
+      std::vector<std::string> args;
+    } t_commands;
+
+    struct Value
+    {
+      std::string group;
+      std::string name;
+      std::string val;
+      std::string description;
+      std::string def_val = val;
       std::string help;
+      std::vector<std::string> args;
       bool readOnly = false;
       std::string type;
-      std::function<void()> command;
+      std::function<void(ClientArgs &args)> callback;
     } t_values;
-    public:
-      CVars();
 
-      ~CVars();
+    using VarsMap = std::multimap<std::string, Value>;
+    using FoundContainer = std::vector<Value>;
 
-      static std::unique_ptr<CVars> Init() { return std::make_unique<CVars>(); }
+  public:
+    CVars();
 
-      static CVars* Get() { return Instance; }
+    ~CVars();
 
-      template< typename T >
-        void Add(const std::string& name, const T &value, const T &defaultValue, const std::string& help, const bool readOnly = false)
-        {
-          std::string type = Demangle(typeid(T).name());
-          if(type.find("char") != std::string::npos) {
-            type = "char";
-          }
-          t_values.val = value;
-          t_values.help = help;
-          t_values.def_value = value;
-          t_values.readOnly = readOnly;
-          t_values.type = type;
-          m_cvars.emplace(std::make_pair(name, t_values));
-          PLOGD << "cvar add: {" << name << ", " << value << ", " << defaultValue << ", " << t_values.type << "}";
-        }
-      
-      void Add(const std::string& name, std::function<void()> callback, const std::string& help);
+    static std::unique_ptr<CVars> Init() { return std::make_unique<CVars>(); }
 
-      void Exec(const std::string &args);
+    static CVars *Get() { return Instance; }
 
-      template< typename T >
-        void Update(const std::string& name, T value)
-        {
-          if(find(name)) {
-            if(!m_find->second.readOnly) {
-              m_find->second.val = value;
-              return;
-            }
-            PLOGD << name << " readonly flag";
-          }
-        }
-      template< typename T >
-        T GetVar(const std::string &name)
-        {
-          try {
-            find(name);
-          } catch (const std::exception&) {
-            PLOGD << "var not found";
-          }
-          return std::any_cast<T>(m_find->second.val);
-        }
+    void Add(const std::string &group, const std::string &name,
+        const std::vector<std::string> &args, const std::string &description,
+        const std::string &help, std::function<void(ClientArgs &args)> callback,
+        bool readOnly = false);
+    void Exec(const std::string &args);
 
-      std::string GetHelp(const std::string &name);
+    void Update(const std::string &group, const std::string &name);
 
-      void Reset(const std::string &name);
+    void ClearStorage() { m_cvars.clear(); }
 
-      void clearStorage()
-      {
-        m_cvars.clear();
-      }
+    VarsMap getList() { return m_cvars; }
 
-      std::map<std::string, Value> getList()
-      {
-        return m_cvars;
-      }
+    std::string getType(const std::string &name);
 
-      std::string getType(const std::string &name);
+    Delegate<void(std::string name, std::vector<std::string> values)> &
+    OnUpdate()
+    {
+      return onUpdate;
+    }
 
-      Delegate<void(std::string name, std::vector<std::string> values)> &OnUpdate() { return onUpdate; }
+  private:
+    static CVars *Instance;
+    std::string Demangle(const char *mangled);
+    void find(const std::string &group, const std::string &name);
+    Commands *parse(const std::string &args);
 
-    private:
-      static CVars *Instance;
-      std::string Demangle(const char* mangled);
-      bool find(const std::string &name);
-      void ExecCommand(const std::string &name, const Value &found);
-      void ExecVar(const std::string &name, Value &found, std::vector<std::string> newVal);
-      
-      std::map<std::string, Value> m_cvars;
-      std::map<std::string, Value>::iterator m_find;
+    VarsMap m_cvars;
+    FoundContainer m_found;
 
-      Delegate<void(std::string name, std::vector<std::string> values)> onUpdate;
+    Delegate<void(std::string name, std::vector<std::string> values)> onUpdate;
   };
-}
+} // namespace mtEngine
