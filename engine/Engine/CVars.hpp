@@ -1,6 +1,5 @@
 #pragma once
 
-#include <any>
 #include <cxxabi.h>
 #include <functional>
 
@@ -15,6 +14,7 @@ namespace mtEngine
     constexpr static std::string_view COMMAND_FLAG = "command";
 
     using ClientArgs = std::vector<std::string>;
+    using InputArgs = std::vector<std::string>;
 
     struct Commands
     {
@@ -32,7 +32,7 @@ namespace mtEngine
       ClientArgs args                                ;
       bool readOnly           = false                ;
       std::string type        = ""                   ;
-      std::function<void(ClientArgs &args)> callback ;
+      std::function<void(ClientArgs &args, InputArgs &input)> callback ;
     } t_values;
 
     // {group, {values...}}
@@ -50,7 +50,7 @@ namespace mtEngine
 
     void Add(const std::string &group, const std::string &name,
         const std::vector<std::string> &args, const std::string &description,
-        const std::string &help, std::function<void(ClientArgs &args)> callback,
+        const std::string &help, std::function<void(ClientArgs &args, InputArgs &input)> callback,
         bool readOnly = false);
     void Exec(const std::string &args);
 
@@ -74,7 +74,7 @@ namespace mtEngine
     VarsMap::iterator find(const std::string &group, const std::string &name);
     VarsMap::iterator findGroup(const std::string &group);
     bool containCommand(const std::string &name, VarsMap::iterator &group);
-    Value getCommand(const std::string &name, const VarsMap::iterator &group) const;
+    Value &getCommand(const std::string &name, const VarsMap::iterator &group);
     Commands *parse(const std::string &args);
 
     VarsMap::iterator addGroup(const std::string &name);

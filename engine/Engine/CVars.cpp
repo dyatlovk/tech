@@ -1,8 +1,6 @@
 #include "CVars.hpp"
 
-#include <algorithm>
 #include <iterator>
-#include <stdexcept>
 
 #include "Utils/String.hpp"
 
@@ -20,7 +18,7 @@ namespace mtEngine
 
   void CVars::Add(const std::string &group, const std::string &name,
       const std::vector<std::string> &args, const std::string &description,
-      const std::string &help, std::function<void(ClientArgs &args)> callback,
+      const std::string &help, std::function<void(ClientArgs &args, InputArgs &input)> callback,
       bool readOnly)
   {
     auto foundGroup = findGroup(group);
@@ -41,7 +39,7 @@ namespace mtEngine
 
     foundGroup->second.push_back(t_values);
 
-    PLOGD << "cvars add: " << name << ": {" << description << ", " << help << "}";
+    PLOGD << "cvars registered: " << group << "::" << name << "{" << description << "}";
     return;
   }
 
@@ -53,7 +51,6 @@ namespace mtEngine
     auto commands = parse(command);
     if (!commands)
     {
-      PLOGD << "cvar require group and name";
       return;
     };
 
@@ -65,7 +62,7 @@ namespace mtEngine
       return;
     }
 
-    VarsCommands groupCommands = foundGroup->second;
+    VarsCommands &groupCommands = foundGroup->second;
 
     // no command name
     // print all commands in group
@@ -74,24 +71,29 @@ namespace mtEngine
       PLOGD << commands->group << " " << commands->name;
       for (const auto &f : groupCommands)
       {
-        PLOGD << "\t - " << f.name;
+        PLOGD << "\t - " << f.name << ": " << String::dump(f.args);
       }
       return;
     }
 
+    Value &foundCommand = getCommand(commands->name, foundGroup);
+    
     // check args
-    Value foundCommand;
-    try
-    {
-      foundCommand = getCommand(commands->name, foundGroup);
+    if(foundCommand.args.size() == 0) {
+      PLOGD << foundCommand.group << "::" << foundCommand.name << " \"" << String::dump(foundCommand.args) << "\"";
+      return;
     }
-    catch (const std::exception& e)
-    {
-      PLOGE << e.what();
+    
+    ClientArgs clientArgs;
+    // foundCommand.callback(foundCommand.args, commands->args);
+    if(commands->args.size() == 0) {
+      PLOGD << foundCommand.group << "::" << foundCommand.name << " \"" << String::dump(foundCommand.args) << "\"";
       return;
     }
 
-    PLOGD << "found command: " << foundCommand.name << " args: " << String::dump(foundCommand.args);
+    foundCommand.args = commands->args;
+
+    PLOGD << foundCommand.group << "::" << foundCommand.name << " \"" << String::dump(foundCommand.args) << "\"";
   }
 
   void CVars::Update(const std::string &group, const std::string &name)
@@ -118,7 +120,7 @@ namespace mtEngine
   {
     auto found = m_cvars.find(group);
     if (found != m_cvars.end())
-      return m_cvars.begin();
+      return found;
 
     return m_cvars.end();
   }
@@ -137,10 +139,10 @@ namespace mtEngine
     return false;
   }
 
-  CVars::Value CVars::getCommand(const std::string &name, const VarsMap::iterator &group) const
+  CVars::Value &CVars::getCommand(const std::string &name, const VarsMap::iterator &group)
   {
-    auto values = group->second;
-    for (auto v : values)
+    auto &values = group->second;
+    for (auto &v : values)
     {
       if (v.name == name)
       {
@@ -148,7 +150,7 @@ namespace mtEngine
       }
     }
 
-    std::string exceptionMsg = "command" + name + " not found";
+    std::string exceptionMsg = name + " not found";
     throw std::invalid_argument(exceptionMsg);
   }
 
@@ -167,6 +169,7 @@ namespace mtEngine
    */
   CVars::Commands *CVars::parse(const std::string &args)
   {
+    if(args == "") return nullptr;
     auto tokens = String::Split(args);
     if (tokens.size() == 0)
       return nullptr; // group required
