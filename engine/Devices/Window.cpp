@@ -3,8 +3,6 @@
 
 #include <GL/gl.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
-#include <stdexcept>
 
 namespace mtEngine {
   void CallbackFramebufferSize(GLFWwindow *window, int32_t width, int32_t height)
@@ -46,6 +44,40 @@ namespace mtEngine {
 
     if (glfwRawMouseMotionSupported())
       glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+
+    using CVarParam = std::vector<std::string>;
+    using Input = std::vector<std::string>;
+    std::string maximizedFlag = std::to_string(isMaximized);
+    CVars::Get()->Add("window", "maximized", {maximizedFlag}, "Window swtich maximized", "window maximized <1|0>", [this](CVarParam &args, Input &input, bool &isValid) {
+      if(input.size() == 0) {
+        isValid = false;
+        return;
+      }
+      if(input.at(0) != "1" && input.at(0) != "0") {
+        isValid = false;
+        return;
+      }
+
+      int flag = std::stoi(input.at(0));
+
+      if(flag == 1) {
+        isMaximized = true;
+      } else {
+        isMaximized = false;
+      }
+
+      Maximize(flag);
+      isValid = true;
+    });
+
+    CVars::Get()->Add("window", "title", {title}, "Window set title", "window title <char>", [this](CVarParam &args, Input &input, bool &isValid) {
+      if(input.size() == 0) {
+        isValid = false;
+        return;
+      }
+      SetTitle(input.at(0));
+      isValid = true;
+    });
   }
 
   Window::~Window()

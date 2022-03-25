@@ -72,7 +72,9 @@ namespace mtEngine
     // print all commands in group
     if (commands->name.compare("") == 0)
     {
+      PLOG_NONE;
       PLOGD << "[" << commands->group << "] " << commands->name;
+      PLOGD << "-----------------------------------------------";
       for (const auto &f : groupCommands)
       {
         PLOGD << f.name << ": " << String::dump(f.args);
