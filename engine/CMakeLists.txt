@@ -8,6 +8,7 @@ file(WRITE "build.in" "${BUILD_NO}")
 find_package(glfw3 3.3 REQUIRED) 
 find_package(OpenGL REQUIRED)
 find_package(Threads REQUIRED)
+find_package(Freetype REQUIRED)
 
 configure_file(Config.hpp.in "${PROJECT_SOURCE_DIR}/Config.hpp" @ONLY)
 configure_file(Settings.in "${RESOURCES_DIR}/Engine/Settings.ini" @ONLY)
@@ -31,14 +32,15 @@ add_library(${PROJECT_NAME} SHARED
   third_party/imgui/imgui_impl_opengl3.cpp
   third_party/imgui/imgui_impl_glfw.cpp
   third_party/imgui/imgui_stdlib.cpp
+  third_party/imgui/freetype/imgui_freetype.cpp
   States/States.cpp
   Scenes/Scenes.cpp
   Guis/Gui.cpp
   Guis/Console.cpp
   )
 add_library(mt::engine ALIAS ${PROJECT_NAME})
-target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR})
-target_link_libraries(${PROJECT_NAME} OpenGL::GL glfw Threads::Threads)
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR} ${FREETYPE_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} OpenGL::GL glfw Threads::Threads ${FREETYPE_LIBRARIES})
 install(
   TARGETS 
   ${PROJECT_NAME} 
