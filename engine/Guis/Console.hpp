@@ -8,6 +8,7 @@ namespace mtEngine {
   class Console
   {
     public:
+      static constexpr float HEIGHT_PERCENT = 45.0f;
       Console();
 
       void Start();
@@ -18,5 +19,9 @@ namespace mtEngine {
       bool IsVisible() { return visible; };
     private:
       bool visible = false;
+      bool down = false;
+      bool up = false;
+
+      void KeyboardScroll(bool scrollDown = false);
   };
 }

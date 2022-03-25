@@ -5,9 +5,18 @@ namespace mtEngine
 {
   Console::Console() { 
     Keyboard::Get()->OnKey().Add([&](Key key, InputAction action, InputMod mods) {
-      if(action != InputAction::Press) return; 
-      if(key == Key::GraveAccent) {
+      if(key == Key::GraveAccent && action == InputAction::Press) {
         ToggleVisible();
+      }
+      if(key == Key::PageDown && InputAction::Press == action) {
+        down = true;
+      }
+      if(key == Key::PageUp && InputAction::Press == action) {
+        up = true;
+      } 
+      if(InputAction::Release == action) {
+        down = false;
+        up = false;
       }
     });
     PLOGD << "console started"; 
@@ -20,11 +29,10 @@ namespace mtEngine
   void Console::Render()
   {
     if (!visible) return;
-    float height = 45.0f;
     auto viewport = ImGui::GetMainViewport()->Size;
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoNav;
     window_flags |= ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
-    ImGui::SetNextWindowSize(ImVec2(viewport.x, viewport.y / 100 * height));
+    ImGui::SetNextWindowSize(ImVec2(viewport.x, viewport.y / 100 * HEIGHT_PERCENT));
     ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
     ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.9f));
     static bool scrollDown;
@@ -42,8 +50,11 @@ namespace mtEngine
       {
         ImGui::Text("%s", list.c_str());
       }
+
+      KeyboardScroll(scrollDown);
       if (scrollDown)
         ImGui::SetScrollHereY(1.0f);
+
       scrollDown = false;
       ImGui::EndChild();
     }
@@ -72,5 +83,21 @@ namespace mtEngine
     }
     ImGui::PopStyleColor();
     ImGui::End();
+  }
+
+  void Console::KeyboardScroll(bool scrollDown)
+  {
+    float pos = ImGui::GetScrollY();
+    float fontSize = ImGui::GetFontSize();
+    if(down && pos < ImGui::GetScrollMaxY()) {
+      pos += fontSize;
+      ImGui::SetScrollY(pos);
+      scrollDown = false;
+    };
+    if(up && pos > 0) {
+      pos -= fontSize;
+      ImGui::SetScrollY(pos);
+      scrollDown = false;
+    };
   }
 }
