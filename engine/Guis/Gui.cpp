@@ -23,8 +23,10 @@ namespace mtEngine {
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
 
     std::string p(RESOURCES);
-    std::string fontPath = p + "/Game/fonts/Roboto-Regular.ttf";
-    io.Fonts->AddFontFromFileTTF(fontPath.c_str(), 17.0f);
+    std::string fontMainPath = p + "/Game/fonts/Roboto-Regular.ttf";
+    std::string fontMonoPath = p + "/Engine/fonts/JetBrains_Mono_R.ttf";
+    LoadFont(std::string(FONT_MAIN), fontMainPath);
+    LoadFont(std::string(FONT_MONO), fontMonoPath);
 
     const char* glsl_version = "#version 130";
     auto window = mtEngine::Window::Get()->GetWindow();
@@ -129,5 +131,22 @@ namespace mtEngine {
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
     PLOGD << "gui shutdown";
+  }
+
+  FontsStack::iterator Gui::GetFont(const std::string &name)
+  {
+    auto it = fonts.find(name);
+    if(it != fonts.end()) {
+      return it;
+    }
+
+    return fonts.end();
+  }
+
+  void Gui::LoadFont(const std::string &name, const std::string &path)
+  {
+    ImGuiIO &io = ImGui::GetIO();
+    ImFont *font = io.Fonts->AddFontFromFileTTF(path.c_str(), 17.0f);
+    fonts.emplace(name, font);
   }
 }

@@ -1,4 +1,6 @@
 #include "Console.hpp"
+#include "Graphics/Graphics.hpp"
+#include "Guis/Gui.hpp"
 #include "Utils/String.hpp"
 
 namespace mtEngine
@@ -36,6 +38,8 @@ namespace mtEngine
     ImGui::SetNextWindowSize(ImVec2(viewport.x, viewport.y / 100 * HEIGHT_PERCENT));
     ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
     ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.9f));
+    ImFont *monoFont = Graphics::Get()->GetGui()->GetFont(std::string(FONT_MONO))->second;
+    ImGui::PushFont(monoFont);
     static bool scrollDown;
     if (ImGui::Begin("Console", &visible, window_flags))
     {
@@ -83,6 +87,7 @@ namespace mtEngine
       scrollDown = true;
     }
     ImGui::PopStyleColor();
+    ImGui::PopFont();
     ImGui::End();
   }
 
