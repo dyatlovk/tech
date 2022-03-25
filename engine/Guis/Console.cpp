@@ -14,6 +14,7 @@ namespace mtEngine
       if(key == Key::PageUp && InputAction::Press == action) {
         up = true;
       } 
+      
       if(InputAction::Release == action) {
         down = false;
         up = false;
@@ -63,22 +64,22 @@ namespace mtEngine
     ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
     const char *helperTitle = "##ConsoleInputHelper";
-    std::string helperText = ">>";
-    float textboxSize = ImGui::CalcTextSize(helperText.c_str()).x + (ImGui::GetStyle().FramePadding.x);
+    std::string ps_1 = std::string(PS1);
+    float textboxSize = ImGui::CalcTextSize(ps_1.c_str()).x + (ImGui::GetStyle().FramePadding.x);
     ImGui::SetNextItemWidth(textboxSize);
     ImGuiInputTextFlags helperFlags = ImGuiInputTextFlags_ReadOnly;
-    ImGui::InputText(helperTitle, &helperText, helperFlags);
+    ImGui::InputText(helperTitle, &ps_1, helperFlags);
     ImGui::SameLine(0.0f, -1.0f);
     ImGui::PopStyleColor();
 
-    std::string command = "";
     const char *title = "##ConsoleInput";
     ImGui::SetKeyboardFocusHere();
     ImGuiInputTextFlags inputFlags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory;
-    if (ImGui::InputText(title, &command, inputFlags))
+    std::string command_line = "";
+    if (ImGui::InputText(title, &command_line, inputFlags, &InputCallback, (void*)this))
     {
-      //TODO: command exec
-      CVars::Get()->Exec(command);
+      CVars::Get()->Exec(command_line);
+      AddHistory(command_line);
       scrollDown = true;
     }
     ImGui::PopStyleColor();
@@ -99,5 +100,33 @@ namespace mtEngine
       ImGui::SetScrollY(pos);
       scrollDown = false;
     };
+  }
+
+  int Console::InputCallback(ImGuiInputTextCallbackData* data)
+  {
+    Console* con = (Console*)data->UserData;
+    if(data->EventFlag != ImGuiInputTextFlags_CallbackHistory) return 0;
+
+    const int prev_history_pos = con->historyPos;
+    if(data->EventKey == ImGuiKey_UpArrow) {
+      if (con->historyPos == -1)
+        con->historyPos = con->history.size() - 1;
+      else if (con->historyPos > 0)
+        con->historyPos--;
+    }
+    
+    if(data->EventKey == ImGuiKey_DownArrow) {
+      if (con->historyPos != -1)
+        if (++con->historyPos >= con->history.size())
+          con->historyPos = -1;
+    }
+   
+    if (prev_history_pos != con->historyPos) {
+      const std::string history_str = (con->historyPos >= 0) ? con->history[con->historyPos] : "";
+      data->DeleteChars(0, data->BufTextLen);
+      data->InsertChars(0, history_str.c_str());
+    }
+
+    return 0;
   }
 }
