@@ -12,8 +12,41 @@
 #include "Log.hpp"
 #include "Commands.hpp"
 #include "IniParser.hpp"
+#include "Maths/Time.hpp"
+#include "Maths/ElapsedTime.hpp"
 
 namespace mtEngine {
+
+  class Delta 
+  {
+    public:
+      void Update() {
+        currentFrameTime = Time::Now();
+        change = currentFrameTime - lastFrameTime;
+        lastFrameTime = currentFrameTime;
+      }
+
+      Time currentFrameTime;
+      Time lastFrameTime;
+      Time change;
+  };
+
+  class ChangePerSecond {
+    public:
+      void Update(const Time &time) {
+        valueTemp++;
+
+        if (std::floor(time.AsSeconds()) > std::floor(valueTime.AsSeconds())) {
+          value = valueTemp;
+          valueTemp = 0;
+        }
+
+        valueTime = time;
+      }
+
+      uint32_t valueTemp = 0, value = 0;
+      Time valueTime;
+  };
 
   /**
    * @brief Main class for Acid, manages modules and updates. After creating your Engine object call {@link Engine#Run} to start.
@@ -87,6 +120,12 @@ namespace mtEngine {
        */
       void RequestClose() { running = false; }
 
+      const Time &GetDeltaRender() const { return deltaRender.change; }
+
+      const Time &GetDelta() const { return deltaUpdate.change; }
+
+      uint32_t GetFps() const { return fps.value; }
+
     private:
       void UpdateStage(Module::Stage stage);
       void PostUpdate();
@@ -107,5 +146,9 @@ namespace mtEngine {
       std::unique_ptr<CVars> cvars;
       std::unique_ptr<Commands> commands;
       std::unique_ptr<IniParser> iniParser;
+
+      Delta deltaUpdate, deltaRender;
+      ElapsedTime elapsedUpdate, elapsedRender;
+      ChangePerSecond ups, fps;
   };
 }

@@ -81,8 +81,15 @@ namespace mtEngine {
       // Post-Update.
       UpdateStage(Module::Stage::Post);
 
+      // Updates the engines delta.
+      deltaUpdate.Update();
+
       // Render
-      UpdateStage(Module::Stage::Render);
+      if (elapsedRender.GetElapsed() != 0) {
+        UpdateStage(Module::Stage::Render);
+        fps.Update(Time::Now());
+        deltaRender.Update();
+      }
 
       PostUpdate();
 

@@ -35,14 +35,22 @@ namespace Game
     ImGui::SetNextWindowSize(ImVec2(viewport.x / 100 * 20.0f, viewport.y));
     if (ImGui::Begin("Left", &p_open, window_flags))
     {
+      auto delta = Engine::Get()->GetDeltaRender();
+      auto fps = Engine::Get()->GetFps();
+      auto deltaUpdate = Engine::Get()->GetDelta();
+      
       ImGui::Text("%s", GameStates::ToString(state).c_str());
+      ImGui::Separator();
+      ImGui::Text("Render: %f ms/f", delta.AsSeconds() * 1000);
+      ImGui::Text("Updates: %f ms/f", deltaUpdate.AsSeconds()  * 1000);
+      ImGui::Text("FPS: %d", fps);
       ImGui::Separator();
       ImGui::Text("%s", "Console: ~");
       ImGui::Text("%s", "UI Demo: F12");
+      
       if (state == GameStates::MainMenu)
       {
         ImGui::Text("%s", "Start: Enter");
-        ImGui::Text("%s", "Fullscreen: F");
         ImGui::Text("%s", "Exit: F10");
       }
       if (state == GameStates::Player)
@@ -58,8 +66,8 @@ namespace Game
       {
         ImGui::Text("%s", "Resume: Esc");
         ImGui::Text("%s", "Main menu: F10");
-      }
     }
     ImGui::End();
+    }
   }
 }

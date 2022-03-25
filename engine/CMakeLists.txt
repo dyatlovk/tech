@@ -37,6 +37,7 @@ add_library(${PROJECT_NAME} SHARED
   Scenes/Scenes.cpp
   Guis/Gui.cpp
   Guis/Console.cpp
+  Maths/ElapsedTime.cpp
   )
 add_library(mt::engine ALIAS ${PROJECT_NAME})
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR} ${FREETYPE_INCLUDE_DIRS})
