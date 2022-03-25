@@ -43,6 +43,8 @@ namespace mtEngine {
 
       static Log* Get() { return Instance; }
 
+      void Clear() { memAppender.getMessageList().clear(); }
+
       static std::unique_ptr<Log> Init() { return std::make_unique<Log>(); }
 
     private:
