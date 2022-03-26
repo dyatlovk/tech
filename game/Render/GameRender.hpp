@@ -16,5 +16,8 @@ namespace Game {
       void Update() override;
     private:
       std::unique_ptr<GameGui> GameUI;
+      int image_width      = 0;
+      int image_height     = 0;
+      GLuint image_texture = 0;
   };
 }

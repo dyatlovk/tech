@@ -13,7 +13,7 @@ namespace Game
     int state = States::Get()->Current();
     if(state != GameStates::Inventory) return;
     auto viewport = ImGui::GetMainViewport()->Size;
-    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus;
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
     ImGui::SetNextWindowSize(ImVec2(viewport.x / 100 * 25.0f, viewport.y));
     static bool p_open = true;
     if (ImGui::Begin("Inventory", &p_open, window_flags))
