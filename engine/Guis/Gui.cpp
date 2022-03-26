@@ -133,14 +133,14 @@ namespace mtEngine {
     PLOGD << "gui shutdown";
   }
 
-  FontsStack::iterator Gui::GetFont(const std::string &name)
+  ImFont *Gui::GetFont(const std::string &name)
   {
     auto it = fonts.find(name);
     if(it != fonts.end()) {
-      return it;
+      return it->second;
     }
 
-    return fonts.end();
+    return nullptr;
   }
 
   void Gui::LoadFont(const std::string &name, const std::string &path)

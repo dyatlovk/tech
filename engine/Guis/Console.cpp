@@ -38,7 +38,12 @@ namespace mtEngine
     ImGui::SetNextWindowSize(ImVec2(viewport.x, viewport.y / 100 * HEIGHT_PERCENT));
     ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
     ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.9f));
-    ImFont *monoFont = Graphics::Get()->GetGui()->GetFont(std::string(FONT_MONO))->second;
+    ImGui::PushStyleColor(ImGuiCol_ScrollbarGrab, ImVec4(0.1f, 0.1f, 0.1f, 0.2f));
+    ImFont *monoFont = Graphics::Get()->GetGui()->GetFont(std::string(FONT_MONO));
+    if(!monoFont) {
+      PLOGE << "Font not found";
+      return;
+    };
     ImGui::PushFont(monoFont);
     static bool scrollDown;
     if (ImGui::Begin("Console", &visible, window_flags))
@@ -51,10 +56,12 @@ namespace mtEngine
       }
 
       auto logList = Log::Get()->GetMomory();
+      ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
       for (const auto &list : logList)
       {
         ImGui::Text("%s", list.c_str());
       }
+      ImGui::PopStyleColor();
 
       KeyboardScroll(scrollDown);
       if (scrollDown)
@@ -63,7 +70,8 @@ namespace mtEngine
       scrollDown = false;
       ImGui::EndChild();
     }
-    ImGui::PopStyleColor();
+    ImGui::PopStyleColor(); // end window
+    ImGui::PopStyleColor(); // end scroll
 
     ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));

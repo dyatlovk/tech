@@ -72,13 +72,22 @@ namespace mtEngine
     // print all commands in group
     if (commands->name.compare("") == 0)
     {
+      std::string permission = "[RW]";
       PLOG_NONE;
       PLOGD << "[" << commands->group << "] " << commands->name;
       PLOGD << "-----------------------------------------------";
       for (const auto &f : groupCommands)
       {
-        PLOGD << f.name << ": " << String::dump(f.args);
+        std::string values = "";
+        if(f.readOnly) permission = "[R]";
+        if(f.type == VAR_FLAG && f.args.size() != 0) values = String::dump(f.args);
+        if(values == "") {
+          PLOGD << f.name;
+        } else {
+          PLOGD << f.name << ": \"" << values << "\" " << permission;
+        }
       }
+      PLOGD << "-----------------------------------------------";
       return;
     }
 

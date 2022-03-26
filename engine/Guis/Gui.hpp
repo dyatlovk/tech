@@ -24,7 +24,7 @@ namespace mtEngine {
       void Render();
       bool IsStarted() { return started; }
       void SetStarted() { started = true; }
-      FontsStack::iterator GetFont(const std::string &name);
+      ImFont *GetFont(const std::string &name);
 
       Console *GetConsole() { return console.get(); }
     private:
