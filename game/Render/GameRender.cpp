@@ -22,6 +22,13 @@ namespace Game {
     texture = std::make_unique<Texture>();
     const std::string p(RESOURCES);
     bool ret = texture->LoadTextureFromFile(p + "/Game/textures/bg.jpg", &image_texture, &image_width, &image_height);
+
+    Keyboard::Get()->OnKey().Add([&](Key key, InputAction action, InputMod mods) {
+      if(States::Get()->Current() == EnumStates::Console) return;
+      if(InputAction::Press == action && key == Key::Tab) {
+        showHelp = !showHelp;
+      }
+    });
   }
 
   void GameRender::Update()
@@ -37,6 +44,7 @@ namespace Game {
     ImGui::PopStyleVar();
     ImGui::End();
 
+    GameUI->Help(showHelp);
     GameUI->Inventory();
     GameUI->Info();
   }

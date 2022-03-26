@@ -19,5 +19,7 @@ namespace Game {
       int image_width      = 0;
       int image_height     = 0;
       GLuint image_texture = 0;
+
+      bool showHelp = true;
   };
 }

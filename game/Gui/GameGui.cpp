@@ -39,8 +39,6 @@ namespace Game
       auto fps = Engine::Get()->GetFps();
       auto deltaUpdate = Engine::Get()->GetDelta();
       
-      ImGui::Text("%s", GameStates::ToString(state).c_str());
-      ImGui::Separator();
       ImGui::Text("Render: %f ms/f", delta.AsSeconds() * 1000);
       ImGui::Text("Updates: %f ms/f", deltaUpdate.AsSeconds()  * 1000);
       ImGui::Text("FPS: %d", fps);
@@ -69,5 +67,36 @@ namespace Game
     }
     ImGui::End();
     }
+  }
+
+  void GameGui::Help(bool open)
+  {
+    if(!open) return;
+    int state = States::Get()->Current();
+
+    std::string msg = GameStates::ToString(state);
+
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+    window_flags |= ImGuiWindowFlags_NoMouseInputs;
+    auto viewport = ImGui::GetMainViewport()->Size;
+    
+    auto font_size = ImGui::CalcTextSize(msg.c_str());
+    
+    ImVec4 green = ImVec4(0.0f, 1.0f, 0.0f, 1.0f);
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+    ImGui::PushStyleColor(ImGuiCol_Border, green);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 2.0f);
+    
+    ImGui::Begin("##Help", &open, window_flags);
+    auto win = ImGui::GetCurrentWindow();
+    ImGui::SetWindowSize(ImVec2(font_size.x + 50, font_size.y + 50));
+    ImGui::SetWindowPos(win, ImVec2(viewport.x / 2 - ImGui::GetWindowSize().x / 2, viewport.y / 2 - ImGui::GetWindowSize().y / 2));
+    ImGui::SetCursorPos(ImVec2(ImGui::GetWindowSize().x / 2 - (font_size.x / 2), ImGui::GetWindowSize().y / 2 - (font_size.y / 2)));
+    ImGui::Text("%s", msg.c_str());
+
+    ImGui::PopStyleColor(); // window bg
+    ImGui::PopStyleColor(); // border col
+    ImGui::PopStyleVar(); // border size
+    ImGui::End();
   }
 }

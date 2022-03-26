@@ -14,5 +14,7 @@ namespace Game
       void Inventory();
 
       void Info();
+
+      void Help(bool open);
   };
 }
