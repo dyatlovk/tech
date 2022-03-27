@@ -5,11 +5,12 @@
 
 namespace Game
 {
-  class GameGui
+  class GameGui: public mtEngine::Gui
   {
     public:
       GameGui();
-      ~GameGui();
+
+      void Update() override;
 
       void Inventory();
 

@@ -38,8 +38,8 @@ namespace mtEngine
     ImGui::SetNextWindowSize(ImVec2(viewport.x, viewport.y / 100 * HEIGHT_PERCENT));
     ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
     ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.9f));
-    ImGui::PushStyleColor(ImGuiCol_ScrollbarGrab, ImVec4(0.1f, 0.1f, 0.1f, 0.2f));
-    ImFont *monoFont = Graphics::Get()->GetGui()->GetFont(std::string(FONT_MONO));
+    ImGui::PushStyleColor(ImGuiCol_ScrollbarGrab, ImVec4(0.1f, 0.1f, 0.1f, 0.5f));
+    ImFont *monoFont = Gui::Get()->GetFont(std::string(FONT_MONO));
     if(!monoFont) {
       PLOGE << "Font not found";
       return;

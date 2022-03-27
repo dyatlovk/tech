@@ -6,7 +6,7 @@ namespace Game
 {
   GameGui::GameGui() = default;
 
-  GameGui::~GameGui() = default;
+  void GameGui::Update() { }
 
   void GameGui::Inventory()
   {

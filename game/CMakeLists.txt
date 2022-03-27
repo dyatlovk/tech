@@ -4,7 +4,8 @@ file(GLOB SOURCES
   game.cpp 
   app.cpp
   Render/GameRender.cpp
-  Scenes/GameScene.cpp
+  Scenes/MainMenu/MainMenu.cpp
+  Scenes/World/World.cpp
   Gui/GameGui.cpp
   )
 set(GAME_INCLUDE ${PROJECT_SOURCE_DIR}/include)

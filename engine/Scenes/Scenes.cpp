@@ -16,4 +16,10 @@ namespace mtEngine {
     scene->Update();
     scene->AfterUpdate();
   }
+
+  void Scenes::Shutdown()
+  {
+    scene->Shutdown();
+    PLOGD << "scenes shutdown";
+  }
 }

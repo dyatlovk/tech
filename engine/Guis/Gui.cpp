@@ -7,11 +7,7 @@ namespace mtEngine {
     PLOGD << "gui construct";
   };
 
-  Gui::~Gui()
-  {
-    Shutdown();
-    PLOGD << "gui destruct";
-  };
+  Gui::~Gui() = default;
 
   void Gui::Start()
   {
