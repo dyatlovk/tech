@@ -64,9 +64,9 @@ namespace Game
       {
         ImGui::Text("%s", "Resume: Esc");
         ImGui::Text("%s", "Main menu: F10");
+      }
     }
     ImGui::End();
-    }
   }
 
   void GameGui::Help(bool open)

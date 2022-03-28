@@ -10,7 +10,7 @@ namespace Game
     public:
       GameGui();
 
-      void Update() override;
+      void Update();
 
       void Inventory();
 

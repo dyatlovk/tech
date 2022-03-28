@@ -22,7 +22,9 @@ namespace mtEngine {
 
       void Start();
       void NewFrame();
+      void BeforeUpdate() override;
       void Update() override;
+      void AfterUpdate() override;
       void Render();
       bool IsStarted() { return started; }
       void SetStarted() { started = true; }

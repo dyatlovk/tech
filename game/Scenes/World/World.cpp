@@ -6,13 +6,19 @@ namespace Game
 
   World::~World() = default;
 
-  void World::Start() { gui = dynamic_cast<GameGui *>(Gui::Get()->GetGui()); }
+  void World::Start() {  
+    gui = std::make_unique<WorldGui>();
+  }
 
   void World::BeforeUpdate() {}
 
-  void World::Update() { gui->Help(true); }
+  void World::Update() {
+    gui->Window();
+  }
 
   void World::AfterUpdate() {}
 
-  void World::Shutdown() { gui = nullptr; }
+  void World::Shutdown() { 
+    gui = nullptr;
+  }
 } // namespace Game

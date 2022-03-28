@@ -6,21 +6,20 @@ namespace Game
 
   MainMenu::~MainMenu() = default;
 
-  void MainMenu::Start()
-  {
-    gui = dynamic_cast<GameGui *>(Gui::Get()->GetGui());
+  void MainMenu::Start() {
+    gui = std::make_unique<MenuGui>();
   }
 
   void MainMenu::BeforeUpdate() {}
 
-  void MainMenu::Update()
-  {
-    gui->Inventory();
-    gui->Info();
+  void MainMenu::Update() {
+    gui->RenderList();
   }
 
   void MainMenu::AfterUpdate() {}
 
-  void MainMenu::Shutdown() { gui = nullptr; }
+  void MainMenu::Shutdown() {
+    gui = nullptr;
+  }
 
 } // namespace Game

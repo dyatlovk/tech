@@ -5,8 +5,10 @@ file(GLOB SOURCES
   app.cpp
   Render/GameRender.cpp
   Scenes/MainMenu/MainMenu.cpp
+  Scenes/MainMenu/Gui/MenuGui.cpp
+
   Scenes/World/World.cpp
-  Gui/GameGui.cpp
+  Scenes/World/Gui/WorldGui.cpp
   )
 set(GAME_INCLUDE ${PROJECT_SOURCE_DIR}/include)
 add_executable(${PROJECT_NAME} ${SOURCES})

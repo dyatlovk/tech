@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Gui/MenuGui.hpp"
 #include "Scenes/Scene.hpp"
-#include "../../Gui/GameGui.hpp"
 #include "Scenes/Scenes.hpp"
 
 using namespace mtEngine;
@@ -25,6 +25,6 @@ namespace Game
     std::string GetName() const override { return std::string(NAME); };
 
   private:
-    GameGui *gui;
+    std::unique_ptr<MenuGui> gui;
   };
 } // namespace Game

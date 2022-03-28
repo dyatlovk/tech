@@ -4,6 +4,7 @@
 namespace mtEngine {
   Gui::Gui()
   {
+    Start();
     PLOGD << "gui construct";
   };
 
@@ -108,6 +109,11 @@ namespace mtEngine {
     console->Render();
   }
 
+  void Gui::BeforeUpdate()
+  {
+    NewFrame();
+  }
+
   void Gui::Update()
   {
     if(showDemo) ImGui::ShowDemoWindow(&showDemo);
@@ -119,6 +125,11 @@ namespace mtEngine {
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     auto window = mtEngine::Window::Get()->GetWindow();
     glfwSwapBuffers(window);
+  }
+
+  void Gui::AfterUpdate()
+  {
+    Render();
   }
 
   void Gui::Shutdown()
