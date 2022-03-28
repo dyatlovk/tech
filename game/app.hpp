@@ -19,5 +19,8 @@ namespace Game
     void BeforeUpdate() override;
     virtual void Update() override;
     void AfterUpdate() override;
+
+  private:
+    std::unique_ptr<GameGui> gameGui;
   };
 } // namespace Game

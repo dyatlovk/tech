@@ -22,6 +22,7 @@ add_library(${PROJECT_NAME} SHARED
   Devices/Window.cpp
   Devices/Keyboard.cpp
   Graphics/Graphics.cpp
+  Graphics/Texture.cpp
   Inputs/Input.cpp
   Inputs/Buttons/KeyboardInputButton.cpp
   third_party/imgui/imgui.cpp

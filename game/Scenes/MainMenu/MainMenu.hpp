@@ -1,8 +1,10 @@
 #pragma once
 
+#include "Graphics/Texture.hpp"
 #include "Gui/MenuGui.hpp"
 #include "Scenes/Scene.hpp"
 #include "Scenes/Scenes.hpp"
+#include "Graphics/Renderer.hpp"
 
 using namespace mtEngine;
 
@@ -26,5 +28,9 @@ namespace Game
 
   private:
     std::unique_ptr<MenuGui> gui;
+    int tex_width = 0;
+    int tex_height = 0;
+    GLuint bg_image = 0;
+    std::unique_ptr<Texture> bg_texture;
   };
 } // namespace Game
