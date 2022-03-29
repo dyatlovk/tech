@@ -14,10 +14,8 @@ namespace Game
 
     void Window();
 
-    void MessageDock();
-
     void PlayerInfoDock();
 
-    void Items();
+    void Row();
   };
 } // namespace Game

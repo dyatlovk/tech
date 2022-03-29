@@ -8,26 +8,6 @@ namespace Game
 {
   WorldGui::WorldGui() = default;
 
-  void WorldGui::Window()
-  {
-    ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove;
-    flags |= ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoResize;
-    flags |= ImGuiWindowFlags_NoDocking;
-    auto viewport = ImGui::GetMainViewport()->Size;
-    ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-    
-    ImGui::Begin("##world_window", nullptr, flags);
-    auto win = ImGui::GetCurrentWindow();
-    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-    if (ImGui::Button("MainMenu"))
-    {
-      Scenes::Get()->SetScene(std::make_unique<MainMenu>());
-    }
-    ImGui::PopStyleColor(); // buttons
-    ImGui::End();
-  }
-
   void WorldGui::PlayerInfoDock()
   {
     ImGuiWindowClass window_class2;
@@ -38,29 +18,30 @@ namespace Game
     ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove;
     flags |= ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoNavFocus;
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {0.0f, 0.0f});
+    
+    ImVec2 vSize = ImGui::GetMainViewport()->Size;
+    ImGui::SetNextWindowPos(vSize, ImGuiCond_Always, ImVec2(1.0f, 1.0f));
+    ImGui::SetNextWindowSize({vSize.x, 70});
+    
     ImGui::Begin("##player_info", nullptr, flags);
-    Items();
+    Row();
     ImGui::End();
     ImGui::PopStyleVar();
   }
 
-  void WorldGui::Items()
+  void WorldGui::Row()
   {
-    auto info = ImGui::GetCurrentWindow();
-    ImGui::BeginChild("Item", {info->Size.y, 0}, false);
-    ImGui::Text("Item1");
-    ImGui::EndChild();
-    
-    ImGui::SameLine(0.0f, 0.0f);
-    
-    ImGui::BeginChild("Item2", {info->Size.y, 0}, false);
-    ImGui::Text("Item2");
-    ImGui::EndChild();
-    
-    ImGui::SameLine(0.0f, 0.0f);
-  
-    ImGui::BeginChild("Item3", {info->Size.y, 0}, false);
-    ImGui::Text("Item3");
-    ImGui::EndChild();
+    auto dock = ImGui::GetCurrentWindow();
+    ImVec2 button_sz(dock->Size.y, dock->Size.y);
+    ImGui::PushStyleColor(ImGuiCol_Button, {0,0,0,0});
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, {0,0,0,0});
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, {0,0,0,0});
+    ImGui::Button("HL: 95%", button_sz);
+    ImGui::SameLine(0.0f, 1.0f);
+    ImGui::Button("AR: 100%", button_sz);
+    ImGui::SameLine(0.0f, 1.0f);
+    ImGui::Button("ED: 40%", button_sz);
+    ImGui::SameLine(0.0f, 1.0f);
+    ImGui::PopStyleColor(3);
   }
 } // namespace Game

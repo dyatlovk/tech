@@ -57,7 +57,7 @@ namespace Game
         auto dock_id_down = ImGui::DockBuilderSplitNode( dockspace_id, ImGuiDir_Down, 0.10f, nullptr, &dockspace_id);
 
         // we now dock our windows into the docking node we made above
-        ImGui::DockBuilderDockWindow("##player_info", dock_id_down);
+        // ImGui::DockBuilderDockWindow("##player_info", dock_id_down);
         ImGui::DockBuilderFinish(dockspace_id);
       }
     }

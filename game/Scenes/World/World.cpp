@@ -15,11 +15,7 @@ namespace Game
   void World::BeforeUpdate() {}
 
   void World::Update() {
-    Gui::Get()->StyleDocking();
-    layout->Create();
-    gui->Window();
     gui->PlayerInfoDock();
-    // gui->Item();
   }
 
   void World::AfterUpdate() {}
