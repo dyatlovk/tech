@@ -13,5 +13,11 @@ namespace Game
     WorldGui();
 
     void Window();
+
+    void MessageDock();
+
+    void PlayerInfoDock();
+
+    void Items();
   };
 } // namespace Game

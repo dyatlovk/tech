@@ -10,6 +10,7 @@ file(GLOB SOURCES
 
   Scenes/World/World.cpp
   Scenes/World/Gui/WorldGui.cpp
+  Scenes/World/Gui/Layout.cpp
   )
 set(GAME_INCLUDE ${PROJECT_SOURCE_DIR}/include)
 add_executable(${PROJECT_NAME} ${SOURCES})

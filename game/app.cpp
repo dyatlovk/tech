@@ -28,9 +28,10 @@ namespace Game {
   }
 
   void GameApp::Update() {
-    gameGui->Stats();
   }
 
   void GameApp::AfterUpdate() {
+    gameGui->Stats();
+    gameGui->Debug();
   }
 }

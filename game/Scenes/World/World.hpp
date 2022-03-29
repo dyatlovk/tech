@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Gui/WorldGui.hpp"
+#include "Gui/Layout.hpp"
 #include "Scenes/Scene.hpp"
 #include "Scenes/Scenes.hpp"
 
@@ -28,5 +29,6 @@ namespace Game
 
   private:
     std::unique_ptr<WorldGui> gui;
+    std::unique_ptr<WorldLayout> layout;
   };
 } // namespace Game

@@ -92,9 +92,9 @@ namespace mtEngine {
         deltaRender.Update();
       }
 
-      PostUpdate();
-
       app->AfterUpdate();
+
+      PostUpdate();
     }
 
     return EXIT_SUCCESS;

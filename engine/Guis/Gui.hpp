@@ -34,6 +34,9 @@ namespace mtEngine {
       Gui *GetGui() const { return gui.get(); }
 
       Console *GetConsole() { return console.get(); }
+
+      void StyleDark();
+      void StyleDocking();
     private:
       void Shutdown() override;
       void LoadFont(const std::string &name, const std::string &path);

@@ -17,7 +17,8 @@ namespace Game
 
   void MainMenu::Update() {
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
-    window_flags |= ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMouseInputs | ImGuiWindowFlags_NoBringToFrontOnFocus;
+    window_flags |= ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMouseInputs;
+    window_flags |= ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoFocusOnAppearing;
     auto viewport = ImGui::GetMainViewport()->Size;
     ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
     ImGui::SetNextWindowSize(ImVec2(viewport.x, viewport.y));
@@ -30,7 +31,8 @@ namespace Game
     gui->RenderList();
   }
 
-  void MainMenu::AfterUpdate() {}
+  void MainMenu::AfterUpdate() {
+  }
 
   void MainMenu::Shutdown() {
     gui = nullptr;

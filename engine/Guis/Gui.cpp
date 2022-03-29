@@ -17,7 +17,9 @@ namespace mtEngine {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    io.ConfigFlags |= ImGuiDockNodeFlags_PassthruCentralNode;
 
     std::string p(RESOURCES);
     std::string fontMainPath = p + "/Game/fonts/Roboto-Regular.ttf";
@@ -31,10 +33,81 @@ namespace mtEngine {
     ImGui_ImplOpenGL3_Init(glsl_version);
 
     float rounding = 1.0f;
-    ImVec4* colors = ImGui::GetStyle().Colors;
     ImGui::GetStyle().ScrollbarRounding = rounding;
     ImGui::GetStyle().TabRounding = rounding;
     ImGui::GetStyle().ScrollbarSize = 16.0f;
+    StyleDark();
+
+    console = std::make_unique<Console>();
+    
+    Keyboard::Get()->OnKey().Add([&](Key key, InputAction action, InputMod mods) {
+      if(action != InputAction::Press) return; 
+      if(key == Key::F12) {
+        showDemo = !showDemo;
+      }
+    });
+  }
+
+  void Gui::NewFrame()
+  {
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+    console->Render();
+  }
+
+  void Gui::BeforeUpdate()
+  {
+    NewFrame();
+  }
+
+  void Gui::Update()
+  {
+    StyleDark();
+    if(showDemo) ImGui::ShowDemoWindow(&showDemo);
+  }
+
+  void Gui::Render()
+  {
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    auto window = mtEngine::Window::Get()->GetWindow();
+    glfwSwapBuffers(window);
+  }
+
+  void Gui::AfterUpdate()
+  {
+    Render();
+  }
+
+  void Gui::Shutdown()
+  {
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+    PLOGD << "gui shutdown";
+  }
+
+  ImFont *Gui::GetFont(const std::string &name)
+  {
+    auto it = fonts.find(name);
+    if(it != fonts.end()) {
+      return it->second;
+    }
+
+    return nullptr;
+  }
+
+  void Gui::LoadFont(const std::string &name, const std::string &path)
+  {
+    ImGuiIO &io = ImGui::GetIO();
+    ImFont *font = io.Fonts->AddFontFromFileTTF(path.c_str(), 17.0f);
+    fonts.emplace(name, font);
+  }
+
+  void Gui::StyleDark()
+  {
+    ImVec4* colors = ImGui::GetStyle().Colors;
     colors[ImGuiCol_Text]                   = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
     colors[ImGuiCol_TextDisabled]           = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
     colors[ImGuiCol_WindowBg]               = ImVec4(0.06f, 0.06f, 0.06f, 1.00f);
@@ -90,70 +163,12 @@ namespace mtEngine {
     colors[ImGuiCol_NavWindowingHighlight]  = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
     colors[ImGuiCol_NavWindowingDimBg]      = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
     colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
-
-    console = std::make_unique<Console>();
-    
-    Keyboard::Get()->OnKey().Add([&](Key key, InputAction action, InputMod mods) {
-      if(action != InputAction::Press) return; 
-      if(key == Key::F12) {
-        showDemo = !showDemo;
-      }
-    });
   }
 
-  void Gui::NewFrame()
+  void Gui::StyleDocking()
   {
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
-    console->Render();
-  }
-
-  void Gui::BeforeUpdate()
-  {
-    NewFrame();
-  }
-
-  void Gui::Update()
-  {
-    if(showDemo) ImGui::ShowDemoWindow(&showDemo);
-  }
-
-  void Gui::Render()
-  {
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    auto window = mtEngine::Window::Get()->GetWindow();
-    glfwSwapBuffers(window);
-  }
-
-  void Gui::AfterUpdate()
-  {
-    Render();
-  }
-
-  void Gui::Shutdown()
-  {
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
-    PLOGD << "gui shutdown";
-  }
-
-  ImFont *Gui::GetFont(const std::string &name)
-  {
-    auto it = fonts.find(name);
-    if(it != fonts.end()) {
-      return it->second;
-    }
-
-    return nullptr;
-  }
-
-  void Gui::LoadFont(const std::string &name, const std::string &path)
-  {
-    ImGuiIO &io = ImGui::GetIO();
-    ImFont *font = io.Fonts->AddFontFromFileTTF(path.c_str(), 17.0f);
-    fonts.emplace(name, font);
+    ImVec4* colors = ImGui::GetStyle().Colors;
+    colors[ImGuiCol_WindowBg]               = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+    colors[ImGuiCol_Separator]              = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
   }
 }

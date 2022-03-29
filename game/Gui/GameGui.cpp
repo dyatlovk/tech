@@ -29,9 +29,49 @@ namespace Game
         showStats = false;
       }
     });
+
+    CVars::Get()->Add("app", "ui_debug", {"0"}, "Show windows rectangles", "app ui_debug <1|0>", [this](CVarParam &args, Input &input, bool &isValid) {
+      if(input.size() == 0) {
+        isValid = false;
+        return;
+      }
+      if(input.at(0) != "1" && input.at(0) != "0") {
+        isValid = false;
+        return;
+      }
+      isValid = true;
+      
+      int flag = std::stoi(input.at(0));
+      
+      if(flag == 0) {
+        showUIDebug = false;
+      }
+
+      if(flag == 1) {
+        showUIDebug = true;
+      }
+    });
   };
 
-  void GameGui::Update() { }
+  void GameGui::Update() {
+  }
+
+  void GameGui::Debug()
+  {
+    if(!showUIDebug) return;
+    ImGuiContext& g = *GImGui;
+    ImGuiIO& io = g.IO;
+    ImGuiMetricsConfig* cfg = &g.DebugMetricsConfig;
+    for (int n = 0; n < g.Windows.Size; n++)
+    {
+      ImGuiWindow* window = g.Windows[n];
+      if (!window->WasActive)
+        continue;
+      ImDrawList* draw_list = ImGui::GetForegroundDrawList(window);
+      ImRect r = window->Rect();
+      draw_list->AddRect(r.Min, r.Max, IM_COL32(255, 0, 128, 255));
+    }
+  }
 
   void GameGui::Stats()
   {
@@ -44,7 +84,7 @@ namespace Game
     ImGui::SetNextWindowSize(ImVec2(viewport.x / 100 * 20.0f, viewport.y));
     ImFont *monoFont = Gui::Get()->GetFont(std::string(FONT_MONO));
     ImGui::PushFont(monoFont);
-    if (ImGui::Begin("Left", &p_open, window_flags))
+    if (ImGui::Begin("Stats", &p_open, window_flags))
     {
       auto delta = Engine::Get()->GetDeltaRender();
       auto fps = Engine::Get()->GetFps();
