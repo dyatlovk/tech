@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Scenes/Scenes.hpp"
 #include "Scenes/Scene.hpp"
 #include "../Gui/GameGui.hpp"
 #include "Graphics/Graphics.hpp"
@@ -18,5 +19,11 @@ namespace Game {
       void AfterUpdate() override;
 
       bool IsPaused() const override { return false; }
+
+      void Shutdown() override;
+      virtual std::string GetName() const override { return name; };
+    private:
+      GameGui *gui;
+      const std::string name = "main";
   };
 }

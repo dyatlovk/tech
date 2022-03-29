@@ -66,6 +66,7 @@ namespace mtEngine {
           PLOGD << "App started";
         }
         app->BeforeUpdate();
+        PreUpdate();
         app->Update();
       }
 
@@ -91,9 +92,9 @@ namespace mtEngine {
         deltaRender.Update();
       }
 
-      PostUpdate();
-
       app->AfterUpdate();
+
+      PostUpdate();
     }
 
     return EXIT_SUCCESS;
@@ -103,6 +104,13 @@ namespace mtEngine {
     for (auto &[stageIndex, module] : modules) {
       if (stageIndex.first == stage)
         module->Update();
+    }
+  }
+  
+  void Engine::PreUpdate()
+  {
+    for (auto &[stageIndex, module] : modules) {
+      module->BeforeUpdate();
     }
   }
 

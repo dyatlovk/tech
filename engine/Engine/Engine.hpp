@@ -128,6 +128,7 @@ namespace mtEngine {
 
     private:
       void UpdateStage(Module::Stage stage);
+      void PreUpdate();
       void PostUpdate();
       void ModuleShutdown();
 

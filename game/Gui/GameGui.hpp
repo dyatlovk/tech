@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Guis/Gui.hpp"
-#include "../States/GameStates.hpp"
+#include "Engine/Engine.hpp"
 
 namespace Game
 {
@@ -9,12 +9,14 @@ namespace Game
   {
     public:
       GameGui();
-      ~GameGui();
 
-      void Inventory();
+      void Update();
 
-      void Info();
+      void Stats();
 
-      void Help(bool open);
+      void Debug();
+    private:
+      bool showStats = true;
+      bool showUIDebug = false;
   };
 }
