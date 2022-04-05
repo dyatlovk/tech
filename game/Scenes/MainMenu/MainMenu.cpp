@@ -24,7 +24,7 @@ namespace Game
     ImGui::SetNextWindowSize(ImVec2(viewport.x, viewport.y));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.f, 0.f });
     ImGui::Begin("MainMenu_bg", nullptr, window_flags);
-    ImGui::Image((void*)(intptr_t)bg_image, ImVec2(tex_width, tex_height));
+    ImGui::Image((void*)(intptr_t)bg_image, viewport);
     ImGui::PopStyleVar();
     ImGui::End();
     
