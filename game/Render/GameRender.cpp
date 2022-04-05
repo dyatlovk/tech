@@ -19,6 +19,6 @@ namespace Game {
 
   void GameRender::Update()
   {
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(0.12f, 0.12f, 0.12f, 1.0f);
   }
 }

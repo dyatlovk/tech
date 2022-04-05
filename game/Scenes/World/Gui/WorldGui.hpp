@@ -17,5 +17,14 @@ namespace Game
     void PlayerInfoDock();
 
     void Row();
+
+    void Inventory();
+
+  private:
+    float padding = 10.0f;
+    void CharacterItem();
+    void Weapons();
+    void Items();
+    ImVec2 panelCursor;
   };
 } // namespace Game

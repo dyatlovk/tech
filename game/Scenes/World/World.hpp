@@ -28,6 +28,9 @@ namespace Game
     std::string GetName() const override { return std::string(NAME); };
 
   private:
+    bool show_inv = false;
+
+  private:
     std::unique_ptr<WorldGui> gui;
     std::unique_ptr<WorldLayout> layout;
   };
