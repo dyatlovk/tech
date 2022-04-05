@@ -13,10 +13,10 @@ namespace Game
   {
     ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove;
     flags |= ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoNavFocus;
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {0.0f, 0.0f});
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, {20.0f, 0.0f});
     
     ImVec2 vSize = ImGui::GetMainViewport()->Size;
-    ImGui::SetNextWindowPos(vSize, ImGuiCond_Always, ImVec2(1.0f, 1.0f));
+    ImGui::SetNextWindowPos({vSize.x, vSize.y - 20}, ImGuiCond_Always, ImVec2(1.0f, 1.0f));
     ImGui::SetNextWindowSize({vSize.x, 70});
     
     ImGui::Begin("##player_info", nullptr, flags);
@@ -27,18 +27,34 @@ namespace Game
 
   void WorldGui::Row()
   {
+    float pad = 5;
+    const ImU32 bg = ImColor(ImVec4(0.17, 0.17, 0.17, 1.0));
     auto dock = ImGui::GetCurrentWindow();
-    ImVec2 button_sz(dock->Size.y, dock->Size.y);
-    ImGui::PushStyleColor(ImGuiCol_Button, {0,0,0,0});
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, {0,0,0,0});
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, {0,0,0,0});
-    ImGui::Button("HL: 95%", button_sz);
-    ImGui::SameLine(0.0f, 1.0f);
-    ImGui::Button("AR: 100%", button_sz);
-    ImGui::SameLine(0.0f, 1.0f);
-    ImGui::Button("ED: 40%", button_sz);
-    ImGui::SameLine(0.0f, 1.0f);
-    ImGui::PopStyleColor(3);
+    ImDrawList *draw = ImGui::GetWindowDrawList();
+    ImVec2 itemSize = {dock->Size.y, dock->Size.y};
+    ImVec2 p = ImGui::GetCursorScreenPos();
+   
+    draw->AddRectFilled(p, ImVec2(p.x + itemSize.x, p.y + itemSize.y), bg);
+    const char *HealthText = "100";
+    ImVec2 HealthTextSize = ImGui::CalcTextSize(HealthText);
+    ImGui::SetCursorScreenPos({p.x + itemSize.x / 2 - HealthTextSize.x / 2, p.y + itemSize.y / 2 - HealthTextSize.y / 2});
+    ImGui::TextColored(ImVec4(1.0, 0.92, 0.65, 1.0), "%s", HealthText);
+    ImGui::SetCursorScreenPos({p.x + itemSize.x + pad, p.y});
+    
+    p = ImGui::GetCursorScreenPos();
+    draw->AddRectFilled(p, ImVec2(p.x + itemSize.x, p.y + itemSize.y), bg);
+    const char *armorText = "87";
+    ImVec2 armorTextSize = ImGui::CalcTextSize(armorText);
+    ImGui::SetCursorScreenPos({p.x + itemSize.x / 2 - armorTextSize.x / 2, p.y + itemSize.y / 2 - armorTextSize.y / 2});
+    ImGui::TextColored(ImVec4(1.0, 0.92, 0.65, 1.0), "%s", armorText);
+    ImGui::SetCursorScreenPos({p.x + itemSize.x + pad, p.y});
+    
+    p = ImGui::GetCursorScreenPos();
+    draw->AddRectFilled(p, ImVec2(p.x + itemSize.x, p.y + itemSize.y), bg);
+    const char *powerText = "99";
+    ImVec2 powerTextSize = ImGui::CalcTextSize(powerText);
+    ImGui::SetCursorScreenPos({p.x + itemSize.x / 2 - powerTextSize.x / 2, p.y + itemSize.y / 2 - powerTextSize.y / 2});
+    ImGui::TextColored(ImVec4(1.0, 0.92, 0.65, 1.0), "%s", powerText);
   }
 
   void WorldGui::Inventory()
