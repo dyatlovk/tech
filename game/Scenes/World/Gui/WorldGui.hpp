@@ -16,7 +16,8 @@ namespace Game
 
     void PlayerInfoDock();
 
-    void Row();
+    void RowLeft();
+    void RowRight();
 
     void Inventory();
 
@@ -26,5 +27,6 @@ namespace Game
     void Weapons();
     void Items();
     ImVec2 panelCursor;
+    ImVec2 hudCursor;
   };
 } // namespace Game

@@ -20,19 +20,22 @@ namespace Game
     ImGui::SetNextWindowSize({vSize.x, 70});
     
     ImGui::Begin("##player_info", nullptr, flags);
-    Row();
+    RowLeft();
+    RowRight();
     ImGui::End();
     ImGui::PopStyleVar();
   }
 
-  void WorldGui::Row()
+  void WorldGui::RowLeft()
   {
     float pad = 5;
     const ImU32 bg = ImColor(ImVec4(0.17, 0.17, 0.17, 1.0));
     auto dock = ImGui::GetCurrentWindow();
+    ImVec2 dockSize = dock->WorkRect.GetSize();
     ImDrawList *draw = ImGui::GetWindowDrawList();
     ImVec2 itemSize = {dock->Size.y, dock->Size.y};
     ImVec2 p = ImGui::GetCursorScreenPos();
+    ImVec2 hudCursor = ImGui::GetCursorScreenPos();
    
     draw->AddRectFilled(p, ImVec2(p.x + itemSize.x, p.y + itemSize.y), bg);
     const char *HealthText = "100";
@@ -55,6 +58,34 @@ namespace Game
     ImVec2 powerTextSize = ImGui::CalcTextSize(powerText);
     ImGui::SetCursorScreenPos({p.x + itemSize.x / 2 - powerTextSize.x / 2, p.y + itemSize.y / 2 - powerTextSize.y / 2});
     ImGui::TextColored(ImVec4(1.0, 0.92, 0.65, 1.0), "%s", powerText);
+
+    // to right pos
+    ImGui::SetCursorScreenPos({hudCursor.x + dockSize.x, p.y});
+  }
+
+  void WorldGui::RowRight()
+  {
+    float pad = 5;
+    float padBig = 10;
+    const ImU32 bg = ImColor(ImVec4(0.17, 0.17, 0.17, 1.0));
+    auto dock = ImGui::GetCurrentWindow();
+    ImDrawList *draw = ImGui::GetWindowDrawList();
+    ImVec2 itemSize = {dock->Size.y, dock->Size.y};
+    
+    ImVec2 p = ImGui::GetCursorScreenPos();
+    draw->AddRectFilled(p, ImVec2(p.x - itemSize.x * 2, p.y + itemSize.y), bg);
+    ImGui::SetCursorScreenPos({p.x - (itemSize.x * 2 + pad), p.y});
+    
+    p = ImGui::GetCursorScreenPos();
+    draw->AddRectFilled(p, ImVec2(p.x - itemSize.x, p.y + itemSize.y), bg);
+    ImGui::SetCursorScreenPos({p.x - (itemSize.x + padBig), p.y});
+    
+    p = ImGui::GetCursorScreenPos();
+    draw->AddRectFilled(p, ImVec2(p.x - itemSize.x * 2, p.y + itemSize.y), bg);
+    ImGui::SetCursorScreenPos({p.x - (itemSize.x * 2 + pad), p.y});
+    
+    p = ImGui::GetCursorScreenPos();
+    draw->AddRectFilled(p, ImVec2(p.x - itemSize.x, p.y + itemSize.y), bg);
   }
 
   void WorldGui::Inventory()
