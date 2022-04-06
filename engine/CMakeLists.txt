@@ -36,6 +36,7 @@ add_library(${PROJECT_NAME} SHARED
   third_party/imgui/freetype/imgui_freetype.cpp
   States/States.cpp
   Scenes/Scenes.cpp
+  Resources/ResourcesManager.cpp
   Guis/Gui.cpp
   Guis/Console.cpp
   Maths/ElapsedTime.cpp

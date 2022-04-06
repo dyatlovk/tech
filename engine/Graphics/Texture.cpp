@@ -5,7 +5,21 @@
 
 namespace mtEngine
 {
-  bool Texture::LoadTextureFromFile(const std::string &filename, GLuint* out_texture, int* out_width, int* out_height)
+  Texture::Texture() = default;
+
+  std::shared_ptr<Texture> Texture::Create(const std::string &name, const std::string &path)
+  {
+    auto mgr = ResourcesManager::Get();
+    if (auto resource = mgr->find<Texture>(name)) return resource;
+
+    auto resource = std::make_shared<Texture>();
+    resource->LoadTextureFromFile(path);
+    mgr->add(name, std::dynamic_pointer_cast<Resource>(resource));
+
+    return resource;
+  }
+
+  bool Texture::LoadTextureFromFile(const std::string &filename)
   {
     // Load from file
     int image_width = 0;
@@ -31,10 +45,10 @@ namespace mtEngine
     #endif
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image_width, image_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
     stbi_image_free(image_data);
-
-    *out_texture = image_texture;
-    *out_width = image_width;
-    *out_height = image_height;
+    
+    texture = image_texture;
+    width = image_width;
+    height = image_height;
 
     return true;
   }

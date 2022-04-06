@@ -28,9 +28,5 @@ namespace Game
 
   private:
     std::unique_ptr<MenuGui> gui;
-    int tex_width = 0;
-    int tex_height = 0;
-    GLuint bg_image = 0;
-    std::unique_ptr<Texture> bg_texture;
   };
 } // namespace Game
