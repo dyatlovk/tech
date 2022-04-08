@@ -14,12 +14,12 @@ help:
 ########################################################################################################################
 compile:
 	cd $$pwd
-	cmake --configure build
+	# cmake --configure build
 	cmake --build build
 	notify-send "Tech demo compiled"
 configure:
 	cd $$pwd
-	cmake --configure build
+	# cmake --configure build
 	notify-send "Tech demo configured"
 install:
 	cd $$pwd
@@ -27,7 +27,7 @@ install:
 	notify-send "Tech demo installed"
 rebuild:
 	cd $$pwd
-	cmake --configure build
+	# cmake --configure build
 	cmake --build build
 	cmake --install build
-	notify-send "Tech demo compiled and installed"
+	# notify-send "Tech demo compiled and installed"

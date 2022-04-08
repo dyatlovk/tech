@@ -39,6 +39,7 @@ add_library(${PROJECT_NAME} SHARED
   Resources/ResourcesManager.cpp
   Guis/Gui.cpp
   Guis/Console.cpp
+  Guis/Font.cpp
   Maths/ElapsedTime.cpp
   )
 add_library(mt::engine ALIAS ${PROJECT_NAME})

@@ -1,13 +1,15 @@
 #include "WorldGui.hpp"
 
+#include "Guis/Font.hpp"
 #include "../../MainMenu/MainMenu.hpp"
 #include "Devices/Keyboard.hpp"
 #include "Guis/Gui.hpp"
 #include "../../../Gui/Math.hpp"
+#include "Guis/IconsFontAwesome6.h"
 
 namespace Game
 {
-  WorldGui::WorldGui() = default;
+  WorldGui::WorldGui() { }
 
   void WorldGui::PlayerInfoDock()
   {
@@ -17,7 +19,7 @@ namespace Game
     
     ImVec2 vSize = ImGui::GetMainViewport()->Size;
     ImGui::SetNextWindowPos({vSize.x, vSize.y - 20}, ImGuiCond_Always, ImVec2(1.0f, 1.0f));
-    ImGui::SetNextWindowSize({vSize.x, 70});
+    ImGui::SetNextWindowSize({vSize.x, 80});
     
     ImGui::Begin("##player_info", nullptr, flags);
     RowLeft();
@@ -28,8 +30,12 @@ namespace Game
 
   void WorldGui::RowLeft()
   {
+    ImFont *iconFont = ResourcesManager::Get()->find<Font>("icons")->GetFont();
+    ImFont *boldFont = ResourcesManager::Get()->find<Font>("ui_bold")->GetFont();
+    if(!iconFont || !boldFont) return;
+    ImVec4 textColor = ImVec4(1.0, 0.92, 0.65, 1.0);
     float pad = 5;
-    const ImU32 bg = ImColor(ImVec4(0.17, 0.17, 0.17, 1.0));
+    const ImU32 bg = ImColor(ImVec4(0.17, 0.17, 0.17, 0.2));
     auto dock = ImGui::GetCurrentWindow();
     ImVec2 dockSize = dock->WorkRect.GetSize();
     ImDrawList *draw = ImGui::GetWindowDrawList();
@@ -39,25 +45,54 @@ namespace Game
    
     draw->AddRectFilled(p, ImVec2(p.x + itemSize.x, p.y + itemSize.y), bg);
     const char *HealthText = "100";
+    const char *HealthIcon = ICON_FA_HEART_PULSE;
     ImVec2 HealthTextSize = ImGui::CalcTextSize(HealthText);
-    ImGui::SetCursorScreenPos({p.x + itemSize.x / 2 - HealthTextSize.x / 2, p.y + itemSize.y / 2 - HealthTextSize.y / 2});
-    ImGui::TextColored(ImVec4(1.0, 0.92, 0.65, 1.0), "%s", HealthText);
+    ImVec2 HealthIconSize = ImGui::CalcTextSize(HealthIcon);
+    ImVec2 HealthBound = {HealthTextSize.x + HealthIconSize.y, HealthIconSize.y + 15.0f + HealthTextSize.y};
+   
+    // Health
+    ImGui::SetCursorScreenPos({p.x + itemSize.x / 2 - HealthIconSize.x / 2 - 6, p.y + itemSize.y / 2 - HealthIconSize.y - 5});
+    ImGui::PushFont(iconFont);
+    ImGui::TextColored(textColor, "%s", HealthIcon);
+    ImGui::PopFont();
+    ImGui::SetCursorScreenPos({p.x + itemSize.x / 2 - HealthTextSize.x / 2, p.y + itemSize.y / 2 - HealthTextSize.y / 2 + 15});
+    ImGui::PushFont(boldFont);
+    ImGui::TextColored(textColor, "%s", HealthText);
+    ImGui::PopFont();
     ImGui::SetCursorScreenPos({p.x + itemSize.x + pad, p.y});
-    
+   
+    // Armor
     p = ImGui::GetCursorScreenPos();
     draw->AddRectFilled(p, ImVec2(p.x + itemSize.x, p.y + itemSize.y), bg);
     const char *armorText = "87";
+    const char *armorIconText = ICON_FA_USER_SHIELD;
     ImVec2 armorTextSize = ImGui::CalcTextSize(armorText);
-    ImGui::SetCursorScreenPos({p.x + itemSize.x / 2 - armorTextSize.x / 2, p.y + itemSize.y / 2 - armorTextSize.y / 2});
-    ImGui::TextColored(ImVec4(1.0, 0.92, 0.65, 1.0), "%s", armorText);
+    ImVec2 armorIconSize = ImGui::CalcTextSize(armorIconText);
+    ImGui::SetCursorScreenPos({p.x + itemSize.x / 2 - armorIconSize.x / 2 - 5, p.y + itemSize.y / 2 - armorIconSize.y - 5});
+    ImGui::PushFont(iconFont);
+    ImGui::TextColored(textColor, "%s", armorIconText);
+    ImGui::PopFont();
+    ImGui::PushFont(boldFont);
+    ImGui::SetCursorScreenPos({p.x + itemSize.x / 2 - armorTextSize.x / 2, p.y + itemSize.y / 2 - armorTextSize.y + 23});
+    ImGui::TextColored(textColor, "%s", armorText);
+    ImGui::PopFont();
     ImGui::SetCursorScreenPos({p.x + itemSize.x + pad, p.y});
-    
+   
+    // power
     p = ImGui::GetCursorScreenPos();
     draw->AddRectFilled(p, ImVec2(p.x + itemSize.x, p.y + itemSize.y), bg);
     const char *powerText = "99";
+    const char *powerIconText = ICON_FA_PERSON_RUNNING;
     ImVec2 powerTextSize = ImGui::CalcTextSize(powerText);
-    ImGui::SetCursorScreenPos({p.x + itemSize.x / 2 - powerTextSize.x / 2, p.y + itemSize.y / 2 - powerTextSize.y / 2});
-    ImGui::TextColored(ImVec4(1.0, 0.92, 0.65, 1.0), "%s", powerText);
+    ImVec2 powerIconSize = ImGui::CalcTextSize(powerIconText);
+    ImGui::SetCursorScreenPos({p.x + itemSize.x / 2 - powerIconSize.x / 2 - 5, p.y + itemSize.y / 2 - powerIconSize.y - 3});
+    ImGui::PushFont(iconFont);
+    ImGui::TextColored(textColor, "%s", powerIconText);
+    ImGui::PopFont();
+    ImGui::PushFont(boldFont);
+    ImGui::SetCursorScreenPos({p.x + itemSize.x / 2 - powerTextSize.x / 2, p.y + itemSize.y / 2 - powerTextSize.y + 23});
+    ImGui::TextColored(textColor, "%s", powerText);
+    ImGui::PopFont();
 
     // to right pos
     ImGui::SetCursorScreenPos({hudCursor.x + dockSize.x, p.y});
@@ -67,25 +102,58 @@ namespace Game
   {
     float pad = 5;
     float padBig = 10;
-    const ImU32 bg = ImColor(ImVec4(0.17, 0.17, 0.17, 1.0));
+    const ImU32 bg = ImColor(ImVec4(0.17, 0.17, 0.17, 0.2f));
     auto dock = ImGui::GetCurrentWindow();
     ImDrawList *draw = ImGui::GetWindowDrawList();
-    ImVec2 itemSize = {dock->Size.y, dock->Size.y};
+    ImVec2 dockSize = dock->WorkRect.GetSize();
+    ImVec2 itemSize = {dockSize.y, dockSize.y};
+    ImVec2 doubleItemSize = {itemSize.x * 2, itemSize.y};
+    ImFont *boldFont = ResourcesManager::Get()->find<Font>("ui_bold")->GetFont();
+    ImVec2 dockPos = ImGui::GetCursorScreenPos(); // cursor on max right
+   
+    // primary weapon
+    ImGui::SetCursorScreenPos({dockPos.x - doubleItemSize.x, dockPos.y});
+    ImVec2 primaryCursor = ImGui::GetCursorScreenPos();
+    draw->AddRectFilled(primaryCursor, ImVec2(primaryCursor.x + (doubleItemSize.x), primaryCursor.y + doubleItemSize.y), bg);
+    auto primaryImg = ResourcesManager::Get()->find<Texture>("rifle_icon");
+    ImVec2 primaryImgSize = {(float)primaryImg->GetWidth(), (float)primaryImg->GetHeight()};
+    ImGui::SetCursorScreenPos({primaryCursor.x + (doubleItemSize.x / 2 - primaryImgSize.x / 2), primaryCursor.y + (doubleItemSize.y / 2 - primaryImgSize.y / 2)});
+    ImGui::Image((void*)(intptr_t)primaryImg->GetTexture(), primaryImgSize);
+
+    //primary ammo
+    ImGui::SetCursorScreenPos({primaryCursor.x - pad - itemSize.x, primaryCursor.y});
+    ImVec2 primaryAmmoCursor = ImGui::GetCursorScreenPos();
+    draw->AddRectFilled(primaryAmmoCursor, ImVec2(primaryAmmoCursor.x + itemSize.x, primaryAmmoCursor.y + itemSize.y), bg);
+    const char *primAmmoText = "1340";
+    ImVec2 primAmmoSize = ImGui::CalcTextSize(primAmmoText);
+    ImGui::SetCursorScreenPos({primaryAmmoCursor.x + (itemSize.x / 2 - primAmmoSize.x / 2), primaryAmmoCursor.y + 15});
+    ImGui::Text("%s", primAmmoText);
+    auto primaryAmmoImg = ResourcesManager::Get()->find<Texture>("ammo_icon");
+    ImVec2 primaryAmmoImgSize = {(float)primaryAmmoImg->GetWidth(), (float)primaryAmmoImg->GetHeight()};
+    ImGui::SetCursorScreenPos({primaryAmmoCursor.x + (itemSize.x / 2 - primaryAmmoImgSize.x / 2), primaryAmmoCursor.y + (itemSize.y / 2 - primaryAmmoImgSize.y / 2) + 15});
+    ImGui::Image((void*)(intptr_t)primaryAmmoImg->GetTexture(), primaryAmmoImgSize);
     
-    ImVec2 p = ImGui::GetCursorScreenPos();
-    draw->AddRectFilled(p, ImVec2(p.x - itemSize.x * 2, p.y + itemSize.y), bg);
-    ImGui::SetCursorScreenPos({p.x - (itemSize.x * 2 + pad), p.y});
-    
-    p = ImGui::GetCursorScreenPos();
-    draw->AddRectFilled(p, ImVec2(p.x - itemSize.x, p.y + itemSize.y), bg);
-    ImGui::SetCursorScreenPos({p.x - (itemSize.x + padBig), p.y});
-    
-    p = ImGui::GetCursorScreenPos();
-    draw->AddRectFilled(p, ImVec2(p.x - itemSize.x * 2, p.y + itemSize.y), bg);
-    ImGui::SetCursorScreenPos({p.x - (itemSize.x * 2 + pad), p.y});
-    
-    p = ImGui::GetCursorScreenPos();
-    draw->AddRectFilled(p, ImVec2(p.x - itemSize.x, p.y + itemSize.y), bg);
+    // sec weapon
+    ImGui::SetCursorScreenPos({primaryAmmoCursor.x - doubleItemSize.x - padBig, primaryAmmoCursor.y});
+    ImVec2 secCursor = ImGui::GetCursorScreenPos();
+    draw->AddRectFilled(secCursor, ImVec2(secCursor.x + doubleItemSize.x, secCursor.y + itemSize.y), bg);
+    auto secImg = ResourcesManager::Get()->find<Texture>("pistol_icon");
+    ImVec2 secImgSize = {(float)secImg->GetWidth(), (float)secImg->GetHeight()};
+    ImGui::SetCursorScreenPos({secCursor.x + (doubleItemSize.x / 2 - secImgSize.x / 2), secCursor.y + (doubleItemSize.y / 2 - secImgSize.y / 2)});
+    ImGui::Image((void*)(intptr_t)secImg->GetTexture(), secImgSize);
+
+    //sec ammo
+    ImGui::SetCursorScreenPos({secCursor.x - pad - itemSize.x, secCursor.y});
+    ImVec2 secAmmoCursor = ImGui::GetCursorScreenPos();
+    const char *secAmmoText = "256";
+    ImVec2 secAmmoSize = ImGui::CalcTextSize(secAmmoText);
+    ImGui::SetCursorScreenPos({secAmmoCursor.x + (itemSize.x / 2 - secAmmoSize.x / 2), secAmmoCursor.y + 15});
+    ImGui::Text("%s", secAmmoText);
+    draw->AddRectFilled(secAmmoCursor, ImVec2(secAmmoCursor.x + itemSize.x, secAmmoCursor.y + itemSize.y), bg);
+    auto secAmmoImg = ResourcesManager::Get()->find<Texture>("ammo_icon");
+    ImVec2 secAmmoImgSize = {(float)secAmmoImg->GetWidth(), (float)secAmmoImg->GetHeight()};
+    ImGui::SetCursorScreenPos({secAmmoCursor.x + (itemSize.x / 2 - secAmmoImgSize.x / 2), secAmmoCursor.y + (itemSize.y / 2 - secAmmoImgSize.y / 2) + 15});
+    ImGui::Image((void*)(intptr_t)secAmmoImg->GetTexture(), secAmmoImgSize);
   }
 
   void WorldGui::Inventory()
