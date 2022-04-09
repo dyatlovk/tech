@@ -35,7 +35,7 @@ namespace Game
     if(!iconFont || !boldFont) return;
     ImVec4 textColor = ImVec4(1.0, 0.92, 0.65, 1.0);
     float pad = 5;
-    const ImU32 bg = ImColor(ImVec4(0.17, 0.17, 0.17, 0.2));
+    const ImU32 bg = ImColor(ImVec4(0.17, 0.17, 0.17, 0.6));
     auto dock = ImGui::GetCurrentWindow();
     ImVec2 dockSize = dock->WorkRect.GetSize();
     ImDrawList *draw = ImGui::GetWindowDrawList();
@@ -102,7 +102,7 @@ namespace Game
   {
     float pad = 5;
     float padBig = 10;
-    const ImU32 bg = ImColor(ImVec4(0.17, 0.17, 0.17, 0.2f));
+    const ImU32 bg = ImColor(ImVec4(0.17, 0.17, 0.17, 0.6f));
     auto dock = ImGui::GetCurrentWindow();
     ImDrawList *draw = ImGui::GetWindowDrawList();
     ImVec2 dockSize = dock->WorkRect.GetSize();
@@ -145,11 +145,11 @@ namespace Game
     //sec ammo
     ImGui::SetCursorScreenPos({secCursor.x - pad - itemSize.x, secCursor.y});
     ImVec2 secAmmoCursor = ImGui::GetCursorScreenPos();
+    draw->AddRectFilled(secAmmoCursor, ImVec2(secAmmoCursor.x + itemSize.x, secAmmoCursor.y + itemSize.y), bg);
     const char *secAmmoText = "256";
     ImVec2 secAmmoSize = ImGui::CalcTextSize(secAmmoText);
     ImGui::SetCursorScreenPos({secAmmoCursor.x + (itemSize.x / 2 - secAmmoSize.x / 2), secAmmoCursor.y + 15});
     ImGui::Text("%s", secAmmoText);
-    draw->AddRectFilled(secAmmoCursor, ImVec2(secAmmoCursor.x + itemSize.x, secAmmoCursor.y + itemSize.y), bg);
     auto secAmmoImg = ResourcesManager::Get()->find<Texture>("ammo_icon");
     ImVec2 secAmmoImgSize = {(float)secAmmoImg->GetWidth(), (float)secAmmoImg->GetHeight()};
     ImGui::SetCursorScreenPos({secAmmoCursor.x + (itemSize.x / 2 - secAmmoImgSize.x / 2), secAmmoCursor.y + (itemSize.y / 2 - secAmmoImgSize.y / 2) + 15});
