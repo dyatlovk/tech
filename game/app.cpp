@@ -1,4 +1,5 @@
 #include "app.hpp"
+#include "Engine/CVars.hpp"
 #include "Guis/Font.hpp"
 #include "Render/GameRender.hpp"
 #include "Utils/String.hpp"
@@ -31,6 +32,25 @@ namespace Game {
     Graphics::Get()->SetRenderer(std::make_unique<GameRender>());
     Scenes::Get()->SetScene(std::make_unique<MainMenu>());
     gameGui = std::make_unique<GameGui>();
+
+    using CVarParam = std::vector<std::string>;
+    using Input = std::vector<std::string>;
+    CVars::Get()->Add("scenes", "load", {""}, "Load scene", "scenes load main_menu", [this](CVarParam &args, Input &input, bool &isValid) {
+      if(input.size() == 0) {
+        isValid = false;
+        return;
+      }
+
+      if(input.at(0) == "main_menu") {
+        isValid = true;
+        Scenes::Get()->SetScene(std::make_unique<MainMenu>());
+      }
+
+      if(input.at(0) == "world") {
+        isValid = true;
+        Scenes::Get()->SetScene(std::make_unique<World>());
+      }
+    });
   }
 
   void GameApp::BeforeUpdate() {

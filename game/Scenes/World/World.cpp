@@ -28,6 +28,8 @@ namespace Game
     Texture::Create("vss_icon", p + "/Game/textures/weapons/vss.png");
     Texture::Create("armor_icon", p + "/Game/textures/armor.png");
     Texture::Create("grenade_icon", p + "/Game/textures/weapons/grenade.png");
+
+    PLOGD << "world started";
   }
 
   void World::BeforeUpdate() {
@@ -57,5 +59,6 @@ namespace Game
   {
     gui = nullptr;
     layout = nullptr;
+    PLOGD << "world shutdown";
   }
 } // namespace Game

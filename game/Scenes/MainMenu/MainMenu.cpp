@@ -10,6 +10,7 @@ namespace Game
     gui = std::make_unique<MenuGui>();
     const std::string p(RESOURCES);
     auto texture = Texture::Create("bg", p + "/Game/textures/bg.jpg");
+    PLOGD << "main menu started";
   }
 
   void MainMenu::BeforeUpdate() {}
@@ -36,6 +37,7 @@ namespace Game
 
   void MainMenu::Shutdown() {
     gui = nullptr;
+    PLOGD << "main menu shutdown";
   }
 
 } // namespace Game
