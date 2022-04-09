@@ -12,7 +12,7 @@ file(GLOB SOURCES
   Scenes/World/Gui/WorldGui.cpp
   Scenes/World/Gui/Layout.cpp
   )
-set(GAME_INCLUDE ${PROJECT_SOURCE_DIR}/include)
+set(GAME_INCLUDE ${PROJECT_SOURCE_DIR})
 add_executable(${PROJECT_NAME} ${SOURCES})
 target_link_libraries(${PROJECT_NAME} mt::engine)
 target_include_directories(${PROJECT_NAME} PUBLIC ${GAME_INCLUDE})

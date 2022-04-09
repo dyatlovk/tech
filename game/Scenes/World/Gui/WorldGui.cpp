@@ -1,10 +1,10 @@
 #include "WorldGui.hpp"
 
 #include "Guis/Font.hpp"
-#include "../../MainMenu/MainMenu.hpp"
+#include "Scenes/MainMenu/MainMenu.hpp"
 #include "Devices/Keyboard.hpp"
 #include "Guis/Gui.hpp"
-#include "../../../Gui/Math.hpp"
+#include "Gui/Math.hpp"
 #include "Guis/IconsFontAwesome6.h"
 
 namespace Game
@@ -235,17 +235,27 @@ namespace Game
     float width = win_size.GetWidth();
     float height = 160;
     ImVec2 p = ImGui::GetCursorScreenPos();
-    draw->AddRectFilled(p, ImVec2(p.x + width, p.y + height), bg);
+    draw->AddRectFilled(p, ImVec2(p.x + width, p.y + height), bg); //bg
     
     ImGui::SetCursorScreenPos({p.x + padding, p.y + padding});
     float widthWeaponsItems = Game::divide_rectangle(2, padding, win_size.GetWidth() - 20);
     float heightWeaponsItems = 140;
     p = ImGui::GetCursorScreenPos();
-    draw->AddRectFilled(p, ImVec2(p.x + widthWeaponsItems, p.y + heightWeaponsItems), ImColor(ImVec4(0.23f, 0.23f, 0.23f, 0.22f)));
+    ImVec2 primaryCursor = p;
+    draw->AddRectFilled(p, ImVec2(p.x + widthWeaponsItems, p.y + heightWeaponsItems), ImColor(ImVec4(0.23f, 0.23f, 0.23f, 0.22f))); // inner bg
+    auto primaryImg = ResourcesManager::Get()->find<Texture>("vss_icon");
+    ImVec2 primaryImgSize = {(float)primaryImg->GetWidth(), (float)primaryImg->GetHeight()};
+    ImGui::SetCursorScreenPos({primaryCursor.x + (widthWeaponsItems / 2 - primaryImgSize.x / 2), primaryCursor.y + (heightWeaponsItems / 2 - primaryImgSize.y / 2)});
+    ImGui::Image((void*)(intptr_t)primaryImg->GetTexture(), primaryImgSize);
     
     ImGui::SetCursorScreenPos({p.x + widthWeaponsItems + padding, p.y});
     p = ImGui::GetCursorScreenPos();
+    ImVec2 secCursor = p;
     draw->AddRectFilled(p, ImVec2(p.x + widthWeaponsItems, p.y + heightWeaponsItems), ImColor(ImVec4(0.23f, 0.23f, 0.23f, 0.22f)));
+    auto secImg = ResourcesManager::Get()->find<Texture>("pistol_icon");
+    ImVec2 secImgSize = {(float)secImg->GetWidth(), (float)secImg->GetHeight()};
+    ImGui::SetCursorScreenPos({secCursor.x + (widthWeaponsItems / 2 - secImgSize.x / 2), secCursor.y + (heightWeaponsItems / 2 - secImgSize.y / 2)});
+    ImGui::Image((void*)(intptr_t)secImg->GetTexture(), secImgSize);
     
     ImGui::SetCursorScreenPos({panelCursor.x, p.y + height});
   }
@@ -257,7 +267,32 @@ namespace Game
     auto win_size = ImGui::GetCurrentWindow()->WorkRect;
     float width = win_size.GetWidth();
     float height = win_size.GetHeight() - p.y + 20.0f;
-    
+ 
+    // bg
     draw->AddRectFilled(p, ImVec2(p.x + width, p.y + height), ImColor(ImVec4(0.12f, 0.12f, 0.12f, 1.0f)));
+    ImGui::SetCursorScreenPos({p.x + 10, p.y + 10});
+    ImVec2 itemsCursor = ImGui::GetCursorScreenPos();
+    ImGuiStyle& style = ImGui::GetStyle();
+   
+    // bg inner
+    draw->AddRectFilled(itemsCursor, ImVec2(itemsCursor.x + width - 20 - style.ScrollbarSize, itemsCursor.y + height - 20), ImColor(ImVec4(0.10f, 0.10f, 0.10f, 1.0f)));
+    ImGui::BeginChild("##Inventory items", ImVec2(width - 20, height - 20));
+
+    // grid
+    ///////
+    int GRID_SIZE = 17;
+    draw->PushClipRect(itemsCursor, {itemsCursor.x + width - 20 - style.ScrollbarSize, itemsCursor.y + height - 20});
+    // horizontal
+    for(int i = 1; i <= GRID_SIZE; i++)
+      draw->AddLine({itemsCursor.x, itemsCursor.y + 60 * i}, {itemsCursor.x + width - 20, itemsCursor.y + 60 * i}, ImColor(ImVec4(0.12f, 0.12f, 0.12f, 1.0f)));
+
+    // verical
+    for(int i = 1; i <= GRID_SIZE; i++)
+      draw->AddLine({itemsCursor.x + 60 * i, itemsCursor.y}, {itemsCursor.x + 60 * i, itemsCursor.y + height - 20}, ImColor(ImVec4(0.12f, 0.12f, 0.12f, 1.0f)));
+    draw->PopClipRect();
+
+    for(int i = 0; i < 100; i++)
+      ImGui::Text("Text: %d0.4", i);
+    ImGui::EndChild();
   }
 } // namespace Game

@@ -14,16 +14,18 @@ namespace Game
     gui = std::make_unique<WorldGui>();
     layout = std::make_unique<WorldLayout>();
     Keyboard::Get()->OnKey().Add([this](Key key, InputAction action, InputMod mods) {
+      if(Gui::Get()->GetConsole()->IsVisible()) return;
       if(key == Key::I && action == InputAction::Press) {
         show_inv = !show_inv;
       }
     });
 
     const std::string p(RESOURCES);
-    Texture::Create("bg", p + "/Game/textures/bg.jpg");
+    Texture::Create("bg_game", p + "/Game/textures/bg_game.jpg");
     Texture::Create("pistol_icon", p + "/Game/textures/weapons/pistol.png");
     Texture::Create("rifle_icon", p + "/Game/textures/weapons/rifle.png");
     Texture::Create("ammo_icon", p + "/Game/textures/weapons/ammo.png");
+    Texture::Create("vss_icon", p + "/Game/textures/weapons/vss.png");
   }
 
   void World::BeforeUpdate() {
@@ -35,7 +37,7 @@ namespace Game
     ImGui::SetNextWindowSize(ImVec2(viewport.x, viewport.y));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.f, 0.f });
     ImGui::Begin("bg", nullptr, window_flags);
-    auto bgImage = ResourcesManager::Get()->find<Texture>("bg");
+    auto bgImage = ResourcesManager::Get()->find<Texture>("bg_game");
     ImGui::Image((void*)(intptr_t)bgImage->GetTexture(), viewport);
     ImGui::PopStyleVar();
     ImGui::End();
