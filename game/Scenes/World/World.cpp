@@ -26,6 +26,8 @@ namespace Game
     Texture::Create("rifle_icon", p + "/Game/textures/weapons/rifle.png");
     Texture::Create("ammo_icon", p + "/Game/textures/weapons/ammo.png");
     Texture::Create("vss_icon", p + "/Game/textures/weapons/vss.png");
+    Texture::Create("armor_icon", p + "/Game/textures/armor.png");
+    Texture::Create("grenade_icon", p + "/Game/textures/weapons/grenade.png");
   }
 
   void World::BeforeUpdate() {

@@ -1,6 +1,9 @@
 #include "WorldGui.hpp"
+#include <functional>
 
 #include "Guis/Font.hpp"
+#include "Resources/Resource.hpp"
+#include "Resources/ResourcesManager.hpp"
 #include "Scenes/MainMenu/MainMenu.hpp"
 #include "Devices/Keyboard.hpp"
 #include "Guis/Gui.hpp"
@@ -284,15 +287,33 @@ namespace Game
     draw->PushClipRect(itemsCursor, {itemsCursor.x + width - 20 - style.ScrollbarSize, itemsCursor.y + height - 20});
     // horizontal
     for(int i = 1; i <= GRID_SIZE; i++)
-      draw->AddLine({itemsCursor.x, itemsCursor.y + 60 * i}, {itemsCursor.x + width - 20, itemsCursor.y + 60 * i}, ImColor(ImVec4(0.12f, 0.12f, 0.12f, 1.0f)));
+      draw->AddLine({itemsCursor.x, itemsCursor.y + itemUnitSize.x * i}, {itemsCursor.x + width - 20, itemsCursor.y + itemUnitSize.y * i}, ImColor(ImVec4(0.12f, 0.12f, 0.12f, 1.0f)));
 
     // verical
     for(int i = 1; i <= GRID_SIZE; i++)
       draw->AddLine({itemsCursor.x + 60 * i, itemsCursor.y}, {itemsCursor.x + 60 * i, itemsCursor.y + height - 20}, ImColor(ImVec4(0.12f, 0.12f, 0.12f, 1.0f)));
     draw->PopClipRect();
 
-    for(int i = 0; i < 100; i++)
-      ImGui::Text("Text: %d0.4", i);
+    AddItem(itemsCursor, "armor_icon", 2, 3);
+    AddItem({itemsCursor.x + itemUnitSize.x * 2, itemsCursor.y}, "vss_icon", 4, 1);
+    AddItem({itemsCursor.x + itemUnitSize.x * 6, itemsCursor.y}, "pistol_icon", 2, 1, true);
+    AddItem({itemsCursor.x + itemUnitSize.x * 2, itemsCursor.y + itemUnitSize.y * 1}, "grenade_icon", 1, 1);
     ImGui::EndChild();
+  }
+
+  void WorldGui::AddItem(ImVec2 pos, const std::string &imgName, int sizeX, int sizeY, bool hovered)
+  {
+    auto iconImg = ResourcesManager::Get()->find<Texture>(imgName);
+    if(!iconImg) return;
+
+    ImVec2 size = {itemUnitSize.x * sizeX, itemUnitSize.y * sizeY};
+    ImDrawList *draw = ImGui::GetWindowDrawList();
+    ImVec2 imgSize = {(float)iconImg->GetWidth(), (float)iconImg->GetHeight()};
+    if(hovered) {
+        draw->AddRectFilled(pos, {pos.x + size.x, pos.y + size.y}, ImColor(ImVec4(0.31f, 0.43f, 0.33f, 1.0f)));
+        draw->AddRect(pos, {pos.x + size.x, pos.y + size.y}, ImColor(ImVec4(0.33f, 0.91f, 0.43f, 1.0f)));
+    }
+    ImGui::SetCursorScreenPos({pos.x + (size.x / 2 - imgSize.x / 2), pos.y + (size.y / 2 - imgSize.y / 2)});
+    ImGui::Image((void*)(intptr_t)iconImg->GetTexture(), imgSize);
   }
 } // namespace Game
