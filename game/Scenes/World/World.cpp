@@ -1,5 +1,6 @@
 #include "World.hpp"
 
+#include "Gui/Notify.hpp"
 #include "Guis/Gui.hpp"
 #include "Graphics/Texture.hpp"
 
@@ -12,12 +13,30 @@ namespace Game
   void World::Start()
   {
     gui = std::make_unique<WorldGui>();
-    layout = std::make_unique<WorldLayout>();
+    notify = std::make_unique<Notify>();
     Keyboard::Get()->OnKey().Add([this](Key key, InputAction action, InputMod mods) {
       if(Gui::Get()->GetConsole()->IsVisible()) return;
       if(key == Key::I && action == InputAction::Press) {
         show_inv = !show_inv;
       }
+    });
+
+    using CVarParam = std::vector<std::string>;
+    using Input = std::vector<std::string>;
+    CVars::Get()->Add("scenes", "notify_add", {""}, "Add notify message", "scenes add_notify <text> <duration>", [this](CVarParam &args, Input &input, bool &isValid) {
+      if(input.size() == 0) {
+        isValid = false;
+        return;
+      }
+      isValid = true;
+
+      const std::string text = input.at(0);
+      float duration = Message::SHOW_TIME;
+      try {
+        duration = std::stof(input.at(1));
+      } catch (const std::out_of_range& oor) {}
+
+      notify->Add({text, duration});
     });
 
     const std::string p(RESOURCES);
@@ -51,6 +70,7 @@ namespace Game
   {
     gui->PlayerInfoDock();
     if(show_inv) gui->Inventory();
+    notify->Render();
   }
 
   void World::AfterUpdate() {}
@@ -58,7 +78,7 @@ namespace Game
   void World::Shutdown()
   {
     gui = nullptr;
-    layout = nullptr;
+    notify = nullptr;
     PLOGD << "world shutdown";
   }
 } // namespace Game

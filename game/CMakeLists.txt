@@ -5,6 +5,7 @@ file(GLOB SOURCES
   app.cpp
   Render/GameRender.cpp
   Gui/GameGui.cpp
+  Gui/Notify.cpp
   Scenes/MainMenu/MainMenu.cpp
   Scenes/MainMenu/Gui/MenuGui.cpp
 

@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Gui/Notify.hpp"
 #include "Gui/WorldGui.hpp"
-#include "Gui/Layout.hpp"
 #include "Scenes/Scene.hpp"
 #include "Scenes/Scenes.hpp"
 
@@ -32,6 +32,6 @@ namespace Game
 
   private:
     std::unique_ptr<WorldGui> gui;
-    std::unique_ptr<WorldLayout> layout;
+    std::unique_ptr<Notify> notify;
   };
 } // namespace Game

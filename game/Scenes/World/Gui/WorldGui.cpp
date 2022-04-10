@@ -12,7 +12,7 @@
 
 namespace Game
 {
-  WorldGui::WorldGui() { }
+  WorldGui::WorldGui() {}
 
   void WorldGui::PlayerInfoDock()
   {
