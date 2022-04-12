@@ -1,0 +1,19 @@
+## Game
+    HUD:
+        [ ] layout
+        [ ] CVars for testing
+        [ ] Hovering inventory items
+        [ ] Rearange position added/removed items on inventory
+        [ ] Show inventory item info on hovering
+  
+    Dialog:
+        [ ] layout
+        [ ] Cvar command for testing dialog
+  
+    PauseMenu:
+        [ ] add popup window
+        [ ] return to main menu  
+
+## Engine
+    Cvars:
+        [ ] Remove unused vars after scenes reload
