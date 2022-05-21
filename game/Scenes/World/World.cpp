@@ -68,7 +68,7 @@ namespace Game
 
   void World::Update()
   {
-    gui->PlayerInfoDock();
+    gui->PlayerInfo();
     if(show_inv) gui->Inventory();
     notify->Render();
   }

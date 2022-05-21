@@ -30,8 +30,8 @@ namespace mtEngine
     bool LoadTextureFromFile(const std::string &filename);
 
   private:
-    GLuint texture;
-    int width;
-    int height;
+    GLuint texture{};
+    int width{};
+    int height{};
   };
 } // namespace mtEngine

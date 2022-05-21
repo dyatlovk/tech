@@ -15,7 +15,7 @@ namespace Game
     constexpr static std::string_view NAME = "world";
 
     World();
-    ~World();
+    ~World() override;
 
     void Start() override;
     void BeforeUpdate() override;

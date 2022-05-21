@@ -5,9 +5,7 @@
 #include <sstream>
 #include <vector>
 
-namespace mtEngine
-{
-  namespace String
+namespace mtEngine::String
   {
     using SplitMap = std::vector<std::string>;
     static SplitMap Split(const std::string &s, const std::string &delimiter = " ")
@@ -46,16 +44,15 @@ namespace mtEngine
 
     static std::string &trim(std::string s) { return ltrim(rtrim(s)); }
 
-    static std::string dump(std::vector<std::string> val)
+    static std::string dump(const std::vector<std::string>& val)
     {
-      if(val.size() == 0) return "";
+      if(val.empty()) return "";
 
       std::ostringstream ss;
-      for(const auto i : val) {
+      for(const auto& i : val) {
         ss << " " << i;
       }
 
       return trim(ss.str());
     }
-  } // namespace String
-} // namespace mtEngine
+  } // namespace mtEngine

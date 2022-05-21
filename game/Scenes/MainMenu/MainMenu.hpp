@@ -16,15 +16,15 @@ namespace Game
     constexpr static std::string_view NAME = "main_menu";
 
     MainMenu();
-    ~MainMenu();
+    ~MainMenu() override;
 
     void Start() override;
     void BeforeUpdate() override;
     void Update() override;
     void AfterUpdate() override;
-    bool IsPaused() const override { return false; }
+    [[nodiscard]] bool IsPaused() const override { return false; }
     void Shutdown() override;
-    std::string GetName() const override { return std::string(NAME); };
+    [[nodiscard]] std::string GetName() const override { return std::string(NAME); };
 
   private:
     std::unique_ptr<MenuGui> gui;
