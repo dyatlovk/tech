@@ -16,9 +16,9 @@ namespace Game
     void static UpdateHealth(int value, std::shared_ptr<HUDLayout> layout);
     void static UpdatePower(int value, std::shared_ptr<HUDLayout> layout);
     void static UpdateWeaponPrimary(std::shared_ptr<HUDLayout> layout);
-    void static UpdateWeaponSecondary(int value, std::shared_ptr<HUDLayout> layout);
+    void static UpdateWeaponSecondary(std::shared_ptr<HUDLayout> layout);
     void static UpdateArmorPrimary(int value, std::shared_ptr<HUDLayout> layout);
-    void static UpdateArmorSecondary(int value, std::shared_ptr<HUDLayout> layout);
+    void static UpdateAmmoSecondary(int value, std::shared_ptr<HUDLayout> layout);
 
   public:
     std::shared_ptr<HUDLayout> layout;

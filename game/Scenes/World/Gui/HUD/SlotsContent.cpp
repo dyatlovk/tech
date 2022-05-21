@@ -117,11 +117,6 @@ namespace Game
         {item->box.btmRightX, item->box.btmRightY}, bg);
   }
 
-  void SlotsContent::UpdateWeaponSecondary(int value, std::shared_ptr<HUDLayout> layout)
-  {
-
-  }
-
   void SlotsContent::UpdateArmorPrimary(int value, std::shared_ptr<HUDLayout> layout)
   {
     auto content = std::make_shared<SlotsContent>();
@@ -137,7 +132,33 @@ namespace Game
         {item->box.btmRightX, item->box.btmRightY}, bg);
   }
 
-  void SlotsContent::UpdateArmorSecondary(int value, std::shared_ptr<HUDLayout> layout)
+  void SlotsContent::UpdateWeaponSecondary(std::shared_ptr<HUDLayout> layout)
   {
+    auto content = std::make_shared<SlotsContent>();
+    content->layout = std::move(layout);
+    auto bottom = content->layout->GetBottom();
+
+    ImVec4 textColor = ImVec4(1.0, 0.92, 0.65, 1.0);
+    const ImU32 bg = ImColor(ImVec4(0.17, 0.17, 0.17, 0.6));
+    ImDrawList *draw = ImGui::GetWindowDrawList();
+
+    auto item = bottom.slots->rightSlotC;
+    draw->AddRectFilled({item->box.topLeftX, item->box.topLeftY},
+        {item->box.btmRightX, item->box.btmRightY}, bg);
+  }
+
+  void SlotsContent::UpdateAmmoSecondary(int value, std::shared_ptr<HUDLayout> layout)
+  {
+    auto content = std::make_shared<SlotsContent>();
+    content->layout = std::move(layout);
+    auto bottom = content->layout->GetBottom();
+
+    ImVec4 textColor = ImVec4(1.0, 0.92, 0.65, 1.0);
+    const ImU32 bg = ImColor(ImVec4(0.17, 0.17, 0.17, 0.6));
+    ImDrawList *draw = ImGui::GetWindowDrawList();
+
+    auto item = bottom.slots->rightSlotD;
+    draw->AddRectFilled({item->box.topLeftX, item->box.topLeftY},
+        {item->box.btmRightX, item->box.btmRightY}, bg);
   }
 } // namespace Game

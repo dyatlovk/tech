@@ -40,6 +40,8 @@ namespace Game
     SlotsContent::UpdatePower(81, hudLayout);
     SlotsContent::UpdateWeaponPrimary(hudLayout);
     SlotsContent::UpdateArmorPrimary(180, hudLayout);
+    SlotsContent::UpdateWeaponSecondary(hudLayout);
+    SlotsContent::UpdateAmmoSecondary(190, hudLayout);
     ImGui::End();
     ImGui::PopStyleVar();
   }

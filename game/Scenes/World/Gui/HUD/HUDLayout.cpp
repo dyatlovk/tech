@@ -59,6 +59,8 @@ namespace Game
     slots->AddSlotCLeft("power");
     slots->AddSlotARight("weapon_primary");
     slots->AddSlotBRight("ammo_primary");
+    slots->AddSlotCRight("weapon_secondary");
+    slots->AddSlotDRight("ammo_secondary");
     bottom.slots = &slots->getSlots();
   }
 
