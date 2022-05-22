@@ -66,6 +66,8 @@ namespace Game
 
     Bottom &GetBottom();
 
+    Canvas &GetCanvas() { return _canvas; }
+
   public:
     Box2Df padding = {0.0f};
     Coord2Df canvas = {0.0f};

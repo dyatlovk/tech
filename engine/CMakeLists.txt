@@ -42,8 +42,10 @@ add_library(${PROJECT_NAME} SHARED
   Guis/Font.cpp
   Maths/ElapsedTime.cpp
   )
+set(ENGINE_INCLUDE ${PROJECT_SOURCE_DIR})
+set(ENGINE_INCLUDE ${ENGINE_INCLUDE} PARENT_SCOPE)
 add_library(mt::engine ALIAS ${PROJECT_NAME})
-target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR} ${FREETYPE_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PUBLIC ${ENGINE_INCLUDE} ${FREETYPE_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} OpenGL::GL glfw Threads::Threads ${FREETYPE_LIBRARIES})
 install(
   TARGETS 
