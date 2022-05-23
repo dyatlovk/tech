@@ -50,7 +50,7 @@ namespace Game
   {
     r_slot_a.name = name;
     r_slot_a.size = {unitSize.x * 2, unitSize.y};
-    r_slot_a.cursor = {right.x - unitSize.x, right.y};
+    r_slot_a.cursor = {right.x - r_slot_a.size.x, right.y};
     r_slot_a.box.topLeftX = r_slot_a.cursor.x;
     r_slot_a.box.topLeftY = r_slot_a.cursor.y;
     r_slot_a.box.btmRightX = r_slot_a.cursor.x + unitSize.x * 2;

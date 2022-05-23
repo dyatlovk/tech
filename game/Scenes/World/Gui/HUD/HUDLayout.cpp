@@ -32,9 +32,8 @@ namespace Game
 
     Coord2Df &left = bottom.LeftRowBox;
     left.topLeftX = _canvas.inner.topLeftX;
-    left.topLeftY =
-        _canvas.inner.topLeftY + _canvas.innerSize.y - bottom.size.y;
-    left.btmRightX = left.topLeftX + UNIT_SIZE.x;
+    left.topLeftY = _canvas.inner.topLeftY + _canvas.innerSize.y - bottom.size.y;
+    left.btmRightX = _canvas.innerSize.x / 2;
     left.btmRightY = left.topLeftY + UNIT_SIZE.y;
 
     mtVec2f &cursorLeft = bottom.cursorLeft;
@@ -42,15 +41,14 @@ namespace Game
     cursorLeft.y = left.topLeftY;
 
     Coord2Df &right = bottom.RightRowBox;
-    right.topLeftX = bottom.size.x - UNIT_SIZE.x;
-    right.topLeftY =
-        _canvas.inner.topLeftY + _canvas.innerSize.y - bottom.size.y;
-    right.btmRightX = right.topLeftX + UNIT_SIZE.x;
-    right.btmRightY = right.topLeftY + UNIT_SIZE.y;
+    right.topLeftX = _canvas.innerSize.x / 2;
+    right.topLeftY = _canvas.inner.btmRightY - bottom.size.y;
+    right.btmRightX = _canvas.inner.btmRightX;
+    right.btmRightY = _canvas.inner.btmRightY;
 
     mtVec2f &cursorRight = bottom.cursorRight;
-    cursorRight.x = right.topLeftX;
-    cursorRight.y = right.topLeftY;
+    cursorRight.x = right.btmRightX;
+    cursorRight.y = right.btmRightY - UNIT_SIZE.y;
 
     slots->left = cursorLeft;
     slots->right = cursorRight;
