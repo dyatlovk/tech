@@ -11,6 +11,36 @@ namespace Game
   WorldGui::WorldGui()
   {
     hudLayout = std::make_shared<HUDLayout>();
+
+    using CVarParam = std::vector<std::string>;
+    using Input = std::vector<std::string>;
+    CVars::Get()->Add("world", "health", {"100"}, "Set health", "update player health", [this](CVarParam &args, Input &input, bool &isValid) {
+      if(input.size() == 0) {
+        isValid = false;
+        return;
+      }
+
+      health = stoi(input.at(0));
+      isValid = true;
+    });
+    CVars::Get()->Add("world", "armor", {"100"}, "Set armor", "update player armor", [this](CVarParam &args, Input &input, bool &isValid) {
+      if(input.size() == 0) {
+        isValid = false;
+        return;
+      }
+
+      armor = stoi(input.at(0));
+      isValid = true;
+    });
+    CVars::Get()->Add("world", "power", {"100"}, "Set power", "update player power", [this](CVarParam &args, Input &input, bool &isValid) {
+          if(input.size() == 0) {
+            isValid = false;
+            return;
+          }
+
+          power = stoi(input.at(0));
+          isValid = true;
+        });
   };
 
   void WorldGui::PlayerInfo()
@@ -35,9 +65,9 @@ namespace Game
     ImGui::SetNextWindowSize({bottom.size.x, bottom.size.y});
 
     ImGui::Begin("##player_info", nullptr, flags);
-    SlotsContent::UpdateHealth(54, hudLayout);
-    SlotsContent::UpdateArmor(90, hudLayout);
-    SlotsContent::UpdatePower(81, hudLayout);
+    SlotsContent::UpdateHealth(health, hudLayout);
+    SlotsContent::UpdateArmor(armor, hudLayout);
+    SlotsContent::UpdatePower(power, hudLayout);
     SlotsContent::UpdateWeaponPrimary(hudLayout);
     SlotsContent::UpdateArmorPrimary(180, hudLayout);
     SlotsContent::UpdateWeaponSecondary(hudLayout);

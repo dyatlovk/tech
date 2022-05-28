@@ -31,5 +31,8 @@ namespace Game
 
   private:
     std::shared_ptr<HUDLayout> hudLayout;
+    int health = 100;
+    int armor = 100;
+    int power = 100;
   };
 } // namespace Game
