@@ -63,22 +63,27 @@ namespace GameTest
 
     void ExpectedBottom()
     {
-      _expectedBottomDock.size.x = 960.0f;
+      _expectedBottomDock.margin.lft = 20.0f;
+      _expectedBottomDock.margin.up = 0.0f;
+      _expectedBottomDock.margin.rgt = 20.0f;
+      _expectedBottomDock.margin.dwn = 20.0f;
+
+      _expectedBottomDock.size.x = 920.0f;
       _expectedBottomDock.size.y = 80.0f;
-      _expectedBottomDock.cursorLeft.x = 20.0f;
-      _expectedBottomDock.cursorLeft.y = 900.0f;
+      _expectedBottomDock.cursorLeft.x = 40.0f;
+      _expectedBottomDock.cursorLeft.y = 880.0f;
 
-      _expectedBottomDock.LeftRowBox.topLeftX = 20.0f;
-      _expectedBottomDock.LeftRowBox.topLeftY = 900.0f;
-      _expectedBottomDock.LeftRowBox.btmRightX = 480.0f;
-      _expectedBottomDock.LeftRowBox.btmRightY = 980.0f;
+      _expectedBottomDock.LeftRowBox.topLeftX = 40.0f;
+      _expectedBottomDock.LeftRowBox.topLeftY = 880.0f;
+      _expectedBottomDock.LeftRowBox.btmRightX = 500.0f;
+      _expectedBottomDock.LeftRowBox.btmRightY = 960.0f;
 
-      _expectedBottomDock.cursorRight.x = 980.0f;
-      _expectedBottomDock.cursorRight.y = 900.0f;
-      _expectedBottomDock.RightRowBox.topLeftX = 480.0f;
-      _expectedBottomDock.RightRowBox.topLeftY = 900.0f;
-      _expectedBottomDock.RightRowBox.btmRightX = 980.0f;
-      _expectedBottomDock.RightRowBox.btmRightY = 980.0f;
+      _expectedBottomDock.cursorRight.x = 960.0f;
+      _expectedBottomDock.cursorRight.y = 880.0f;
+      _expectedBottomDock.RightRowBox.topLeftX = 500.0f;
+      _expectedBottomDock.RightRowBox.topLeftY = 880.0f;
+      _expectedBottomDock.RightRowBox.btmRightX = 960.0f;
+      _expectedBottomDock.RightRowBox.btmRightY = 960.0f;
     }
   };
 } // namespace GameTest

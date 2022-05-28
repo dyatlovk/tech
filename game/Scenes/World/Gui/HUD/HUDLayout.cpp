@@ -27,13 +27,13 @@ namespace Game
 
   void HUDLayout::AddBottom()
   {
-    bottom.margin = padding;
-    bottom.size = {_canvas.innerSize.x, DEFAULT_HEIGHT};
+    bottom.margin = {20.0f, 0.0f, 20.0f, 20.0f};
+    bottom.size = {_canvas.innerSize.x - bottom.margin.lft - bottom.margin.rgt, DEFAULT_HEIGHT};
 
     Coord2Df &left = bottom.LeftRowBox;
-    left.topLeftX = _canvas.inner.topLeftX;
-    left.topLeftY = _canvas.inner.topLeftY + _canvas.innerSize.y - bottom.size.y;
-    left.btmRightX = _canvas.innerSize.x / 2;
+    left.topLeftX = _canvas.inner.topLeftX + bottom.margin.lft;
+    left.topLeftY = _canvas.inner.btmRightY - bottom.margin.dwn - bottom.size.y;
+    left.btmRightX = _canvas.innerSize.x / 2 + bottom.margin.lft;
     left.btmRightY = left.topLeftY + UNIT_SIZE.y;
 
     mtVec2f &cursorLeft = bottom.cursorLeft;
@@ -41,10 +41,10 @@ namespace Game
     cursorLeft.y = left.topLeftY;
 
     Coord2Df &right = bottom.RightRowBox;
-    right.topLeftX = _canvas.innerSize.x / 2;
-    right.topLeftY = _canvas.inner.btmRightY - bottom.size.y;
-    right.btmRightX = _canvas.inner.btmRightX;
-    right.btmRightY = _canvas.inner.btmRightY;
+    right.topLeftX = _canvas.innerSize.x / 2 + bottom.margin.rgt;
+    right.topLeftY = _canvas.inner.btmRightY - bottom.size.y - bottom.margin.dwn;
+    right.btmRightX = _canvas.inner.btmRightX - bottom.margin.rgt;
+    right.btmRightY = _canvas.inner.btmRightY - bottom.margin.dwn;
 
     mtVec2f &cursorRight = bottom.cursorRight;
     cursorRight.x = right.btmRightX;

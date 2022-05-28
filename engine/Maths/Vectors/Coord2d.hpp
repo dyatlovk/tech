@@ -6,7 +6,7 @@ namespace mtEngine
 {
   struct Coord2Df
   {
-    float topLeftX, topLeftY, btmRightX, btmRightY;
+    float topLeftX, topLeftY, btmRightX, btmRightY = 0.0f;
 
     Coord2Df &operator=(Pos2Df pos)
     {

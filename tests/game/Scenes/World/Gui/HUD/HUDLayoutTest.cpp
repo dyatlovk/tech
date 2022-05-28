@@ -58,12 +58,12 @@ namespace GameTest
 
     EXPECT_EQ(slots->leftSlotA->size.x, 80.0f);
     EXPECT_EQ(slots->leftSlotA->size.y, 80.0f);
-    EXPECT_EQ(slots->leftSlotA->cursor.x, 20.0f);
-    EXPECT_EQ(slots->leftSlotA->cursor.y, 900.0f);
-    EXPECT_EQ(slots->leftSlotA->box.topLeftX, 20.0f);
-    EXPECT_EQ(slots->leftSlotA->box.topLeftY, 900.0f);
-    EXPECT_EQ(slots->leftSlotA->box.btmRightX, 100.0f);
-    EXPECT_EQ(slots->leftSlotA->box.btmRightY, 980.0f);
+    EXPECT_EQ(slots->leftSlotA->cursor.x, 40.0f);
+    EXPECT_EQ(slots->leftSlotA->cursor.y, 880.0f);
+    EXPECT_EQ(slots->leftSlotA->box.topLeftX, 40.0f);
+    EXPECT_EQ(slots->leftSlotA->box.topLeftY, 880.0f);
+    EXPECT_EQ(slots->leftSlotA->box.btmRightX, 120.0f);
+    EXPECT_EQ(slots->leftSlotA->box.btmRightY, 960.0f);
   }
 
   TEST_F(HUDLayoutTest, SlotLeftB)
@@ -74,12 +74,12 @@ namespace GameTest
 
     EXPECT_EQ(slots->leftSlotB->size.x, 80.0f);
     EXPECT_EQ(slots->leftSlotB->size.y, 80.0f);
-    EXPECT_EQ(slots->leftSlotB->cursor.x, 105.0f);
-    EXPECT_EQ(slots->leftSlotB->cursor.y, 900.0f);
-    EXPECT_EQ(slots->leftSlotB->box.topLeftX, 105.0f);
-    EXPECT_EQ(slots->leftSlotB->box.topLeftY, 900.0f);
-    EXPECT_EQ(slots->leftSlotB->box.btmRightX, 185.0f);
-    EXPECT_EQ(slots->leftSlotB->box.btmRightY, 980.0f);
+    EXPECT_EQ(slots->leftSlotB->cursor.x, 125.0f);
+    EXPECT_EQ(slots->leftSlotB->cursor.y, 880.0f);
+    EXPECT_EQ(slots->leftSlotB->box.topLeftX, 125.0f);
+    EXPECT_EQ(slots->leftSlotB->box.topLeftY, 880.0f);
+    EXPECT_EQ(slots->leftSlotB->box.btmRightX, 205.0f);
+    EXPECT_EQ(slots->leftSlotB->box.btmRightY, 960.0f);
   }
 
   TEST_F(HUDLayoutTest, SlotLeftC)
@@ -90,12 +90,12 @@ namespace GameTest
 
     EXPECT_EQ(slots->leftSlotC->size.x, 80.0f);
     EXPECT_EQ(slots->leftSlotC->size.y, 80.0f);
-    EXPECT_EQ(slots->leftSlotC->cursor.x, 190.0f);
-    EXPECT_EQ(slots->leftSlotC->cursor.y, 900.0f);
-    EXPECT_EQ(slots->leftSlotC->box.topLeftX, 190.0f);
-    EXPECT_EQ(slots->leftSlotC->box.topLeftY, 900.0f);
-    EXPECT_EQ(slots->leftSlotC->box.btmRightX, 270.0f);
-    EXPECT_EQ(slots->leftSlotC->box.btmRightY, 980.0f);
+    EXPECT_EQ(slots->leftSlotC->cursor.x, 210.0f);
+    EXPECT_EQ(slots->leftSlotC->cursor.y, 880.0f);
+    EXPECT_EQ(slots->leftSlotC->box.topLeftX, 210.0f);
+    EXPECT_EQ(slots->leftSlotC->box.topLeftY, 880.0f);
+    EXPECT_EQ(slots->leftSlotC->box.btmRightX, 290.0f);
+    EXPECT_EQ(slots->leftSlotC->box.btmRightY, 960.0f);
   }
 
   TEST_F(HUDLayoutTest, SlotRightA)
@@ -106,59 +106,59 @@ namespace GameTest
 
     EXPECT_EQ(slots->rightSlotA->size.x, 160.0f);
     EXPECT_EQ(slots->rightSlotA->size.y, 80.0f);
-    EXPECT_EQ(slots->rightSlotA->cursor.x, 820.0f);
-    EXPECT_EQ(slots->rightSlotA->cursor.y, 900.0f);
-    EXPECT_EQ(slots->rightSlotA->box.topLeftX, 820.0f);
-    EXPECT_EQ(slots->rightSlotA->box.topLeftY, 900.0f);
-    EXPECT_EQ(slots->rightSlotA->box.btmRightX, 980.0f);
-    EXPECT_EQ(slots->rightSlotA->box.btmRightY, 980.0f);
+    EXPECT_EQ(slots->rightSlotA->cursor.x, 800.0f);
+    EXPECT_EQ(slots->rightSlotA->cursor.y, 880.0f);
+    EXPECT_EQ(slots->rightSlotA->box.topLeftX, 800.0f);
+    EXPECT_EQ(slots->rightSlotA->box.topLeftY, 880.0f);
+    EXPECT_EQ(slots->rightSlotA->box.btmRightX, 960.0f);
+    EXPECT_EQ(slots->rightSlotA->box.btmRightY, 960.0f);
   }
-  
+
   TEST_F(HUDLayoutTest, SlotRightB)
   {
     layout->RegisterDocks();
-    
+
     auto slots = layout->GetBottom().slots;
 
     EXPECT_EQ(slots->rightSlotB->size.x, 80.0f);
     EXPECT_EQ(slots->rightSlotB->size.y, 80.0f);
-    EXPECT_EQ(slots->rightSlotB->cursor.x, 735.0f);
-    EXPECT_EQ(slots->rightSlotB->cursor.y, 900.0f);
-    EXPECT_EQ(slots->rightSlotB->box.topLeftX, 735.0f);
-    EXPECT_EQ(slots->rightSlotB->box.topLeftY, 900.0f);
-    EXPECT_EQ(slots->rightSlotB->box.btmRightX, 815.0f);
-    EXPECT_EQ(slots->rightSlotB->box.btmRightY, 980.0f);
+    EXPECT_EQ(slots->rightSlotB->cursor.x, 715.0f);
+    EXPECT_EQ(slots->rightSlotB->cursor.y, 880.0f);
+    EXPECT_EQ(slots->rightSlotB->box.topLeftX, 715.0f);
+    EXPECT_EQ(slots->rightSlotB->box.topLeftY, 880.0f);
+    EXPECT_EQ(slots->rightSlotB->box.btmRightX, 795.0f);
+    EXPECT_EQ(slots->rightSlotB->box.btmRightY, 960.0f);
   }
-  
- TEST_F(HUDLayoutTest, SlotRightC)
- {
-   layout->RegisterDocks();
-   
-   auto slots = layout->GetBottom().slots;
-   
-   EXPECT_EQ(slots->rightSlotC->size.x, 160.0f);
-   EXPECT_EQ(slots->rightSlotC->size.y, 80.0f);
-   EXPECT_EQ(slots->rightSlotC->cursor.x, 570.0f);
-   EXPECT_EQ(slots->rightSlotC->cursor.y, 900.0f);
-   EXPECT_EQ(slots->rightSlotC->box.topLeftX, 570.0f);
-   EXPECT_EQ(slots->rightSlotC->box.topLeftY, 900.0f);
-   EXPECT_EQ(slots->rightSlotC->box.btmRightX, 730.0f);
-   EXPECT_EQ(slots->rightSlotC->box.btmRightY, 980.0f);
- }
 
-TEST_F(HUDLayoutTest, SlotRightD)
-{
- layout->RegisterDocks();
+  TEST_F(HUDLayoutTest, SlotRightC)
+  {
+    layout->RegisterDocks();
 
- auto slots = layout->GetBottom().slots;
+    auto slots = layout->GetBottom().slots;
 
- EXPECT_EQ(slots->rightSlotD->size.x, 80.0f);
- EXPECT_EQ(slots->rightSlotD->size.y, 80.0f);
- EXPECT_EQ(slots->rightSlotD->cursor.x, 485.0f);
- EXPECT_EQ(slots->rightSlotD->cursor.y, 900.0f);
- EXPECT_EQ(slots->rightSlotD->box.topLeftX, 485.0f);
- EXPECT_EQ(slots->rightSlotD->box.topLeftY, 900.0f);
- EXPECT_EQ(slots->rightSlotD->box.btmRightX, 565.0f);
- EXPECT_EQ(slots->rightSlotD->box.btmRightY, 980.0f);
-}
+    EXPECT_EQ(slots->rightSlotC->size.x, 160.0f);
+    EXPECT_EQ(slots->rightSlotC->size.y, 80.0f);
+    EXPECT_EQ(slots->rightSlotC->cursor.x, 550.0f);
+    EXPECT_EQ(slots->rightSlotC->cursor.y, 880.0f);
+    EXPECT_EQ(slots->rightSlotC->box.topLeftX, 550.0f);
+    EXPECT_EQ(slots->rightSlotC->box.topLeftY, 880.0f);
+    EXPECT_EQ(slots->rightSlotC->box.btmRightX, 710.0f);
+    EXPECT_EQ(slots->rightSlotC->box.btmRightY, 960.0f);
+  }
+
+  TEST_F(HUDLayoutTest, SlotRightD)
+  {
+    layout->RegisterDocks();
+
+    auto slots = layout->GetBottom().slots;
+
+    EXPECT_EQ(slots->rightSlotD->size.x, 80.0f);
+    EXPECT_EQ(slots->rightSlotD->size.y, 80.0f);
+    EXPECT_EQ(slots->rightSlotD->cursor.x, 465.0f);
+    EXPECT_EQ(slots->rightSlotD->cursor.y, 880.0f);
+    EXPECT_EQ(slots->rightSlotD->box.topLeftX, 465.0f);
+    EXPECT_EQ(slots->rightSlotD->box.topLeftY, 880.0f);
+    EXPECT_EQ(slots->rightSlotD->box.btmRightX, 545.0f);
+    EXPECT_EQ(slots->rightSlotD->box.btmRightY, 960.0f);
+  }
 } // namespace GameTest
