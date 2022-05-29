@@ -23,4 +23,31 @@ namespace EngineTest
     auto _commands = instance->getList();
     EXPECT_EQ(1, _commands.size());
   }
+
+  TEST_F(CVarsTest, GroupNotFound)
+  {
+    instance->Exec("notfound test 1");
+    auto _commands = instance->getList();
+    EXPECT_EQ(-1, callback);
+  }
+
+  TEST_F(CVarsTest, ClearStorage)
+  {
+    instance->ClearStorage();
+
+    auto _commands = instance->getList();
+    EXPECT_EQ(0, _commands.size());
+  }
+
+  TEST_F(CVarsTest, ExecCallbackValid)
+  {
+    instance->Exec("group test 1");
+    EXPECT_EQ(1, callback);
+  }
+
+  TEST_F(CVarsTest, ExecCallbackNotValid)
+  {
+    instance->Exec("group test 0");
+    EXPECT_NE(1, callback);
+  }
 }

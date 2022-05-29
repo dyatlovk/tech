@@ -90,7 +90,13 @@ namespace mtEngine
       return;
     }
 
-    Value &foundCommand = getCommand(commands->name, foundGroup);
+    Value &foundCommand = t_values;
+    try {
+      foundCommand = getCommand(commands->name, foundGroup);
+    } catch (std::invalid_argument &e) {
+      PLOGE << "cvar: " << commands->group << "::" << commands->name << " not found";
+      return;
+    }
 
     // exec command firstly
     bool isValid = false;
@@ -116,7 +122,6 @@ namespace mtEngine
       PLOGD << foundCommand.group << "::" << foundCommand.name << " \"" << String::dump(foundCommand.args) << "\"";
       return;
     }
-    if(!isValid) return;
     PLOGD << "callback: " << String::dump(commands->args);
     foundCommand.args = commands->args;
 
