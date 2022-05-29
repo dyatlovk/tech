@@ -19,20 +19,20 @@ namespace mtEngine
 
     struct Commands
     {
-      std::string group = "" ;
-      std::string name  = "" ;
-      ClientArgs args        ;
+      std::string group ;
+      std::string name  ;
+      ClientArgs args   ;
     } t_commands;
 
     struct Value
     {
-      std::string group       = ""                                     ;
-      std::string name        = ""                                     ;
-      std::string description = ""                                     ;
-      std::string help        = ""                                     ;
-      ClientArgs args                                                  ;
-      bool readOnly           = false                                  ;
-      std::string type        = ""                                     ;
+      std::string group                                    ;
+      std::string name                                     ;
+      std::string description                              ;
+      std::string help                                     ;
+      ClientArgs args                                      ;
+      bool readOnly           = false                      ;
+      std::string type                                     ;
       std::function<void(ClientArgs &args, InputArgs &input, bool &isValid)> callback ;
     } t_values;
 
@@ -43,7 +43,7 @@ namespace mtEngine
   public:
     CVars();
 
-    ~CVars();
+    ~CVars() override;
 
     static std::unique_ptr<CVars> Init() { return std::make_unique<CVars>(); }
 
@@ -55,7 +55,7 @@ namespace mtEngine
         const std::string &description,
         const std::string &help,
         std::function<void(ClientArgs &args, InputArgs &input, bool &isValid)> callback,
-        const std::string &type = "var",
+        const std::string &type = std::string(VAR_FLAG),
         bool readOnly = false);
 
     void Exec(const std::string &args);
@@ -66,17 +66,8 @@ namespace mtEngine
 
     VarsMap getList() { return m_cvars; }
 
-    std::string getType(const std::string &name);
-
-    Delegate<void(std::string name, std::vector<std::string> values)> &
-    OnUpdate()
-    {
-      return onUpdate;
-    }
-
   private:
     static CVars *Instance;
-    std::string Demangle(const char *mangled);
     VarsMap::iterator find(const std::string &group, const std::string &name);
     VarsMap::iterator findGroup(const std::string &group);
     bool containCommand(const std::string &name, VarsMap::iterator &group);

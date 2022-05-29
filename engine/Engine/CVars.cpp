@@ -1,6 +1,7 @@
 #include "CVars.hpp"
 
 #include <iterator>
+#include <utility>
 
 #include "Utils/String.hpp"
 
@@ -25,7 +26,6 @@ namespace mtEngine
       const std::string &type, bool readOnly)
   {
     auto foundGroup = findGroup(group);
-    auto isCommandExist = containCommand(name, foundGroup);
 
     if (foundGroup == m_cvars.end())
     {
@@ -37,14 +37,13 @@ namespace mtEngine
     t_values.group       = group;
     t_values.description = description;
     t_values.help        = help;
-    t_values.callback    = callback;
+    t_values.callback    = std::move(callback);
     t_values.readOnly    = readOnly;
     t_values.type        = type;
 
     foundGroup->second.push_back(t_values);
 
     PLOGD << "cvars add: " << group << "::" << name << "{" << description << "}";
-    return;
   }
 
   /**
@@ -70,7 +69,7 @@ namespace mtEngine
 
     // no command name
     // print all commands in group
-    if (commands->name.compare("") == 0)
+    if (commands->name.empty())
     {
       std::string permission = "[RW]";
       PLOG_NONE;
@@ -78,10 +77,10 @@ namespace mtEngine
       PLOGD << "-----------------------------------------------";
       for (const auto &f : groupCommands)
       {
-        std::string values = "";
+        std::string values;
         if(f.readOnly) permission = "[R]";
         if(f.type == VAR_FLAG && f.args.size() != 0) values = String::dump(f.args);
-        if(values == "") {
+        if(values.empty()) {
           PLOGD << f.name;
         } else {
           PLOGD << f.name << ": \"" << values << "\" " << permission;
@@ -101,13 +100,13 @@ namespace mtEngine
     }
     
     // check args
-    if(foundCommand.args.size() == 0) {
+    if(foundCommand.args.empty()) {
       PLOGD << foundCommand.group << "::" << foundCommand.name << " \"" << String::dump(foundCommand.args) << "\"";
       return;
     }
     
     ClientArgs clientArgs;
-    if(commands->args.size() == 0) {
+    if(commands->args.empty()) {
       PLOGD << foundCommand.group << "::" << foundCommand.name << " \"" << String::dump(foundCommand.args) << "\"";
       return;
     }
@@ -157,7 +156,7 @@ namespace mtEngine
   {
     auto values = group->second;
 
-    for (const auto v : values)
+    for (const auto& v : values)
     {
       if (v.name == name)
       {
@@ -197,9 +196,9 @@ namespace mtEngine
    */
   CVars::Commands *CVars::parse(const std::string &args)
   {
-    if(args == "") return nullptr;
+    if(args.empty()) return nullptr;
     auto tokens = String::Split(args);
-    if (tokens.size() == 0)
+    if (tokens.empty())
       return nullptr; // group required
 
     t_commands.group = "";
