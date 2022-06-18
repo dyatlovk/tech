@@ -64,14 +64,20 @@ namespace mtEngine
 
     void ClearStorage() { m_cvars.clear(); }
 
+    void RemoveGroup(const std::string &name);
+
+    void ClearGroup(const std::string &name);
+
+    void RemoveName(const std::string &group, const std::string &name);
+
     VarsMap getList() { return m_cvars; }
 
   private:
     static CVars *Instance;
-    VarsMap::iterator find(const std::string &group, const std::string &name);
+    CVars::VarsCommands::iterator find(const std::string &group, const std::string &name);
     VarsMap::iterator findGroup(const std::string &group);
     bool containCommand(const std::string &name, VarsMap::iterator &group);
-    Value &getCommand(const std::string &name, const VarsMap::iterator &group);
+    static Value &getCommand(const std::string &name, const VarsMap::iterator &group);
     Commands *parse(const std::string &args);
 
     VarsMap::iterator addGroup(const std::string &name);

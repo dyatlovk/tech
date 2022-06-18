@@ -135,17 +135,42 @@ namespace mtEngine
     }
   }
 
-  CVars::VarsMap::iterator CVars::find(
-      const std::string &group, const std::string &name)
+  void CVars::RemoveGroup(const std::string &name)
+  {
+    auto found = findGroup(name);
+    m_cvars.erase(found);
+  }
+
+  void CVars::ClearGroup(const std::string &name)
+  {
+    auto found = findGroup(name);
+    found->second.clear();
+  }
+
+  void CVars::RemoveName(const std::string &group, const std::string &name)
+  {
+    auto found = findGroup(group);
+    try {
+      auto cmdIt = find(group, name);
+      found->second.erase(cmdIt);
+    } catch (std::invalid_argument &e) {
+      PLOGD << "cvar: " << group << "::" << name << " not found";
+    }
+  }
+
+  CVars::VarsCommands::iterator CVars::find(const std::string &group, const std::string &name)
   {
     auto foundGroup = findGroup(group);
-
-    if (foundGroup == m_cvars.end())
+    auto values = foundGroup->second;
+    for (auto it = values.begin(); it != values.end(); it++)
     {
-      return m_cvars.end();
+      if(it->name == name) {
+        return it;
+      }
     }
 
-    return m_cvars.begin();
+    std::string exceptionMsg = name + " not found";
+    throw std::invalid_argument(exceptionMsg);
   }
 
   CVars::VarsMap::iterator CVars::findGroup(const std::string &group)

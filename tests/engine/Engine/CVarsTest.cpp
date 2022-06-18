@@ -50,4 +50,11 @@ namespace EngineTest
     instance->Exec("group test 0");
     EXPECT_NE(1, callback);
   }
+
+  TEST_F(CVarsTest, RemoveGroup)
+  {
+    instance->RemoveGroup("group");
+    auto cmds = instance->getList();
+    EXPECT_EQ(0, cmds.size());
+  }
 }

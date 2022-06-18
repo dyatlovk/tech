@@ -24,7 +24,7 @@ namespace Game
     using CVarParam = std::vector<std::string>;
     using Input = std::vector<std::string>;
     CVars::Get()->Add("scenes", "notify_add", {""}, "Add notify message", "scenes add_notify <text> <duration>", [this](CVarParam &args, Input &input, bool &isValid) {
-      if(input.size() == 0) {
+      if(input.empty()) {
         isValid = false;
         return;
       }
@@ -79,6 +79,7 @@ namespace Game
   {
     gui = nullptr;
     notify = nullptr;
+    CVars::Get()->RemoveName("scenes", "notify_add");
     PLOGD << "world shutdown";
   }
 } // namespace Game
