@@ -1,5 +1,7 @@
 #include "Scenes.hpp"
 
+#include "Engine/Engine.hpp"
+
 namespace mtEngine {
   Scenes::Scenes() {};
 
@@ -11,7 +13,7 @@ namespace mtEngine {
       scene->Start();
       scene->started = true;
     }
-      
+
     scene->BeforeUpdate();
     scene->Update();
     scene->AfterUpdate();

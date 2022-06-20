@@ -8,8 +8,10 @@ namespace Game
 
   void MainMenu::Start() {
     gui = std::make_unique<MenuGui>();
-    const std::string p(RESOURCES);
-    auto texture = Texture::Create("bg", p + "/Game/textures/bg.jpg");
+    std::future task = Engine::Get()->GetApp()->GetThreadPool().Enqueue([]() {
+      const std::string p(RESOURCES);
+      Texture::Create("bg", p + "/Game/textures/bg.jpg");
+    });
     PLOGD << "main menu started";
   }
 
@@ -25,7 +27,10 @@ namespace Game
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.f, 0.f });
     ImGui::Begin("MainMenu_bg", nullptr, window_flags);
     auto bgImage = ResourcesManager::Get()->find<Texture>("bg");
-    ImGui::Image((void*)(intptr_t)bgImage->GetTexture(), viewport);
+    if(bgImage) {
+      auto tex = bgImage->GetTexture();
+      ImGui::Image((void*)(intptr_t)tex, viewport);
+    }
     ImGui::PopStyleVar();
     ImGui::End();
     

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Utils/Delegate.hpp"
+#include "Utils/ThreadPool.hpp"
 
 #ifdef major
 #undef major
@@ -73,9 +74,12 @@ namespace mtEngine {
      */
     void SetVersion(const Version &version) { this->version = version; }
 
+    ThreadPool &GetThreadPool() { return threadPool; }
+
     private:
     bool started = false;
     std::string name;
     Version version;
+    ThreadPool threadPool;
   };
 }

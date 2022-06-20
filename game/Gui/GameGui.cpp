@@ -9,7 +9,7 @@ namespace Game
     using CVarParam = std::vector<std::string>;
     using Input = std::vector<std::string>;
     CVars::Get()->Add("app", "stats", {"1"}, "Show stats", "app stats <1|0>", [this](CVarParam &args, Input &input, bool &isValid) {
-      if(input.size() == 0) {
+      if(input.empty()) {
         isValid = false;
         return;
       }
@@ -31,7 +31,7 @@ namespace Game
     });
 
     CVars::Get()->Add("app", "ui_debug", {"0"}, "Show windows rectangles", "app ui_debug <1|0>", [this](CVarParam &args, Input &input, bool &isValid) {
-      if(input.size() == 0) {
+      if(input.empty()) {
         isValid = false;
         return;
       }

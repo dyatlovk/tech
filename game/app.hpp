@@ -6,6 +6,7 @@
 #include "Scenes/MainMenu/MainMenu.hpp"
 #include "Scenes/World/World.hpp"
 #include "States/GameStates.hpp"
+#include "Utils/ThreadPool.hpp"
 
 namespace Game
 {
@@ -13,14 +14,14 @@ namespace Game
   {
   public:
     GameApp();
-    ~GameApp();
+    ~GameApp() override;
 
     void Start() override;
     void BeforeUpdate() override;
-    virtual void Update() override;
+    void Update() override;
     void AfterUpdate() override;
-
   private:
     std::unique_ptr<GameGui> gameGui;
+    std::unique_ptr<Scene> scene;
   };
 } // namespace Game

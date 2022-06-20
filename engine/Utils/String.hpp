@@ -55,4 +55,15 @@ namespace mtEngine::String
 
       return trim(ss.str());
     }
+
+    static std::string spaces(const unsigned int size = 1)
+    {
+      std::string str = " ";
+
+      for(auto i = 0; i < size; ++i) {
+        str += " ";
+      }
+
+      return str;
+    }
   } // namespace mtEngine

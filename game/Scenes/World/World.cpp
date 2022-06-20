@@ -39,14 +39,17 @@ namespace Game
       notify->Add({text, duration});
     });
 
-    const std::string p(RESOURCES);
-    Texture::Create("bg_game", p + "/Game/textures/bg_game.jpg");
-    Texture::Create("pistol_icon", p + "/Game/textures/weapons/pistol.png");
-    Texture::Create("rifle_icon", p + "/Game/textures/weapons/rifle.png");
-    Texture::Create("ammo_icon", p + "/Game/textures/weapons/ammo.png");
-    Texture::Create("vss_icon", p + "/Game/textures/weapons/vss.png");
-    Texture::Create("armor_icon", p + "/Game/textures/armor.png");
-    Texture::Create("grenade_icon", p + "/Game/textures/weapons/grenade.png");
+    std::future task = Engine::Get()->GetApp()->GetThreadPool().Enqueue([]() {
+      const std::string p(RESOURCES);
+      Texture::Create("bg_game", p + "/Game/textures/bg_game.jpg");
+      Texture::Create("pistol_icon", p + "/Game/textures/weapons/pistol.png");
+      Texture::Create("rifle_icon", p + "/Game/textures/weapons/rifle.png");
+      Texture::Create("ammo_icon", p + "/Game/textures/weapons/ammo.png");
+      Texture::Create("vss_icon", p + "/Game/textures/weapons/vss.png");
+      Texture::Create("armor_icon", p + "/Game/textures/armor.png");
+      Texture::Create("grenade_icon", p + "/Game/textures/weapons/grenade.png");
+    });
+
 
     PLOGD << "world started";
   }
@@ -61,7 +64,10 @@ namespace Game
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.f, 0.f });
     ImGui::Begin("bg", nullptr, window_flags);
     auto bgImage = ResourcesManager::Get()->find<Texture>("bg_game");
-    ImGui::Image((void*)(intptr_t)bgImage->GetTexture(), viewport);
+    if(bgImage) {
+        auto tex = bgImage->GetTexture();
+        ImGui::Image((void*)(intptr_t)tex, viewport);
+    }
     ImGui::PopStyleVar();
     ImGui::End();
   }

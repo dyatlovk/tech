@@ -1,7 +1,8 @@
 #define STB_IMAGE_IMPLEMENTATION
-#include "third_party/stb/stb_image.h"
-
 #include "Texture.hpp"
+
+#include "Devices/Window.hpp"
+#include "third_party/stb/stb_image.h"
 
 namespace mtEngine
 {
@@ -13,6 +14,7 @@ namespace mtEngine
     if (auto resource = mgr->find<Texture>(name)) return resource;
 
     auto resource = std::make_shared<Texture>();
+    glfwMakeContextCurrent(Window::Get()->GetWindow());
     resource->LoadTextureFromFile(path);
     mgr->add(name, std::dynamic_pointer_cast<Resource>(resource));
 
@@ -24,8 +26,8 @@ namespace mtEngine
     // Load from file
     int image_width = 0;
     int image_height = 0;
-    unsigned char* image_data = stbi_load(filename.c_str(), &image_width, &image_height, NULL, 4);
-    if (image_data == NULL)
+    unsigned char* image_data = stbi_load(filename.c_str(), &image_width, &image_height, nullptr, 4);
+    if (image_data == nullptr)
       return false;
 
     // Create a OpenGL texture identifier
@@ -44,6 +46,7 @@ namespace mtEngine
       glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
     #endif
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image_width, image_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
+
     stbi_image_free(image_data);
     
     texture = image_texture;

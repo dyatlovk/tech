@@ -29,6 +29,7 @@ namespace mtEngine {
 
         // set new scene
         this->scene = std::move(scene);
+        thread_lock = false;
       }
 
       void Reload(std::unique_ptr<Scene> &&scene)
@@ -41,5 +42,6 @@ namespace mtEngine {
 
     private:
       std::unique_ptr<Scene> scene = nullptr;
+      bool thread_lock = false;
   };
 }

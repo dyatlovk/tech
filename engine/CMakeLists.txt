@@ -41,6 +41,7 @@ add_library(${PROJECT_NAME} SHARED
   Guis/Console.cpp
   Guis/Font.cpp
   Maths/ElapsedTime.cpp
+  Utils/ThreadPool.cpp
   )
 set(ENGINE_INCLUDE ${PROJECT_SOURCE_DIR})
 set(ENGINE_INCLUDE ${ENGINE_INCLUDE} PARENT_SCOPE)

@@ -122,7 +122,6 @@ namespace mtEngine
       PLOGD << foundCommand.group << "::" << foundCommand.name << " \"" << String::dump(foundCommand.args) << "\"";
       return;
     }
-    PLOGD << "callback: " << String::dump(commands->args);
     foundCommand.args = commands->args;
 
     PLOGD << foundCommand.group << "::" << foundCommand.name << " \"" << String::dump(foundCommand.args) << "\"";
