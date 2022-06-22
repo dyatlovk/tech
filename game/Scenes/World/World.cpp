@@ -83,9 +83,9 @@ namespace Game
 
   void World::Shutdown()
   {
+    CVars::Get()->RemoveName("scenes", "notify_add");
     gui = nullptr;
     notify = nullptr;
-    CVars::Get()->RemoveName("scenes", "notify_add");
     PLOGD << "world shutdown";
   }
 } // namespace Game

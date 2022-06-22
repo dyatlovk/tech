@@ -70,12 +70,14 @@ namespace mtEngine
 
     void RemoveName(const std::string &group, const std::string &name);
 
+    VarsMap::iterator findGroup(const std::string &group);
+    
+    CVars::VarsCommands::iterator find(const std::string &group, const std::string &name);
+
     VarsMap getList() { return m_cvars; }
 
   private:
     static CVars *Instance;
-    CVars::VarsCommands::iterator find(const std::string &group, const std::string &name);
-    VarsMap::iterator findGroup(const std::string &group);
     bool containCommand(const std::string &name, VarsMap::iterator &group);
     static Value &getCommand(const std::string &name, const VarsMap::iterator &group);
     Commands *parse(const std::string &args);

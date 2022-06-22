@@ -57,4 +57,24 @@ namespace EngineTest
     auto cmds = instance->getList();
     EXPECT_EQ(0, cmds.size());
   }
+
+  TEST_F(CVarsTest, findGroup)
+  {
+    auto it = instance->findGroup("group");
+    EXPECT_EQ("group", it->first);
+  }
+
+  TEST_F(CVarsTest, find)
+  {
+    auto it = instance->find("group", "test");
+    EXPECT_EQ("test", it->name);
+  }
+
+  TEST_F(CVarsTest, RemoveName)
+  {
+    instance->RemoveName("group", "test");
+    auto found = instance->findGroup("group");
+    auto size = found->second.size();
+    EXPECT_EQ(0, size);
+  }
 }

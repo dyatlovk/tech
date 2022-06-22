@@ -150,10 +150,12 @@ namespace mtEngine
   {
     auto found = findGroup(group);
     try {
-      auto cmdIt = find(group, name);
-      found->second.erase(cmdIt);
-    } catch (std::invalid_argument &e) {
-      PLOGD << "cvar: " << group << "::" << name << " not found";
+        auto cmdIt = find(group, name);
+        auto cmds = found->second;
+        std::size_t idx = std::distance(std::begin(cmds), cmdIt);
+        found->second.erase(found->second.begin() + idx);
+    } catch(std::invalid_argument &e) {
+        PLOGD << "cvar: " << group << "::" << name << " not found";
     }
   }
 
