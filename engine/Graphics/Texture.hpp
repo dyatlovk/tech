@@ -6,6 +6,7 @@
 #include "Devices/Window.hpp"
 #include "Resources/Resource.hpp"
 #include "Resources/ResourcesManager.hpp"
+#include "Files/File.hpp"
 
 namespace mtEngine
 {
