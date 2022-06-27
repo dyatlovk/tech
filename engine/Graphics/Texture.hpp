@@ -1,9 +1,9 @@
 #pragma once
 
-#include <GL/gl.h>
 #include <memory>
 #include <string>
 
+#include "Devices/Window.hpp"
 #include "Resources/Resource.hpp"
 #include "Resources/ResourcesManager.hpp"
 

@@ -1,9 +1,6 @@
 #include "Window.hpp"
 #include "Engine/Engine.hpp"
 
-#include <GL/gl.h>
-#include <GLFW/glfw3.h>
-
 namespace mtEngine {
   void CallbackFramebufferSize(GLFWwindow *window, int32_t width, int32_t height)
   {
@@ -25,6 +22,7 @@ namespace mtEngine {
   Window::Window(): title("Demo")
   {
     PLOGD << "window started";
+
     if (glfwInit() == GLFW_FALSE)
       throw std::runtime_error("GLFW failed to initialize");
 
@@ -37,6 +35,8 @@ namespace mtEngine {
 
     glfwShowWindow(window);
     glfwMakeContextCurrent(window);
+
+    if(glewInit() != GLEW_OK) throw std::runtime_error("glewInit failed");
 
     glfwSetWindowCloseCallback(window, CallbackWindowClose);
     glfwSetFramebufferSizeCallback(window, CallbackFramebufferSize);

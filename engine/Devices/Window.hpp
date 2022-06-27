@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Engine/Module.hpp"
+#include <GL/glew.h>
+#define GLFW_INCLUDE_GLEXT
 #include <GLFW/glfw3.h>
 #include <array>
 #include <bits/stdint-intn.h>

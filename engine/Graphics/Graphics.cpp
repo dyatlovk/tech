@@ -12,6 +12,12 @@ namespace mtEngine {
     PLOGD << "Graphics shutdown";
   }
 
+  void Graphics::BeforeUpdate()
+  {
+    if(!renderer->started) return;
+    renderer->BeforeUpdate();
+  }
+
   void Graphics::Update()
   {
     if (!renderer->started) {
@@ -19,7 +25,6 @@ namespace mtEngine {
       renderer->started = true;
     }
 
-    renderer->BeforeUpdate();
     renderer->Update();
     renderer->AfterUpdate();
   }

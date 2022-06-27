@@ -1,8 +1,10 @@
 #include "World.hpp"
 
+#include "Devices/Window.hpp"
 #include "Gui/Notify.hpp"
 #include "Guis/Gui.hpp"
 #include "Graphics/Texture.hpp"
+#include "Resources/ResourcesManager.hpp"
 
 namespace Game
 {
@@ -39,7 +41,7 @@ namespace Game
       notify->Add({text, duration});
     });
 
-    std::future task = Engine::Get()->GetApp()->GetThreadPool().Enqueue([]() {
+    Engine::Get()->GetApp()->GetThreadPool().Enqueue([]() {
       const std::string p(RESOURCES);
       Texture::Create("bg_game", p + "/Game/textures/bg_game.jpg");
       Texture::Create("pistol_icon", p + "/Game/textures/weapons/pistol.png");
@@ -50,26 +52,17 @@ namespace Game
       Texture::Create("grenade_icon", p + "/Game/textures/weapons/grenade.png");
     });
 
+    Engine::Get()->GetApp()->GetThreadPool().Enqueue([]() {
+      auto shader = Shader::Create("shader");
+      auto mesh = Mesh::Create("mesh");
+      Model::Create("model", shader.get(), mesh.get());
+    });
 
     PLOGD << "world started";
   }
 
   void World::BeforeUpdate() {
-    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
-    window_flags |= ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMouseInputs;
-    window_flags |= ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoBringToFrontOnFocus;
-    auto viewport = ImGui::GetMainViewport()->Size;
-    ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
-    ImGui::SetNextWindowSize(ImVec2(viewport.x, viewport.y));
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.f, 0.f });
-    ImGui::Begin("bg", nullptr, window_flags);
-    auto bgImage = ResourcesManager::Get()->find<Texture>("bg_game");
-    if(bgImage) {
-        auto tex = bgImage->GetTexture();
-        ImGui::Image((void*)(intptr_t)tex, viewport);
-    }
-    ImGui::PopStyleVar();
-    ImGui::End();
+    
   }
 
   void World::Update()
@@ -77,9 +70,14 @@ namespace Game
     gui->PlayerInfo();
     if(show_inv) gui->Inventory();
     notify->Render();
+
+    auto model = ResourcesManager::Get()->find<Model>("model");
+    if(model) model->Draw();
   }
 
-  void World::AfterUpdate() {}
+  void World::AfterUpdate() {
+   
+  }
 
   void World::Shutdown()
   {

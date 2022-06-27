@@ -2,6 +2,7 @@
 
 #include "Gui/Notify.hpp"
 #include "Gui/WorldGui.hpp"
+#include "Models/Model.hpp"
 #include "Scenes/Scene.hpp"
 #include "Scenes/Scenes.hpp"
 
@@ -33,5 +34,6 @@ namespace Game
   private:
     std::unique_ptr<WorldGui> gui;
     std::unique_ptr<Notify> notify;
+    std::unique_ptr<Model> model;
   };
 } // namespace Game

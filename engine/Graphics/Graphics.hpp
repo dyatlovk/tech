@@ -18,6 +18,8 @@ namespace mtEngine {
 
       void Update() override;
 
+      void BeforeUpdate() override;
+
       void SetRenderer(std::unique_ptr<Renderer> &&renderer) { this->renderer = std::move(renderer); }
 
       Renderer *GetRenderer() const { return renderer.get(); }

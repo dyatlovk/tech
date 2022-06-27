@@ -9,6 +9,7 @@ find_package(glfw3 3.3 REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(Threads REQUIRED)
 find_package(Freetype REQUIRED)
+find_package(GLEW REQUIRED)
 
 configure_file(Config.hpp.in "${PROJECT_SOURCE_DIR}/Config.hpp" @ONLY)
 configure_file(Settings.in "${RESOURCES_DIR}/Engine/Settings.ini" @ONLY)
@@ -23,6 +24,7 @@ add_library(${PROJECT_NAME} SHARED
   Devices/Keyboard.cpp
   Graphics/Graphics.cpp
   Graphics/Texture.cpp
+  Graphics/Shader.cpp
   Inputs/Input.cpp
   Inputs/Buttons/KeyboardInputButton.cpp
   third_party/imgui/imgui.cpp
@@ -43,12 +45,14 @@ add_library(${PROJECT_NAME} SHARED
   Maths/ElapsedTime.cpp
   Utils/ThreadPool.cpp
   Files/File.cpp
+  Models/Model.cpp
+  Models/Mesh.cpp
   )
 set(ENGINE_INCLUDE ${PROJECT_SOURCE_DIR})
 set(ENGINE_INCLUDE ${ENGINE_INCLUDE} PARENT_SCOPE)
 add_library(mt::engine ALIAS ${PROJECT_NAME})
 target_include_directories(${PROJECT_NAME} PUBLIC ${ENGINE_INCLUDE} ${FREETYPE_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} OpenGL::GL glfw Threads::Threads ${FREETYPE_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} OpenGL::GL GLEW glfw Threads::Threads ${FREETYPE_LIBRARIES})
 install(
   TARGETS 
   ${PROJECT_NAME} 

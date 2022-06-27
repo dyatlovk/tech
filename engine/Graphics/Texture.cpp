@@ -1,7 +1,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "Texture.hpp"
 
-#include "Devices/Window.hpp"
 #include "third_party/stb/stb_image.h"
 
 namespace mtEngine
