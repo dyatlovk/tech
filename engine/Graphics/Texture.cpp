@@ -1,4 +1,3 @@
-
 #include "Texture.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -8,19 +7,19 @@ namespace mtEngine
 {
   Texture::Texture() = default;
 
-  std::shared_ptr<Texture> Texture::Create(const std::string &name, const std::string &path)
+  std::shared_ptr<Texture> Texture::Create(const std::string &name, const std::string &path, bool async)
   {
     auto mgr = ResourcesManager::Get();
     if (auto resource = mgr->find<Texture>(name)) return resource;
 
     auto resource = std::make_shared<Texture>();
-    glfwMakeContextCurrent(Window::Get()->GetWindow());
-    std::unique_ptr<File> file = std::make_unique<File>();
-    file->Load(path);
-    resource->LoadFromMemory(file->GetBuffer());
+    resource->file = new File();
+    resource->file->Load(path);
+    resource->LoadFromMemory(resource->file->GetBuffer());
+    
     mgr->add(name, std::dynamic_pointer_cast<Resource>(resource));
-    file = nullptr;
 
+    PLOGD << "texture " << name << " created...";
     return resource;
   }
 
@@ -29,8 +28,6 @@ namespace mtEngine
     image_data = stbi_load(filename.c_str(), &image_width, &image_height, nullptr, 4);
     if (image_data == nullptr) return false;
 
-    GenerateTexture(texture);
-    stbi_image_free(image_data);
     out_width = image_width;
     out_height = image_height;
 
@@ -45,12 +42,21 @@ namespace mtEngine
     image_data = stbi_load_from_memory(content, buf.size(), &image_width, &image_height, nullptr, 4);
     if (image_data == nullptr) return false;
 
-    GenerateTexture(texture);
-    stbi_image_free(image_data);
     out_width = image_width;
     out_height = image_height;
 
     return true;
+  }
+
+  void Texture::Update()
+  {
+    if(isTextureReady) return;
+    if(!file->isWorkReady()) return;
+
+    GenerateTexture(texture);
+    CleanData();
+    isTextureReady = true;
+    delete file;
   }
 
   void Texture::GenerateTexture(GLuint &image_texture)
@@ -71,5 +77,10 @@ namespace mtEngine
     #endif
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image_width, image_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
     glGenerateMipmap(GL_TEXTURE_2D);
+  }
+
+  void Texture::CleanData()
+  {
+    stbi_image_free(image_data);
   }
 } // namespace mtEngine

@@ -4,6 +4,7 @@
 #include "Devices/Window.hpp"
 #include "Engine/Module.hpp"
 #include "Graphics/Renderer.hpp"
+#include "Graphics/Shader.hpp"
 #include <memory>
 
 namespace mtEngine {

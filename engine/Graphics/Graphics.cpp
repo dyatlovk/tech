@@ -3,6 +3,8 @@
 namespace mtEngine {
   Graphics::Graphics()
   {
+    Shader::CreateDefault();
+    PLOGI << "graphics constructor";
   };
 
   Graphics::~Graphics() = default;

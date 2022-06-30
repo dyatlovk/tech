@@ -1,55 +1,56 @@
 #pragma once
 
-#include <memory>
-#include <vector>
-
+#include "Devices/Window.hpp"
 #include "Resources/Resource.hpp"
+#include "Resources/ResourcesManager.hpp"
 
 
 namespace mtEngine
 {
-    class Mesh : public Resource
+  class Mesh : public Resource
+  {
+  public:
+    Mesh() = default;
+
+    ~Mesh() override;
+
+    static std::shared_ptr<Mesh> Create(const std::string &name);
+
+    [[nodiscard]] std::type_index GetTypeIndex() const override
     {
-    public:
-        Mesh() = default;
+      return typeid(Mesh);
+    }
 
-        ~Mesh() override;
+    void CreateBuffers();
 
-        static std::shared_ptr<Mesh> Create(const std::string &name);
+    void BindBuffers();
 
-        [[nodiscard]] std::type_index GetTypeIndex() const override
-        {
-          return typeid(Mesh);
-        }
+    void SetVertices(std::vector<float> vertices)
+    {
+      this->vertices = vertices;
+    };
 
-        void CreateBuffers();
+    void SetVAO(unsigned int vao) { this->vao = vao; };
 
-        void BindBuffers();
+    void SetVBO(unsigned int vbo) { this->vbo = vbo; };
 
-        void SetVertices(std::vector<float> vertices) { this->vertices = vertices; };
+    void Clean();
 
-        void SetVAO(unsigned int vao) { this->vao = vao; };
+    void Draw();
 
-        void SetVBO(unsigned int vbo) { this->vbo = vbo; };
+  private:
+    unsigned int vbo;
+    unsigned int vao;
+    unsigned int ebo;
 
-        void Clean();
-
-        void Draw();
-
-    private:
-        unsigned int vbo;
-        unsigned int vao;
-        unsigned int ebo;
-
-        std::vector<float> vertices{ 
-            0.5f,  0.5f, 0.0f,  // верхняя правая
-            0.5f, -0.5f, 0.0f,  // нижняя правая
-            -0.5f, -0.5f, 0.0f,  // нижняя левая
-            -0.5f,  0.5f, 0.0f
-        };
-        std::vector<unsigned int> indices {
-            0, 1, 3,  // первый треугольник
-            1, 2, 3   // второй треугольник
-        };
+    std::vector<float> vertices{
+        0.5f, 0.5f, 0.0f, // верхняя правая
+        0.5f, -0.5f, 0.0f, // нижняя правая
+        -0.5f, -0.5f, 0.0f, // нижняя левая
+        -0.5f, 0.5f, 0.0f};
+    std::vector<unsigned int> indices{
+        0, 1, 3, // первый треугольник
+        1, 2, 3 // второй треугольник
+    };
   };
-}
+} // namespace mtEngine

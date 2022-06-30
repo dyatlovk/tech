@@ -97,7 +97,6 @@ namespace mtEngine {
   
   void Window::AfterUpdate()
   {
-    // glfwSwapBuffers(window);
   }
 
   void Window::SetFullscreen(bool fullscreen)
@@ -144,5 +143,15 @@ namespace mtEngine {
   {
     this->title = title;
     glfwSetWindowTitle(window, title.c_str());
+  }
+
+  void Window::SwapBuffers()
+  {
+    glfwSwapBuffers(window);
+  }
+
+  void Window::ActivateContext()
+  {
+    glfwMakeContextCurrent(window);
   }
 }

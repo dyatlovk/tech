@@ -1,6 +1,7 @@
 #include "World.hpp"
 
 #include "Devices/Window.hpp"
+#include "Engine/Engine.hpp"
 #include "Gui/Notify.hpp"
 #include "Guis/Gui.hpp"
 #include "Graphics/Texture.hpp"
@@ -52,17 +53,13 @@ namespace Game
       Texture::Create("grenade_icon", p + "/Game/textures/weapons/grenade.png");
     });
 
-    Engine::Get()->GetApp()->GetThreadPool().Enqueue([]() {
-      auto shader = Shader::Create("shader");
-      auto mesh = Mesh::Create("mesh");
-      Model::Create("model", shader.get(), mesh.get());
-    });
-
+    auto shader = Shader::CreateDefault();
+    auto mesh = Mesh::Create("mesh");
+    Model::Create("model", shader.get(), mesh.get());
     PLOGD << "world started";
   }
 
   void World::BeforeUpdate() {
-    
   }
 
   void World::Update()

@@ -52,6 +52,10 @@ namespace mtEngine {
 
       const std::array<int, 2> &GetSize() const { return size; }
 
+      void SwapBuffers();
+
+      void ActivateContext();
+
       Delegate<void()> &OnClose() { return onClose; }
       Delegate<void(std::array<int, 2>)> &OnSize() { return onSize; }
 

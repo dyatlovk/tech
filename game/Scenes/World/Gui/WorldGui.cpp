@@ -164,6 +164,7 @@ namespace Game
     ImVec2 primaryCursor = p;
     draw->AddRectFilled(p, ImVec2(p.x + widthWeaponsItems, p.y + heightWeaponsItems), ImColor(ImVec4(0.23f, 0.23f, 0.23f, 0.22f))); // inner bg
     auto primaryImg = ResourcesManager::Get()->find<Texture>("vss_icon");
+    if(primaryImg) primaryImg->Update();
     ImVec2 primaryImgSize = {(float)primaryImg->GetWidth(), (float)primaryImg->GetHeight()};
     ImGui::SetCursorScreenPos({primaryCursor.x + (widthWeaponsItems / 2 - primaryImgSize.x / 2), primaryCursor.y + (heightWeaponsItems / 2 - primaryImgSize.y / 2)});
     ImGui::Image((void*)(intptr_t)primaryImg->GetTexture(), primaryImgSize);
@@ -173,6 +174,7 @@ namespace Game
     ImVec2 secCursor = p;
     draw->AddRectFilled(p, ImVec2(p.x + widthWeaponsItems, p.y + heightWeaponsItems), ImColor(ImVec4(0.23f, 0.23f, 0.23f, 0.22f)));
     auto secImg = ResourcesManager::Get()->find<Texture>("pistol_icon");
+    if(secImg) secImg->Update();
     ImVec2 secImgSize = {(float)secImg->GetWidth(), (float)secImg->GetHeight()};
     ImGui::SetCursorScreenPos({secCursor.x + (widthWeaponsItems / 2 - secImgSize.x / 2), secCursor.y + (heightWeaponsItems / 2 - secImgSize.y / 2)});
     ImGui::Image((void*)(intptr_t)secImg->GetTexture(), secImgSize);
@@ -222,6 +224,7 @@ namespace Game
   {
     auto iconImg = ResourcesManager::Get()->find<Texture>(imgName);
     if(!iconImg) return;
+    iconImg->Update();
 
     ImVec2 size = {itemUnitSize.x * sizeX, itemUnitSize.y * sizeY};
     ImDrawList *draw = ImGui::GetWindowDrawList();

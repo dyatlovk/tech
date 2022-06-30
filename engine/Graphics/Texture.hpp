@@ -1,8 +1,5 @@
 #pragma once
 
-#include <memory>
-#include <string>
-
 #include "Devices/Window.hpp"
 #include "Resources/Resource.hpp"
 #include "Resources/ResourcesManager.hpp"
@@ -17,7 +14,7 @@ namespace mtEngine
 
     using TexturePtr = std::shared_ptr<Texture>;
 
-    static std::shared_ptr<Texture> Create(const std::string &name, const std::string &path);
+    static std::shared_ptr<Texture> Create(const std::string &name, const std::string &path, bool asyns = false);
 
     GLuint GetTexture() { return texture; };
     int GetWidth() { return out_width; };
@@ -31,8 +28,11 @@ namespace mtEngine
     bool LoadTextureFromFile(const std::string &filename);
     bool LoadFromMemory(const std::string &buf);
 
+    void Update();
+
   private:
     void GenerateTexture(GLuint &image_texture);
+    void CleanData();
 
   private:
     GLuint texture = 0;
@@ -42,5 +42,8 @@ namespace mtEngine
     int image_width = 0;
     int image_height = 0;
     unsigned char* image_data;
+
+    bool isTextureReady = false;
+    File *file;
   };
 } // namespace mtEngine

@@ -1,5 +1,5 @@
 #include "Engine.hpp"
-#include <memory>
+#include "Devices/Window.hpp"
 
 namespace mtEngine {
   Engine *Engine::Instance = nullptr;
@@ -59,6 +59,7 @@ namespace mtEngine {
 
   int32_t Engine::Run() {
     while (running) {
+      Window::Get()->ActivateContext();
       if (app) {
         if (!app->started) {
           app->Start();
@@ -95,6 +96,8 @@ namespace mtEngine {
       app->AfterUpdate();
 
       PostUpdate();
+    
+      Window::Get()->SwapBuffers();
     }
 
     return EXIT_SUCCESS;

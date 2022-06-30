@@ -1,4 +1,5 @@
 #include "MainMenu.hpp"
+#include "Engine/Engine.hpp"
 
 namespace Game
 {
@@ -8,7 +9,7 @@ namespace Game
 
   void MainMenu::Start() {
     gui = std::make_unique<MenuGui>();
-    std::future task = Engine::Get()->GetApp()->GetThreadPool().Enqueue([]() {
+    Engine::Get()->GetApp()->GetThreadPool().Enqueue([]() {
       const std::string p(RESOURCES);
       Texture::Create("bg", p + "/Game/textures/bg.jpg");
     });
@@ -28,6 +29,7 @@ namespace Game
     ImGui::Begin("MainMenu_bg", nullptr, window_flags);
     auto bgImage = ResourcesManager::Get()->find<Texture>("bg");
     if(bgImage) {
+      bgImage->Update();
       auto tex = bgImage->GetTexture();
       ImGui::Image((void*)(intptr_t)tex, viewport);
     }

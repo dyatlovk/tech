@@ -14,7 +14,7 @@ namespace EngineTest {
         void SetUp() override
         {
             createTmpDir();
-            instance = std::make_unique<mtEngine::File>();
+            instance = std::make_shared<mtEngine::File>();
         }
 
         void TearDown() override
@@ -38,10 +38,11 @@ namespace EngineTest {
              std::filesystem::remove_all(tmpDir);
         }
 
-        std::unique_ptr<mtEngine::File> instance;
+        std::shared_ptr<mtEngine::File> instance;
         const std::string root = "../../..";
         const std::filesystem::path asciiFile = root + "/tests/engine/Fixtures/Files/file_ascii.txt";
         const std::filesystem::path binFile = root + "/tests/engine/Fixtures/Files/file_bin.bin";
+        const std::filesystem::path pngFile = root + "/tests/engine/Fixtures/Files/image.png";
         const std::filesystem::path tmpDir = root + "/tests/engine/tmp";
     };
 }

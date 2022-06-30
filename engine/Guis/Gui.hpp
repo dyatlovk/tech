@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Devices/Window.hpp"
 #include "Engine/Log.hpp"
 
 #include "Graphics/Graphics.hpp"

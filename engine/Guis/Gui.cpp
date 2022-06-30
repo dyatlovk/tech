@@ -71,8 +71,6 @@ namespace mtEngine {
   {
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    auto window = mtEngine::Window::Get()->GetWindow();
-    glfwSwapBuffers(window);
   }
 
   void Gui::AfterUpdate()
