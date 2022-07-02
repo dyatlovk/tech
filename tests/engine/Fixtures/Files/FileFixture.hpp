@@ -43,6 +43,7 @@ namespace EngineTest {
         const std::filesystem::path asciiFile = root + "/tests/engine/Fixtures/Files/file_ascii.txt";
         const std::filesystem::path binFile = root + "/tests/engine/Fixtures/Files/file_bin.bin";
         const std::filesystem::path pngFile = root + "/tests/engine/Fixtures/Files/image.png";
+        const std::filesystem::path jsonFile = root + "/tests/engine/Fixtures/Files/json.json";
         const std::filesystem::path tmpDir = root + "/tests/engine/tmp";
     };
 }

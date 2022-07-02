@@ -6,6 +6,5 @@ set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 find_package(GTest REQUIRED)
 
-enable_testing()
 add_subdirectory("game")
 add_subdirectory("engine")

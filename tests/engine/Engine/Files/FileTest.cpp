@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "Fixtures/Files/FileFixture.hpp"
+#include "third_party/json/json.hpp"
 
 namespace EngineTest
 {
@@ -75,5 +76,14 @@ namespace EngineTest
     instance->Load(asciiFile);
     auto isReady = instance->isWorkReady();
     EXPECT_TRUE(isReady);
+  }
+
+  TEST_F(FileTest, json)
+  {
+    instance->Load(jsonFile);
+    const std::string buffer = instance->GetBuffer();
+    auto j = nlohmann::json::parse(instance->GetBuffer());
+    EXPECT_EQ(j["pi"], 3.141);
+    EXPECT_EQ(j["happy"], true);
   }
 } // namespace EngineTest
