@@ -31,6 +31,10 @@ namespace mtEngine
   {
     auto json = _jsonParser.parse(_buffer);
 
+    auto assets = json["asset"];
+    auto as = assets.get<nlohmann::json::object_t *>();
+    spec.assets = new Asset(as);
+
     auto nodes = json["nodes"];
     auto n = nodes.get<nlohmann::json::array_t *>();
     spec.nodes = new Nodes(n);
@@ -50,14 +54,20 @@ namespace mtEngine
     auto buf = json["buffers"];
     auto b = buf.get<nlohmann::json::array_t *>();
     spec.buffers = new Buffers(b);
+
+    auto extras = json["extras"];
+    auto ex = extras.get<nlohmann::json::object_t *>();
+    spec.extras = new Extras(ex);
   }
 
   void FileGltf::CleanSpec()
   {
+    spec.assets = nullptr;
     spec.nodes = nullptr;
     spec.meshes = nullptr;
     spec.accessors = nullptr;
     spec.buffers = nullptr;
     spec.bufferViews = nullptr;
+    spec.extras = nullptr;
   }
 } // namespace mtEngine

@@ -129,5 +129,9 @@
             "byteLength" : 840,
             "uri" : "box.bin"
         }
-    ]
+    ],
+    "extras" : {
+        "gameModelsRelativePath" : "/Game/models",
+        "gameTexturesRelativePath" : "/Game/textures"
+    }
 }
