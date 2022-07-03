@@ -45,6 +45,7 @@ add_library(${PROJECT_NAME} SHARED
   Maths/ElapsedTime.cpp
   Utils/ThreadPool.cpp
   Files/File.cpp
+  Files/FileGltf.cpp
   Models/Model.cpp
   Models/Mesh.cpp
   )

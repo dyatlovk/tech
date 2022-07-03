@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 
 #include "Fixtures/Files/FileFixture.hpp"
-#include "third_party/json/json.hpp"
 
 namespace EngineTest
 {

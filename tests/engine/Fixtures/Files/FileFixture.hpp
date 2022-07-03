@@ -3,6 +3,7 @@
 #include <gtest/gtest.h>
 #include <memory>
 #include <Files/File.hpp>
+#include "third_party/json/json.hpp"
 
 namespace EngineTest {
     class FileTest : public ::testing::Test

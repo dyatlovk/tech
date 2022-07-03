@@ -5,6 +5,7 @@ file(GLOB SOURCES
         main.cpp
         Engine/CVarsTest.cpp
         Engine/Files/FileTest.cpp
+        Engine/Files/FileGltfTest.cpp
         Engine/Resources/ResourcesManagerTest.cpp
         )
 set(TEST_INCLUDE .)
