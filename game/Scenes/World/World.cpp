@@ -53,8 +53,9 @@ namespace Game
       Texture::Create("grenade_icon", p + "/Game/textures/weapons/grenade.png");
     });
 
+    const std::string p(RESOURCES);
     auto shader = Shader::CreateDefault();
-    auto mesh = Mesh::Create("mesh");
+    auto mesh = Mesh::Create("mesh", p + "/Game/models/box.gltf");
     Model::Create("model", shader.get(), mesh.get());
     PLOGD << "world started";
   }
