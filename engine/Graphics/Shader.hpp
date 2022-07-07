@@ -52,7 +52,7 @@ namespace mtEngine
         "out vec4 FragColor;\n"
         "void main()\n"
         "{\n"
-        "   FragColor = vec4(0.40f, 0.44f, 0.52f, 1.0f);\n"
+        "   FragColor = vec4(0.43f, 0.6f, 0.52f, 0.4f);\n"
         "}\n\0";
   };
 } // namespace mtEngine
