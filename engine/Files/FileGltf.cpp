@@ -29,35 +29,43 @@ namespace mtEngine
 
   void FileGltf::CreateSpec()
   {
-    auto json = _jsonParser.parse(_buffer);
+    try
+    {
+      auto json = _jsonParser.parse(_buffer);
+      
+      auto assets = json["asset"];
+      auto as = assets.get<nlohmann::json::object_t *>();
+      spec.assets = new Asset(as);
 
-    auto assets = json["asset"];
-    auto as = assets.get<nlohmann::json::object_t *>();
-    spec.assets = new Asset(as);
+      auto nodes = json["nodes"];
+      auto n = nodes.get<nlohmann::json::array_t *>();
+      spec.nodes = new Nodes(n);
 
-    auto nodes = json["nodes"];
-    auto n = nodes.get<nlohmann::json::array_t *>();
-    spec.nodes = new Nodes(n);
+      auto meshes = json["meshes"];
+      auto m = meshes.get<nlohmann::json::array_t *>();
+      spec.meshes = new Meshes(m);
 
-    auto meshes = json["meshes"];
-    auto m = meshes.get<nlohmann::json::array_t *>();
-    spec.meshes = new Meshes(m);
+      auto accessors = json["accessors"];
+      auto a = accessors.get<nlohmann::json::array_t *>();
+      spec.accessors = new Accessors(a);
 
-    auto accessors = json["accessors"];
-    auto a = accessors.get<nlohmann::json::array_t *>();
-    spec.accessors = new Accessors(a);
+      auto bufViews = json["bufferViews"];
+      auto bv = bufViews.get<nlohmann::json::array_t *>();
+      spec.bufferViews = new BufferViews(bv);
 
-    auto bufViews = json["bufferViews"];
-    auto bv = bufViews.get<nlohmann::json::array_t *>();
-    spec.bufferViews = new BufferViews(bv);
+      auto buf = json["buffers"];
+      auto b = buf.get<nlohmann::json::array_t *>();
+      spec.buffers = new Buffers(b);
 
-    auto buf = json["buffers"];
-    auto b = buf.get<nlohmann::json::array_t *>();
-    spec.buffers = new Buffers(b);
-
-    auto extras = json["extras"];
-    auto ex = extras.get<nlohmann::json::object_t *>();
-    spec.extras = new Extras(ex);
+      if(json.contains("extras"))
+      {
+        auto extras = json["extras"];
+        auto ex = extras.get<nlohmann::json::object_t *>();
+        spec.extras = new Extras(ex);
+      }
+    } catch(nlohmann::json::parse_error& e) {
+      PLOGE << e.what();
+    }
   }
 
   void FileGltf::CleanSpec()

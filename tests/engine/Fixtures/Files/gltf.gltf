@@ -127,7 +127,10 @@
     "buffers" : [
         {
             "byteLength" : 840,
-            "uri" : "box.bin"
+            "uri" : "box.bin",
+            "extras" : {
+              "path" : "/"
+            }
         }
     ],
     "extras" : {

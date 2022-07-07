@@ -4,9 +4,12 @@
 #include <cstdint>
 #include <filesystem>
 #include <iostream>
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
+
+#include <Engine/Log.hpp>
 
 #include "third_party/json/json.hpp"
 
@@ -22,6 +25,10 @@ namespace mtEngine
 
   class FileGltf
   {
+  public:
+    FileGltf();
+    ~FileGltf();
+
     struct Spec
     {
       Asset *assets;
@@ -32,10 +39,6 @@ namespace mtEngine
       Buffers *buffers;
       Extras *extras;
     } spec;
-
-  public:
-    FileGltf();
-    ~FileGltf();
 
     Spec GetSpec() { return spec; };
 
@@ -64,10 +67,7 @@ namespace mtEngine
       Parse();
     };
 
-    ~Asset()
-    {
-      json = nullptr;
-    }
+    ~Asset() { json = nullptr; }
 
     Item GetSection() { return _item; }
 
@@ -250,13 +250,13 @@ namespace mtEngine
   //////////////////////////////////////////////////////////////////////////////
   class Meshes
   {
+  public:
     struct Item;
     struct PrimitiveItem;
     struct Attributes;
     struct Targets;
     enum class Modes : int;
 
-  public:
     using PrimitiveItems = std::vector<PrimitiveItem>;
     using MeshesItems = std::vector<Item>;
 
@@ -279,6 +279,7 @@ namespace mtEngine
     PrimitiveItems _primitives;
     nlohmann::json::array_t *json;
 
+  public:
     struct Attributes
     {
       int position;
@@ -347,9 +348,18 @@ namespace mtEngine
         for (const auto &p : i["primitives"])
         {
           Attributes attr;
-          attr.position = p["attributes"]["POSITION"];
-          attr.normal = p["attributes"]["NORMAL"];
-          attr.textcoord_0 = p["attributes"]["TEXCOORD_0"];
+          if(p["attributes"].contains("POSITION"))
+          {
+            attr.position = p["attributes"]["POSITION"];
+          }
+          if(p["attributes"].contains("NORMAL"))
+          {
+            attr.normal = p["attributes"]["NORMAL"];
+          }
+          if(p["attributes"].contains("TEXCOORD_0"))
+          {
+            attr.textcoord_0 = p["attributes"]["TEXCOORD_0"];
+          }
 
           PrimitiveItem primitive;
           if (p.contains("indices"))
@@ -405,6 +415,7 @@ namespace mtEngine
   //////////////////////////////////////////////////////////////////////////////
   class Accessors
   {
+  public:
     struct Item;
     struct Sparse;
     struct Indices;
@@ -453,6 +464,7 @@ namespace mtEngine
     AccessorItems _items;
     nlohmann::json::array_t *json;
 
+  public:
     struct Indices
     {
       /** @brief The index of the buffer view with sparse indices. The
@@ -765,6 +777,7 @@ namespace mtEngine
   class Buffers
   {
     struct Item;
+    struct Extras;
 
   public:
     using BufferItems = std::vector<Item>;
@@ -796,6 +809,15 @@ namespace mtEngine
 
       /** @brief The user-defined name of this object. */
       std::string *name = nullptr;
+
+      /** @brief Application-specific data. */
+      Extras *extras = nullptr;
+    };
+
+    struct Extras
+    {
+      /** @brief where search uri(relative to #Extras.gameModelsRelativePath) */
+      std::string path;
     };
 
   private:
@@ -812,6 +834,17 @@ namespace mtEngine
         if (i.contains("name"))
         {
           item.name = new std::string(i["name"]);
+        }
+        if (i.contains("extras"))
+        {
+          auto extras = i["extras"];
+          auto ex = extras.get<nlohmann::json::object_t *>();
+          if (ex->find("path") != ex->end())
+          {
+            Extras *ex = new Extras();
+            ex->path = extras["path"];
+            item.extras = ex;
+          }
         }
         _items.push_back(item);
       }

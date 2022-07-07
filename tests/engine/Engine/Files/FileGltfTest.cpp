@@ -61,6 +61,7 @@ namespace EngineTest
     EXPECT_EQ(1, buffers.size());
     EXPECT_EQ(840, buffers.at(0).byteLength);
     EXPECT_EQ("box.bin", *buffers.at(0).uri);
+    EXPECT_EQ("/", buffers.at(0).extras->path);
     EXPECT_TRUE(buffers.at(0).name == nullptr);
   }
 
