@@ -3,9 +3,18 @@
 
 namespace EngineTest
 {
+  TEST_F(FileGltfFixture, scenes)
+  {
+    auto spec = instance->GetSpecification();
+    auto scenes = spec.scenes->GetSection();
+
+    EXPECT_EQ("Scene", *scenes.name);
+    EXPECT_EQ(0, scenes.nodes.at(0));
+  }
+
   TEST_F(FileGltfFixture, checkNodes)
   {
-    auto spec = instance->GetSpec();
+    auto spec = instance->GetSpecification();
     auto nodes = spec.nodes->GetItems();
     EXPECT_EQ(0, *nodes.at(0).mesh);
     EXPECT_EQ("Cube", *nodes.at(0).name);
@@ -17,7 +26,7 @@ namespace EngineTest
 
   TEST_F(FileGltfFixture, checkMeshes)
   {
-    auto spec = instance->GetSpec();
+    auto spec = instance->GetSpecification();
     auto meshes = spec.meshes->GetItems();
 
     EXPECT_EQ("Cube", *meshes[0].name);
@@ -31,12 +40,12 @@ namespace EngineTest
 
   TEST_F(FileGltfFixture, checkAccessors)
   {
-    auto spec = instance->GetSpec();
+    auto spec = instance->GetSpecification();
     auto accessors = spec.accessors->GetItems();
 
     EXPECT_EQ(4, accessors.size());
     EXPECT_EQ(0, *accessors.at(0).bufferView);
-    EXPECT_EQ(mtEngine::Accessors::AccessorsComponentTypes::FLOAT, accessors.at(0).componentType);
+    EXPECT_EQ(mtEngine::Files::Accessors::AccessorsComponentTypes::FLOAT, accessors.at(0).componentType);
     EXPECT_EQ("VEC3", accessors.at(0).type);
     EXPECT_EQ(-1, accessors.at(0).min->at(0));
     EXPECT_EQ(1, accessors.at(0).max->at(0));
@@ -44,7 +53,7 @@ namespace EngineTest
 
   TEST_F(FileGltfFixture, checkBufferViews)
   {
-    auto spec = instance->GetSpec();
+    auto spec = instance->GetSpecification();
     auto buffers = spec.bufferViews->GetItems();
 
     EXPECT_EQ(4, buffers.size());
@@ -55,7 +64,7 @@ namespace EngineTest
 
   TEST_F(FileGltfFixture, checkBuffers)
   {
-    auto spec = instance->GetSpec();
+    auto spec = instance->GetSpecification();
     auto buffers = spec.buffers->GetItems();
 
     EXPECT_EQ(1, buffers.size());
@@ -67,7 +76,7 @@ namespace EngineTest
 
   TEST_F(FileGltfFixture, checkAssets)
   {
-    auto spec = instance->GetSpec();
+    auto spec = instance->GetSpecification();
     auto assets = spec.assets->GetSection();
 
     EXPECT_EQ("2.0", assets.version);
@@ -77,7 +86,7 @@ namespace EngineTest
 
   TEST_F(FileGltfFixture, checkExtras)
   {
-    auto spec = instance->GetSpec();
+    auto spec = instance->GetSpecification();
     auto extras = spec.extras->GetSection();
 
     EXPECT_EQ("/Game/models", *extras.gameModelsRelativePath);

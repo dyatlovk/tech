@@ -9,6 +9,8 @@
 
 namespace mtEngine
 {
+  using namespace Files;
+
   class Mesh : public Resource
   {
     struct GLBuffer;
@@ -58,6 +60,6 @@ namespace mtEngine
 
     std::vector<GLBuffer> _glBuffers;
 
-    FileGltf::Spec gltfSpec;
+    FileGltf::Spec gltfSpec{};
   };
 } // namespace mtEngine

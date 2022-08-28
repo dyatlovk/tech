@@ -13,7 +13,7 @@ namespace Game {
 
   GameApp::~GameApp() {
     Graphics::Get()->SetRenderer(nullptr);
-    Scenes::Get()->SetScene(nullptr);
+    mtEngine::Scenes::Get()->SetScene(nullptr);
     gameGui = nullptr;
   }
 
@@ -30,7 +30,7 @@ namespace Game {
     
     Window::Get()->SetPositionOnCenter();
     Graphics::Get()->SetRenderer(std::make_unique<GameRender>());
-    Scenes::Get()->SetScene(std::make_unique<MainMenu>());
+    mtEngine::Scenes::Get()->SetScene(std::make_unique<MainMenu>());
 
     using CVarParam = std::vector<std::string>;
     using Input = std::vector<std::string>;
@@ -43,12 +43,12 @@ namespace Game {
 
       if(input.at(0) == "main_menu") {
         isValid = true;
-        Scenes::Get()->SetScene(std::make_unique<MainMenu>());
+        mtEngine::Scenes::Get()->SetScene(std::make_unique<MainMenu>());
       }
 
       if(input.at(0) == "world") {
         isValid = true;
-        Scenes::Get()->SetScene(std::make_unique<World>());
+        mtEngine::Scenes::Get()->SetScene(std::make_unique<World>());
       }
     });
 

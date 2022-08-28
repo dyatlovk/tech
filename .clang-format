@@ -2,12 +2,12 @@
 AlignAfterOpenBracket: DontAlign
 AlignEscapedNewlines: Left
 AllowAllParametersOfDeclarationOnNextLine: false
-AllowShortBlocksOnASingleLine: false
+AllowShortBlocksOnASingleLine: Never
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: Inline
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
-AlwaysBreakTemplateDeclarations: true
+AlwaysBreakTemplateDeclarations: Yes
 AlignOperands: false
 AlignTrailingComments: false
 BreakAfterJavaFieldAnnotations: true
@@ -35,8 +35,7 @@ MaxEmptyLinesToKeep: 2
 NamespaceIndentation: All
 PointerAlignment: Right
 SpaceBeforeParens: ControlStatements
-Standard: Cpp11
+Standard: c++17
 TabWidth: 2
 UseTab: Never
-
 ...

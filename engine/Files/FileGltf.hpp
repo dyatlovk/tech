@@ -11,11 +11,13 @@
 
 #include <Engine/Log.hpp>
 
+#include "Scenes/Scene.hpp"
 #include "third_party/json/json.hpp"
 
-namespace mtEngine
+namespace mtEngine::Files
 {
   class Asset;
+  class Scenes;
   class Nodes;
   class Meshes;
   class Accessors;
@@ -32,6 +34,7 @@ namespace mtEngine
     struct Spec
     {
       Asset *assets;
+      Scenes *scenes;
       Nodes *nodes;
       Meshes *meshes;
       Accessors *accessors;
@@ -40,7 +43,13 @@ namespace mtEngine
       Extras *extras;
     } spec;
 
+    /** 
+     * @deprecated 
+     * use GetSpecification() instead 
+     */
     Spec GetSpec() { return spec; };
+
+    const Spec &GetSpecification() { return static_cast<Spec &>(spec); };
 
     static std::shared_ptr<FileGltf> Create(const std::filesystem::path path);
 
@@ -115,17 +124,66 @@ namespace mtEngine
   };
 
   //////////////////////////////////////////////////////////////////////////////
+  // Scenes
+  //////////////////////////////////////////////////////////////////////////////
+  class Scenes
+  {
+  public:
+    struct Item;
+    Scenes(nlohmann::json::array_t *json)
+        : json(json)
+    {
+      Parse();
+    }
+    ~Scenes()
+    {
+      json = nullptr;
+      _item.name = nullptr;
+      _item.nodes.clear();
+    }
+
+    struct Item
+    {
+      std::vector<unsigned int> nodes;
+      std::string *name = nullptr;
+    } _item;
+
+    Item GetSection() { return _item; }
+
+  private:
+    nlohmann::json::array_t *json;
+    void Parse()
+    {
+      auto section = json->at(0);
+      if (section.find("name") != section.end())
+      {
+        _item.name = new std::string(section.at("name"));
+      }
+
+      if (section.find("nodes") != section.end())
+      {
+        auto nodes = section.at("nodes");
+        auto array = nodes.get<nlohmann::json::array_t *>();
+        for(const auto &i : *array)
+        {
+          _item.nodes.push_back(i);
+        }
+      }
+    }
+  };
+
+  //////////////////////////////////////////////////////////////////////////////
   // Nodes
   //////////////////////////////////////////////////////////////////////////////
   class Nodes
   {
-    struct Item;
     struct Children;
     struct Rotation;
     struct Scale;
     struct Translation;
 
   public:
+    struct Item;
     using NodesItems = std::vector<Item>;
     Nodes(nlohmann::json::array_t *json)
         : json(json)
@@ -141,8 +199,6 @@ namespace mtEngine
 
     NodesItems GetItems() { return _items; }
 
-  private:
-    NodesItems _items;
     struct Item
     {
       /** @brief The index of the camera referenced by this node. */
@@ -168,6 +224,9 @@ namespace mtEngine
       /** @brief The user-defined name of this object. */
       std::string *name = nullptr;
     };
+
+  private:
+    NodesItems _items;
 
     struct Children
     {
@@ -273,6 +332,22 @@ namespace mtEngine
     }
 
     MeshesItems GetItems() { return _items; }
+
+    Item &FindBy(const int &id)
+    {
+      Item *result;
+      static int foundId = 0;
+      for (const auto &it : _items)
+      {
+        if (foundId == id)
+        {
+          result = &_items.at(id);
+        }
+        foundId++;
+      }
+
+      return *result;
+    }
 
   private:
     MeshesItems _items;
@@ -868,6 +943,7 @@ namespace mtEngine
     {
       delete _item.gameModelsRelativePath;
       delete _item.gameTexturesRelativePath;
+      delete _item.gameScenesRelativePath;
     }
 
     Item GetSection() { return _item; }
@@ -880,6 +956,9 @@ namespace mtEngine
 
       /** @brief Relative path to textures from game root */
       std::string *gameTexturesRelativePath = nullptr;
+
+      /** @brief Relative path to scenes from game root */
+      std::string *gameScenesRelativePath = nullptr;
     } _item;
     nlohmann::json::object_t *json;
 
@@ -894,6 +973,11 @@ namespace mtEngine
       {
         _item.gameTexturesRelativePath =
             new std::string(json->at("gameTexturesRelativePath"));
+      }
+
+      if (json->find("gameScenesRelativePath") != json->end())
+      {
+        _item.gameScenesRelativePath = new std::string(json->at("gameScenesRelativePath"));
       }
     }
   };

@@ -2,7 +2,7 @@
 
 #include "Files/File.hpp"
 
-namespace mtEngine
+namespace mtEngine::Files
 {
   FileGltf::FileGltf() {}
 
@@ -32,6 +32,10 @@ namespace mtEngine
     try
     {
       auto json = _jsonParser.parse(_buffer);
+
+      auto scenes = json["scenes"];
+      auto sc = scenes.get<nlohmann::json::array_t *>();
+      spec.scenes = new Scenes(sc);
       
       auto assets = json["asset"];
       auto as = assets.get<nlohmann::json::object_t *>();
@@ -70,6 +74,7 @@ namespace mtEngine
 
   void FileGltf::CleanSpec()
   {
+    spec.scenes = nullptr;
     spec.assets = nullptr;
     spec.nodes = nullptr;
     spec.meshes = nullptr;

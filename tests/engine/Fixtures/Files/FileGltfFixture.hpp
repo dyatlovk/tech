@@ -13,10 +13,10 @@ namespace EngineTest {
 
     void SetUp() override
     {
-      instance = mtEngine::FileGltf::Create(gltfFile);
+      instance = mtEngine::Files::FileGltf::Create(gltfFile);
     }
 
-    std::shared_ptr<mtEngine::FileGltf> instance;
+    std::shared_ptr<mtEngine::Files::FileGltf> instance;
     const std::string root = "../../..";
     const std::filesystem::path gltfFile = root + "/tests/engine/Fixtures/Files/gltf.gltf";
   };

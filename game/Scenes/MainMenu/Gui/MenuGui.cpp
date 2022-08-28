@@ -20,7 +20,7 @@ namespace Game
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
     if (ImGui::Button("Start Demo")) {
       PLOGD << "start game";
-      Scenes::Get()->SetScene(std::make_unique<World>());
+      mtEngine::Scenes::Get()->SetScene(std::make_unique<World>());
     }
     if (ImGui::Button("Exit")) {
       Engine::Get()->RequestClose();
