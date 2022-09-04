@@ -95,7 +95,7 @@ namespace mtEngine
       return;
     }
     auto binFilePath = *gltfSpec.buffers->GetItems().at(0).uri;
-    auto binPath = p + "/Game/models/" + binFilePath;
+    auto binPath = p + "/Game/models/yard/" + binFilePath;
     auto binFile = new File(binPath);
     _fileBuffer = binFile->GetBuffer();
     delete binFile;

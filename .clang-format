@@ -1,4 +1,5 @@
 ---
+BasedOnStyle: Microsoft
 AlignAfterOpenBracket: DontAlign
 AlignEscapedNewlines: Left
 AllowAllParametersOfDeclarationOnNextLine: false
@@ -13,14 +14,17 @@ AlignTrailingComments: false
 BreakAfterJavaFieldAnnotations: true
 BreakBeforeBraces: Allman
 BreakInheritanceList: AfterColon
+ObjCBreakBeforeNestedBlockParam: false
 BreakBeforeInheritanceComma: false
 BreakBeforeTernaryOperators: false
 BreakConstructorInitializers: BeforeComma
 SpaceAfterTemplateKeyword: false
-ColumnLimit: 80
+PenaltyReturnTypeOnItsOwnLine: 1000
 CommentPragmas:  '^/'
 Cpp11BracedListStyle: true
 FixNamespaceComments: true
+AlwaysBreakAfterReturnType: None
+AlwaysBreakAfterDefinitionReturnType: None
 IncludeBlocks: Regroup
 IncludeCategories:
   - Regex: '^<.*\.hpp>'

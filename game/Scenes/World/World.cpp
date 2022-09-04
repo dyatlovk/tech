@@ -55,8 +55,8 @@ namespace Game
 
     const std::string p(RESOURCES);
     auto shader = Shader::CreateDefault();
-    auto mesh = Mesh::Create("mesh", p + "/Game/models/box.gltf");
-    Model::Create("model", shader.get(), mesh.get());
+    auto mesh = Mesh::Create("mesh", p + "/Game/models/yard/yard.gltf");
+    Model::Create("model", shader.get(), mesh.get(), nullptr);
     PLOGD << "world started";
   }
 

@@ -2,20 +2,21 @@
 
 namespace mtEngine
 {
-  Model::Model(const Shader *shader, const Mesh *mesh)
+  Model::Model(const Shader *shader, const Mesh *mesh, const Material *mat)
   {
     this->mesh = const_cast<Mesh *>(mesh);
     this->shader = const_cast<Shader *>(shader);
+    this->material = const_cast<Material *>(mat);
   }
 
-  std::shared_ptr<Model> Model::Create(
-      const std::string &name, const Shader *shader, const Mesh *mesh)
+  auto Model::Create(const std::string &name, const Shader *shader, const Mesh *mesh, const Material *material)
+      -> std::shared_ptr<Model>
   {
     auto mgr = ResourcesManager::Get();
     if (auto resource = mgr->find<Model>(name))
       return resource;
 
-    auto resource = std::make_shared<Model>(shader, mesh);
+    auto resource = std::make_shared<Model>(shader, mesh, material);
     mgr->add(name, resource);
 
     return resource;
