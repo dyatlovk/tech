@@ -1,11 +1,11 @@
 #pragma once
 
 #include <filesystem>
+
 #include <Devices/Window.hpp>
+#include <Files/FileGltf.hpp>
 #include <Resources/Resource.hpp>
 #include <Resources/ResourcesManager.hpp>
-#include <Files/FileGltf.hpp>
-
 
 namespace mtEngine
 {
@@ -26,26 +26,24 @@ namespace mtEngine
       return typeid(Mesh);
     }
 
-    void CreateBuffers();
-
-    void BindBuffers();
-
     void CleanBuffers();
 
-    void SetupPrimitives();
+    void SetupPrimitives(const Meshes::PrimitiveItems &primitives);
+
+    void SetupMeshes();
 
     void Draw();
 
   private:
     void LoadSpecification(const std::filesystem::path &path);
     void LoadGeometry();
-    const char *BufferOffset(const unsigned int &bytes);
+    const char *BufferOffset(const unsigned int &pos);
 
-    std::vector<Accessors::Item> FindPrimitiveAccessors(const Meshes::PrimitiveItem &item);
+    [[nodiscard]] std::vector<Accessors::Item> FindPrimitiveAccessors(const Meshes::PrimitiveItem &item) const;
 
-    unsigned int PrimitiveVerticesSize(std::vector<Accessors::Item> accessors);
-    unsigned int PrimitiveIndecesSize(const Meshes::PrimitiveItem &item);
-    unsigned int PrimitiveIndecesOffset(const unsigned int position);
+    [[nodiscard]] unsigned int PrimitiveVerticesSize(const std::vector<Accessors::Item>& accessors) const;
+    [[nodiscard]] unsigned int PrimitiveIndicesSize(const Meshes::PrimitiveItem &item) const;
+    [[nodiscard]] unsigned int PrimitiveIndicesOrVerticesOffset(unsigned int position) const;
 
   private:
     std::string _fileBuffer;
@@ -55,7 +53,7 @@ namespace mtEngine
       unsigned int vao;
       unsigned int vbo;
       unsigned int ebo;
-      unsigned int indecesCount;
+      unsigned int indicesCount;
     };
 
     std::vector<GLBuffer> _glBuffers;

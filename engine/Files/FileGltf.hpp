@@ -260,7 +260,7 @@ namespace mtEngine::Files
   private:
     void Parse()
     {
-      for (const auto i : *json)
+      for (const auto &i : *json)
       {
         Item item;
         if (i.contains("mesh"))

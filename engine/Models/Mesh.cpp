@@ -18,39 +18,48 @@ namespace mtEngine
     auto resource = std::make_shared<Mesh>();
     resource->LoadSpecification(path);
     resource->LoadGeometry();
-    resource->SetupPrimitives();
+    resource->SetupMeshes();
 
     mgr->add(name, resource);
 
     return resource;
   }
 
-  void Mesh::SetupPrimitives()
+  void Mesh::SetupMeshes()
   {
-    auto primitives = gltfSpec.meshes->GetItems().at(0).primitives;
+    auto meshes = gltfSpec.meshes->GetItems();
+    for(const auto &mesh : meshes) {
+      this->SetupPrimitives(mesh.primitives);
+    }
+  }
+
+  void Mesh::SetupPrimitives(const Meshes::PrimitiveItems &primitives)
+  {
     auto accessors = gltfSpec.accessors->GetItems();
     for(const auto &primitive : primitives)
     {
-      GLBuffer buf;
+      const auto accessorsPrimitive = FindPrimitiveAccessors(primitive);
+      const auto verticesSize = PrimitiveVerticesSize(accessorsPrimitive);
+      const auto indicesSize = PrimitiveIndicesSize(primitive);
+      const auto verticesPosition = primitive.attr.position;
+      const auto verticesOffset = PrimitiveIndicesOrVerticesOffset(verticesPosition);
+      const auto indicesPosition = *primitive.indices;
+      const auto indicesOffset = PrimitiveIndicesOrVerticesOffset(indicesPosition);
+
+      GLBuffer buf{};
       glGenVertexArrays(1, &buf.vao);
       glGenBuffers(1, &buf.vbo);
       glGenBuffers(1, &buf.ebo);
       glBindVertexArray(buf.vao);
       glBindBuffer(GL_ARRAY_BUFFER, buf.vbo);
-      const auto accessorsPrimitive = FindPrimitiveAccessors(primitive);
-      const auto verticesSize = PrimitiveVerticesSize(accessorsPrimitive);
-      const auto indecesSize = PrimitiveIndecesSize(primitive);
-      const auto verticesPosition = primitive.attr.position;
-      const auto indicesPosition = *primitive.indices;
-      const auto indicesOffset = PrimitiveIndecesOffset(indicesPosition);
-      glBufferData(GL_ARRAY_BUFFER, verticesSize, BufferOffset(verticesPosition), GL_STATIC_DRAW);
-      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+      glBufferData(GL_ARRAY_BUFFER, verticesSize, BufferOffset(verticesOffset), GL_STATIC_DRAW);
+      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)nullptr);
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buf.ebo);
-      glBufferData(GL_ELEMENT_ARRAY_BUFFER, indecesSize, BufferOffset(indicesOffset), GL_STATIC_DRAW);
+      glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize, BufferOffset(indicesOffset), GL_STATIC_DRAW);
       glEnableVertexAttribArray(0);
       glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-      buf.indecesCount = accessors.at(indicesPosition).count;
+      buf.indicesCount = accessors.at(indicesPosition).count;
 
       glBindVertexArray(0);
       _glBuffers.push_back(buf);
@@ -73,10 +82,10 @@ namespace mtEngine
     for(const auto &buf : _glBuffers)
     {
       glBindVertexArray(buf.vao);
-      glDrawElements(GL_TRIANGLES, buf.indecesCount, GL_UNSIGNED_SHORT, nullptr);
+      glDrawElements(GL_TRIANGLES, buf.indicesCount, GL_UNSIGNED_SHORT, nullptr);
       glBindVertexArray(0);
     }
-    
+
     // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   }
 
@@ -95,39 +104,34 @@ namespace mtEngine
       return;
     }
     auto binFilePath = *gltfSpec.buffers->GetItems().at(0).uri;
-    auto binPath = p + "/Game/models/yard/" + binFilePath;
+    auto finInd = *gltfSpec.extras->GetSection().gameModelsRelativePath;
+    auto binPath = p + finInd + "/" + binFilePath;
     auto binFile = new File(binPath);
     _fileBuffer = binFile->GetBuffer();
     delete binFile;
   }
 
-  const char *Mesh::BufferOffset(const unsigned int &bytes)
+  const char *Mesh::BufferOffset(const unsigned int &pos)
   {
-    auto buffer = &_fileBuffer.at(0) + bytes;
+    auto buffer = _fileBuffer.begin() + pos;
 
-    return buffer;
+    return buffer.base();
   }
 
-  std::vector<Accessors::Item> Mesh::FindPrimitiveAccessors(const Meshes::PrimitiveItem &item)
+  std::vector<Accessors::Item> Mesh::FindPrimitiveAccessors(const Meshes::PrimitiveItem &item) const
   {
     auto accessors = gltfSpec.accessors->GetItems();
-    int idFrom = item.attr.position;
-    int idTo = *item.indices;
 
-    auto it = accessors.begin() + idFrom;
-    auto itEnd = accessors.begin() + idTo;
+    auto pos = accessors.begin() + item.attr.position;
 
     std::vector<Accessors::Item> result;
 
-    for (; it != itEnd; it++)
-    {
-      result.push_back(*it);
-    }
+    result.push_back(*pos);
 
     return result;
   }
 
-  unsigned int Mesh::PrimitiveVerticesSize(std::vector<Accessors::Item> accessors)
+  unsigned int Mesh::PrimitiveVerticesSize(const std::vector<Accessors::Item>& accessors) const
   {
     unsigned int bytes = 0;
     const auto buffers = gltfSpec.bufferViews->GetItems();
@@ -139,7 +143,7 @@ namespace mtEngine
     return bytes;
   }
 
-  unsigned int Mesh::PrimitiveIndecesSize(const Meshes::PrimitiveItem &item)
+  unsigned int Mesh::PrimitiveIndicesSize(const Meshes::PrimitiveItem &item) const
   {
     const auto buffers = gltfSpec.bufferViews->GetItems();
     unsigned int bytes = buffers.at(*item.indices).byteLength;
@@ -147,7 +151,7 @@ namespace mtEngine
     return bytes;
   }
 
-  unsigned int Mesh::PrimitiveIndecesOffset(const unsigned int position)
+  unsigned int Mesh::PrimitiveIndicesOrVerticesOffset(const unsigned int position) const
   {
     const auto buffers = gltfSpec.bufferViews->GetItems();
     unsigned int bytes = *buffers.at(position).byteOffset;

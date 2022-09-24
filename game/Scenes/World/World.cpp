@@ -55,7 +55,7 @@ namespace Game
 
     const std::string p(RESOURCES);
     auto shader = Shader::CreateDefault();
-    auto mesh = Mesh::Create("mesh", p + "/Game/models/yard/yard.gltf");
+    auto mesh = Mesh::Create("mesh", p + "/Game/models/boxes.gltf");
     Model::Create("model", shader.get(), mesh.get(), nullptr);
     PLOGD << "world started";
   }
@@ -74,7 +74,7 @@ namespace Game
   }
 
   void World::AfterUpdate() {
-   
+
   }
 
   void World::Shutdown()
