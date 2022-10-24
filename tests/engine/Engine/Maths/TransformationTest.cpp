@@ -9,7 +9,7 @@ namespace EngineTest
   TEST(RotationTest, quatToAxis)
   {
     mtEngine::mtVec4f vec = {0.070535f, -0.277363f, 0.705345f, 0.648523f};
-    mtEngine::quaternionToAxisAngle q;
+    mtEngine::quatToAxisAngle q;
     q = vec;
 
     EXPECT_EQ(q.x, 0.0926634967f);

@@ -7,6 +7,11 @@
 #include <Resources/Resource.hpp>
 #include <Resources/ResourcesManager.hpp>
 
+#include <third_party/glm/glm.hpp>
+#include <third_party/glm/gtc/matrix_transform.hpp>
+#include <third_party/glm/gtc/type_ptr.hpp>
+#include <third_party/glm/gtx/quaternion.hpp>
+
 namespace mtEngine
 {
   using namespace Files;
@@ -28,9 +33,11 @@ namespace mtEngine
 
     void CleanBuffers();
 
-    void SetupPrimitives(const Meshes::PrimitiveItems &primitives);
+    void SetupPrimitives(const Meshes::PrimitiveItems &primitives, unsigned int meshId);
 
-    void SetupMeshes();
+    void SetupMeshes(unsigned int meshId);
+
+    void SetupNodes();
 
     void Draw();
 
@@ -54,6 +61,7 @@ namespace mtEngine
       unsigned int vbo;
       unsigned int ebo;
       unsigned int indicesCount;
+      unsigned int nodeId;
     };
 
     std::vector<GLBuffer> _glBuffers;

@@ -2,9 +2,10 @@
 #include "Engine/Engine.hpp"
 
 namespace mtEngine {
-  void CallbackFramebufferSize(GLFWwindow *window, int32_t width, int32_t height)
+  void CallbackFrameBufferSize(GLFWwindow *window, int32_t width, int32_t height)
   {
     Window::Get()->size = {width, height};
+    glViewport(0, 0, width, height);
   }
 
   void CallbackWindowClose(GLFWwindow *window)
@@ -16,7 +17,7 @@ namespace mtEngine {
   void CallbackWindowSize(GLFWwindow *window, int32_t width, int32_t height)
   {
     if (width <= 0 || height <= 0) return;
-    Window::Get()->onSize(Window::Get()->size);
+    Window::Get()->size = {width, height};
   }
 
   Window::Window(): title("Demo")
@@ -39,7 +40,7 @@ namespace mtEngine {
     if(glewInit() != GLEW_OK) throw std::runtime_error("glewInit failed");
 
     glfwSetWindowCloseCallback(window, CallbackWindowClose);
-    glfwSetFramebufferSizeCallback(window, CallbackFramebufferSize);
+    glfwSetFramebufferSizeCallback(window, CallbackFrameBufferSize);
     glfwSetWindowSizeCallback(window, CallbackWindowSize);
 
     if (glfwRawMouseMotionSupported())
@@ -49,7 +50,7 @@ namespace mtEngine {
     using Input = std::vector<std::string>;
     std::string maximizedFlag = std::to_string(isMaximized);
     CVars::Get()->Add("window", "maximized", {maximizedFlag}, "Window swtich maximized", "window maximized <1|0>", [this](CVarParam &args, Input &input, bool &isValid) {
-      if(input.size() == 0) {
+      if(input.empty()) {
         isValid = false;
         return;
       }
@@ -71,7 +72,7 @@ namespace mtEngine {
     });
 
     CVars::Get()->Add("window", "title", {title}, "Window set title", "window title <char>", [this](CVarParam &args, Input &input, bool &isValid) {
-      if(input.size() == 0) {
+      if(input.empty()) {
         isValid = false;
         return;
       }
@@ -85,7 +86,7 @@ namespace mtEngine {
     glfwDestroyWindow(window);
     glfwTerminate();
   }
-  
+
   void Window::BeforeUpdate()
   {
   }
@@ -94,14 +95,14 @@ namespace mtEngine {
   {
     glfwPollEvents();
   }
-  
+
   void Window::AfterUpdate()
   {
   }
 
-  void Window::SetFullscreen(bool fullscreen)
+  void Window::SetFullScreen(bool fullScreen)
   {
-    this->fullscreen = fullscreen;
+    this->fullScreen = fullScreen;
   }
 
   void Window::SetPosition(const std::array<int, 2> &pos)
@@ -136,7 +137,7 @@ namespace mtEngine {
     auto monitor = glfwGetPrimaryMonitor();
     auto videoMode = glfwGetVideoMode(monitor);
     auto size = GetSize();
-    SetPosition({videoMode->width / 2 - size[0] / 2, videoMode->height / 2 - size[1] / 2});
+    SetPosition({videoMode->width / 2 - size.front() / 2, videoMode->height / 2 - size.back() / 2});
   }
 
   void Window::SetTitle(const std::string &title)
@@ -153,5 +154,10 @@ namespace mtEngine {
   void Window::ActivateContext()
   {
     glfwMakeContextCurrent(window);
+  }
+
+  float Window::GetAspectRatio()
+  {
+    return (float) this->size.front() / (float) this->size.back();
   }
 }

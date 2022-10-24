@@ -6,12 +6,12 @@
 
 namespace mtEngine
 {
-  struct quaternionToAxisAngle
+  struct quatToAxisAngle
   {
     float x, y, z = 0.0f;
     float angle = 1.0f;
 
-    quaternionToAxisAngle &operator=(mtVec4f val)
+    quatToAxisAngle &operator=(mtVec4f val)
     {
       constexpr float PI = 3.14;
       float angle_rad = acos(val.w) * 2;

@@ -16,12 +16,20 @@ namespace EngineTest
   {
     auto spec = instance->GetSpecification();
     auto nodes = spec.nodes->GetItems();
+
     EXPECT_EQ(0, *nodes.at(0).mesh);
     EXPECT_EQ("Cube", *nodes.at(0).name);
+    EXPECT_EQ(0, nodes.at(0).rotation->x);
+    EXPECT_EQ(0.3826834261417389, nodes.at(0).rotation->y);
+    EXPECT_EQ(0, nodes.at(0).rotation->z);
+    EXPECT_EQ(0.9238795638084412, nodes.at(0).rotation->w);
+    EXPECT_EQ(0, nodes.at(0).translation->x);
+    EXPECT_EQ(0, nodes.at(0).translation->y);
+    EXPECT_EQ(-4.179202556610107, nodes.at(0).translation->z);
+    EXPECT_EQ(1, nodes.at(0).scale->x);
+    EXPECT_EQ(1, nodes.at(0).scale->y);
+    EXPECT_EQ(1, nodes.at(0).scale->z);
     EXPECT_TRUE(nodes.at(0).children == nullptr);
-    EXPECT_TRUE(nodes.at(0).rotation == nullptr);
-    EXPECT_TRUE(nodes.at(0).translation == nullptr);
-    EXPECT_TRUE(nodes.at(0).scale == nullptr);
   }
 
   TEST_F(FileGltfFixture, checkMeshes)

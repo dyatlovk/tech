@@ -43,9 +43,9 @@ namespace mtEngine::Files
       Extras *extras;
     } spec;
 
-    /** 
-     * @deprecated 
-     * use GetSpecification() instead 
+    /**
+     * @deprecated
+     * use GetSpecification() instead
      */
     Spec GetSpec() { return spec; };
 
@@ -235,24 +235,24 @@ namespace mtEngine::Files
 
     struct Rotation
     {
-      int x = 0;
-      int y = 0;
-      int z = 0;
-      int w = 1;
+      float x = 0;
+      float y = 0;
+      float z = 0;
+      float w = 0;
     };
 
     struct Scale
     {
-      int x = 1;
-      int y = 1;
-      int z = 1;
+      float x = 1;
+      float y = 1;
+      float z = 1;
     };
 
     struct Translation
     {
-      int x = 0;
-      int y = 0;
-      int z = 0;
+      float x = 0;
+      float y = 0;
+      float z = 0;
     };
 
     nlohmann::json::array_t *json;
@@ -271,34 +271,39 @@ namespace mtEngine::Files
         {
           item.name = new std::string(i["name"]);
         }
+
+        auto rot = new Rotation();
         if (i.contains("rotation"))
         {
-          auto rot = new Rotation();
           rot->x = i["rotation"][0];
           rot->y = i["rotation"][1];
           rot->z = i["rotation"][2];
           rot->w = i["rotation"][3];
-          item.rotation = rot;
-          rot = nullptr;
+         
         }
+        item.rotation = rot;
+        rot = nullptr;
+
+        auto scale = new Scale();
         if (i.contains("scale"))
         {
-          auto scale = new Scale();
           scale->x = i["scale"][0];
           scale->y = i["scale"][1];
           scale->z = i["scale"][2];
-          item.scale = scale;
-          scale = nullptr;
         }
+        item.scale = scale;
+        scale = nullptr;
+
+        auto tr = new Translation();
         if (i.contains("translation"))
         {
-          auto tr = new Translation();
           tr->x = i["translation"][0];
           tr->y = i["translation"][1];
           tr->z = i["translation"][2];
-          item.translation = tr;
-          tr = nullptr;
         }
+        item.translation = tr;
+        tr = nullptr;
+
         _items.push_back(item);
       }
     }

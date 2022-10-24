@@ -2,6 +2,11 @@
 
 #include <Files/File.hpp>
 
+#include "Graphics/Shader.hpp"
+#include "third_party/glm/fwd.hpp"
+#include "third_party/glm/gtx/quaternion.hpp"
+#include <Maths/Transformation.hpp>
+
 namespace mtEngine
 {
 
@@ -18,22 +23,31 @@ namespace mtEngine
     auto resource = std::make_shared<Mesh>();
     resource->LoadSpecification(path);
     resource->LoadGeometry();
-    resource->SetupMeshes();
+    resource->SetupNodes();
 
     mgr->add(name, resource);
 
     return resource;
   }
 
-  void Mesh::SetupMeshes()
+  void Mesh::SetupNodes()
   {
-    auto meshes = gltfSpec.meshes->GetItems();
-    for(const auto &mesh : meshes) {
-      this->SetupPrimitives(mesh.primitives);
+    auto nodes = gltfSpec.nodes->GetItems();
+    int id = 0;
+    for(const auto &node : nodes) {
+      this->SetupMeshes(id);
+      id++;
     }
   }
 
-  void Mesh::SetupPrimitives(const Meshes::PrimitiveItems &primitives)
+  void Mesh::SetupMeshes(const unsigned int meshId)
+  {
+    auto meshes = gltfSpec.meshes->GetItems();
+    auto mesh = meshes.at(meshId);
+    this->SetupPrimitives(mesh.primitives, meshId);
+  }
+
+  void Mesh::SetupPrimitives(const Meshes::PrimitiveItems &primitives, const unsigned int meshId)
   {
     auto accessors = gltfSpec.accessors->GetItems();
     for(const auto &primitive : primitives)
@@ -60,6 +74,7 @@ namespace mtEngine
       glBindBuffer(GL_ARRAY_BUFFER, 0);
 
       buf.indicesCount = accessors.at(indicesPosition).count;
+      buf.nodeId = meshId;
 
       glBindVertexArray(0);
       _glBuffers.push_back(buf);
@@ -78,15 +93,40 @@ namespace mtEngine
 
   void Mesh::Draw()
   {
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+    glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -2.0f);
+    glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+    auto window = Window::Get();
+    auto shader = ResourcesManager::Get()->find<Shader>("default");
+    glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+    view = glm::translate(view, glm::vec3(0.0f, 0.0f, 0.0f));
+    glm::mat4 projection = glm::mat4(1.0f);
+    projection = glm::perspective(glm::radians(45.0f), window->GetAspectRatio(), 0.1f, 100.0f);
+    shader->setMat4("projection", projection);
+    shader->setMat4("view", view);
+
+    auto nodes = gltfSpec.nodes->GetItems();
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     for(const auto &buf : _glBuffers)
     {
+      auto nodeTranslate = nodes.at(buf.nodeId).translation;
+      auto nodeRotation = nodes.at(buf.nodeId).rotation;
+
+      mtEngine::mtVec4f rot = {(float)nodeRotation->x, (float)nodeRotation->y, (float)nodeRotation->z, (float)nodeRotation->w};
+      mtEngine::quatToAxisAngle q;
+      q = rot;
+
       glBindVertexArray(buf.vao);
+      glm::mat4 model = glm::mat4(1.0f);
+      model = glm::translate(model, glm::vec3(nodeTranslate->x, nodeTranslate->y, nodeTranslate->z));
+      model = glm::rotate(model, q.angle, glm::vec3(q.x, q.y, q.z));
+      shader->setMat4("model", model);
       glDrawElements(GL_TRIANGLES, buf.indicesCount, GL_UNSIGNED_SHORT, nullptr);
       glBindVertexArray(0);
     }
 
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   }
 
   void Mesh::LoadSpecification(const std::filesystem::path &path)

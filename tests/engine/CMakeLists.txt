@@ -7,6 +7,7 @@ file(GLOB SOURCES
         Engine/Files/FileTest.cpp
         Engine/Files/FileGltfTest.cpp
         Engine/Resources/ResourcesManagerTest.cpp
+        Engine/Maths/TransformationTest.cpp
         )
 set(TEST_INCLUDE .)
 
