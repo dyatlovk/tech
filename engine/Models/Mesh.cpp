@@ -3,13 +3,14 @@
 #include <Files/File.hpp>
 
 #include "Graphics/Shader.hpp"
+#include "Maths/Vectors/Matrix4.hpp"
 #include "third_party/glm/fwd.hpp"
+#include "third_party/glm/gtc/type_ptr.hpp"
 #include "third_party/glm/gtx/quaternion.hpp"
 #include <Maths/Transformation.hpp>
 
 namespace mtEngine
 {
-
   Mesh::~Mesh() { CleanBuffers(); }
 
   std::shared_ptr<Mesh> Mesh::Create(
@@ -93,17 +94,11 @@ namespace mtEngine
 
   void Mesh::Draw()
   {
-    glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-    glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -2.0f);
-    glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+    auto camera = mtEngine::Scenes::Get()->GetCamera();
     auto window = Window::Get();
     auto shader = ResourcesManager::Get()->find<Shader>("default");
-    glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, 0.0f));
-    glm::mat4 projection = glm::mat4(1.0f);
-    projection = glm::perspective(glm::radians(45.0f), window->GetAspectRatio(), 0.1f, 100.0f);
-    shader->setMat4("projection", projection);
-    shader->setMat4("view", view);
+    shader->setMat4("projection", camera->GetProjectionMatrix());
+    shader->setMat4("view", camera->GetViewMatrix());
 
     auto nodes = gltfSpec.nodes->GetItems();
 

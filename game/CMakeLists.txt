@@ -17,6 +17,8 @@ file(GLOB SOURCES
         Scenes/World/Gui/HUD/SlotsLayout.hpp
         Scenes/World/Gui/HUD/SlotsContent.cpp
         Scenes/World/Gui/HUD/SlotsContent.hpp
+        Scenes/World/FPSCamera.hpp
+        Scenes/World/FPSCamera.cpp
         )
 set(GAME_INCLUDE ${PROJECT_SOURCE_DIR})
 set(GAME_INCLUDE ${GAME_INCLUDE} PARENT_SCOPE)

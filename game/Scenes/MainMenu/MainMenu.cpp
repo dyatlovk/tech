@@ -1,13 +1,16 @@
 #include "MainMenu.hpp"
 #include "Engine/Engine.hpp"
+#include "Scenes/Scene.hpp"
 
 namespace Game
 {
-  MainMenu::MainMenu() = default;
+  MainMenu::MainMenu(): Scene(nullptr)
+  {
 
-  MainMenu::~MainMenu() = default;
+  }
 
   void MainMenu::Start() {
+    Mouse::Get()->ShowCursor();
     gui = std::make_unique<MenuGui>();
     Engine::Get()->GetApp()->GetThreadPool().Enqueue([]() {
       const std::string p(RESOURCES);

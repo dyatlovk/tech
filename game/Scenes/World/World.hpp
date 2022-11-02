@@ -5,6 +5,7 @@
 #include "Models/Model.hpp"
 #include "Scenes/Scene.hpp"
 #include "Scenes/Scenes.hpp"
+#include "FPSCamera.hpp"
 
 using namespace mtEngine;
 
@@ -16,8 +17,6 @@ namespace Game
     constexpr static std::string_view NAME = "world";
 
     World();
-    ~World() override;
-
     void Start() override;
     void BeforeUpdate() override;
     void Update() override;

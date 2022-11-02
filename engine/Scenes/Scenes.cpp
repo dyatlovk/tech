@@ -14,6 +14,9 @@ namespace mtEngine {
       scene->started = true;
     }
 
+    if (scene->GetCamera())
+      scene->GetCamera()->Update();
+
     scene->BeforeUpdate();
     scene->Update();
     scene->AfterUpdate();

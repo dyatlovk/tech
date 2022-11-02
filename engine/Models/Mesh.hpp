@@ -6,6 +6,7 @@
 #include <Files/FileGltf.hpp>
 #include <Resources/Resource.hpp>
 #include <Resources/ResourcesManager.hpp>
+#include <Scenes/Scenes.hpp>
 
 #include <third_party/glm/glm.hpp>
 #include <third_party/glm/gtc/matrix_transform.hpp>

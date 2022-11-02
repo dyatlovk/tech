@@ -235,7 +235,7 @@ namespace mtEngine::Files
 
     struct Rotation
     {
-      float x = 0;
+      float x = 1;
       float y = 0;
       float z = 0;
       float w = 0;

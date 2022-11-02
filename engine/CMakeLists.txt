@@ -22,6 +22,7 @@ add_library(${PROJECT_NAME} SHARED
   Engine/IniParser.cpp
   Devices/Window.cpp
   Devices/Keyboard.cpp
+  Devices/Mouse.cpp
   Graphics/Graphics.cpp
   Graphics/Texture.cpp
   Graphics/Shader.cpp

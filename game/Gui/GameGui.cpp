@@ -1,4 +1,5 @@
 #include "GameGui.hpp"
+#include "Scenes/Scenes.hpp"
 
 using namespace mtEngine;
 
@@ -89,6 +90,7 @@ namespace Game
       auto delta = Engine::Get()->GetDeltaRender();
       auto fps = Engine::Get()->GetFps();
       auto deltaUpdate = Engine::Get()->GetDelta();
+      auto camera = mtEngine::Scenes::Get()->GetCamera();
       
       ImGui::Text("%s", "Console: ~");
       ImGui::Text("%s", "UI Demo: F12");
@@ -96,6 +98,12 @@ namespace Game
       ImGui::Text("Render: %f ms/f", delta.AsSeconds() * 1000);
       ImGui::Text("Updates: %f ms/f", deltaUpdate.AsSeconds()  * 1000);
       ImGui::Text("FPS: %d", fps);
+      ImGui::Separator();
+      if(camera) {
+        ImGui::Text("Camera x: %f", camera->GetPosition().x);
+        ImGui::Text("Camera y: %f", camera->GetPosition().y);
+        ImGui::Text("Camera z: %f", camera->GetPosition().z);
+      }
     }
     ImGui::PopFont();
     ImGui::End();

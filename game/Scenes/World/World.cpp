@@ -6,12 +6,14 @@
 #include "Guis/Gui.hpp"
 #include "Graphics/Texture.hpp"
 #include "Resources/ResourcesManager.hpp"
+#include "Scenes/Scene.hpp"
 
 namespace Game
 {
-  World::World() = default;
+  World::World(): Scene(std::make_unique<FPSCamera>())
+  {
 
-  World::~World() = default;
+  }
 
   void World::Start()
   {

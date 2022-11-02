@@ -40,6 +40,10 @@ namespace mtEngine {
 
       void Shutdown() override;
 
+      Camera *GetCamera() const { return scene ? scene->GetCamera() : nullptr; }
+
+      bool IsPaused() const { return scene ? scene->IsPaused() : false; }
+
     private:
       std::unique_ptr<Scene> scene = nullptr;
       bool thread_lock = false;
