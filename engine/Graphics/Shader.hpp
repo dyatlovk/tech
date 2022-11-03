@@ -15,11 +15,16 @@ namespace mtEngine
 
     static std::shared_ptr<Shader> Create(const std::string &name);
 
+    static std::shared_ptr<Shader> Create(const std::string &name, const std::string &vert, const std::string &frag, const std::string &geom);
+
     static std::shared_ptr<Shader> CreateDefault();
 
-    void VertCompile();
 
-    void FragCompile();
+    void VertCompile(const std::string *buffer = nullptr);
+
+    void FragCompile(const std::string *buffer = nullptr);
+
+    void GeomCompile(const std::string *buffer = nullptr);
 
     void Link();
 
@@ -45,10 +50,7 @@ namespace mtEngine
     int geom;
 
   private:
-    bool isMainThread();
-
-  private:
-    const char *vertexShaderSource =
+    const char *vertexShaderDefaultSource =
         "#version 330 core\n"
         "layout (location = 0) in vec3 aPos;\n"
         "uniform mat4 model;\n"
@@ -58,12 +60,23 @@ namespace mtEngine
         "{\n"
         "   gl_Position = projection * view * model * vec4(aPos, 1.0);\n"
         "}\0";
-    const char *fragmentShaderSource =
+    const char *fragmentShaderDefaultSource =
         "#version 330 core\n"
         "out vec4 FragColor;\n"
         "void main()\n"
         "{\n"
         "   FragColor = vec4(0.43f, 0.6f, 0.52f, 0.4f);\n"
+        "}\n\0";
+
+    const char *geometrySource =
+        "#version 330 core\n"
+        "layout (points) in;\n"
+        "layout (points, max_vertices = 1) out;\n"
+        "void main()\n"
+        "{\n"
+        "gl_Position = gl_in[0].gl_Position;\n"
+        " EmitVertex();\n"
+        " EndPrimitive();\n"
         "}\n\0";
   };
 } // namespace mtEngine
