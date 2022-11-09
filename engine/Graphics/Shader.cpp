@@ -6,6 +6,7 @@ namespace mtEngine
 {
   std::shared_ptr<Shader> Shader::Create(const std::string &name)
   {
+    PLOGI << "Start creating " << name << "shader";
     auto mgr = ResourcesManager::Get();
     if (auto resource = mgr->find<Shader>(name))
       return resource;
@@ -21,6 +22,7 @@ namespace mtEngine
 
   std::shared_ptr<Shader> Shader::CreateDefault()
   {
+    PLOGI << "Start creating default shader";
     auto mgr = ResourcesManager::Get();
     if (auto resource = mgr->find<Shader>("default"))
       return resource;
@@ -34,8 +36,9 @@ namespace mtEngine
     return resource;
   }
 
-  std::shared_ptr<Shader> Shader::Create(const std::string &name, const std::string &vert, const std::string &frag, const std::string &geom)
+  std::shared_ptr<Shader> Shader::Create(const std::string &name, const std::string &vert, const std::string &frag, const std::string *geom)
   {
+    PLOGI << "Start creating " << name << " shader";
     auto mgr = ResourcesManager::Get();
     if (auto resource = mgr->find<Shader>(name))
       return resource;
@@ -46,18 +49,22 @@ namespace mtEngine
     fileVert->Load(vert);
     auto vertBuf = fileVert->GetBuffer();
     resource->VertCompile(&vertBuf);
-    fileVert = nullptr;
+    delete fileVert;
 
 
     auto fileFrag = new File();
-    fileFrag->Load(vert);
+    fileFrag->Load(frag);
     auto vertFrag = fileFrag->GetBuffer();
     resource->FragCompile(&vertFrag);
+    delete fileFrag;
 
-    auto geomFile = new File();
-    geomFile->Load(geom);
-    auto geomBuf = geomFile->GetBuffer();
-    resource->GeomCompile(&geomBuf);
+    if(geom) {
+      auto geomFile = new File();
+      geomFile->Load(*geom);
+      auto geomBuf = geomFile->GetBuffer();
+      resource->GeomCompile(&geomBuf);
+      delete geomFile;
+    }
 
     resource->Link();
     mgr->add(name, resource);
@@ -72,12 +79,15 @@ namespace mtEngine
   void Shader::VertCompile(const std::string *buffer)
   {
     vert = glCreateShader(GL_VERTEX_SHADER);
-    if(buffer) {
-      const std::string a = vertexShaderDefaultSource;
-      buffer = &a;
-      vertexShaderDefaultSource = buffer->c_str();
+    if(!buffer) {
+      PLOGI << "Vertex shader: using default source";
+      glShaderSource(vert, 1, &vertexShaderDefaultSource, nullptr);
     }
-    glShaderSource(vert, 1, &vertexShaderDefaultSource, nullptr);
+    if(buffer) {
+      const char *v = buffer->c_str();
+      glShaderSource(vert, 1, &v, nullptr);
+    }
+
     glCompileShader(vert);
 
     int success;
@@ -86,7 +96,7 @@ namespace mtEngine
     if (!success)
     {
       glGetShaderInfoLog(vert, 512, nullptr, infoLog);
-      PLOGD << "ERROR::SHADER::VERTEX::COMPILATION_FAILED" << infoLog;
+      PLOGD << "Vertex shader compilation failed" << infoLog;
     }
     PLOGI << "Shader vert compiled";
   }
@@ -94,12 +104,14 @@ namespace mtEngine
   void Shader::FragCompile(const std::string *buffer)
   {
     frag = glCreateShader(GL_FRAGMENT_SHADER);
-    if(buffer) {
-      const std::string a = fragmentShaderDefaultSource;
-      buffer = &a;
-      fragmentShaderDefaultSource = buffer->c_str();
+    if(!buffer) {
+      PLOGI << "Fragment shader: using default source";
+      glShaderSource(frag, 1, &fragmentShaderDefaultSource, NULL);
     }
-    glShaderSource(frag, 1, &fragmentShaderDefaultSource, NULL);
+    if(buffer) {
+      const char *v = buffer->c_str();
+      glShaderSource(frag, 1, &v, nullptr);
+    }
     glCompileShader(frag);
 
     int success;
@@ -109,7 +121,7 @@ namespace mtEngine
     if (!success)
     {
       glGetShaderInfoLog(frag, 512, nullptr, infoLog);
-      PLOGD << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED" << infoLog;
+      PLOGD << "Fragment shader compilation failed" << infoLog;
     }
 
     PLOGI << "Shader frag compiled";
@@ -118,13 +130,15 @@ namespace mtEngine
   void Shader::GeomCompile(const std::string *buffer)
   {
     geom = glCreateShader(GL_GEOMETRY_SHADER);
-    if(buffer) {
-      const std::string a = geometrySource;
-      buffer = &a;
-      geometrySource = buffer->c_str();
+    if(!buffer) {
+      PLOGI << "Geometry shader: using default source";
+      glShaderSource(geom, 1, &geometrySource, NULL);
     }
 
-    glShaderSource(geom, 1, &geometrySource, NULL);
+    if(buffer) {
+      const char *v = buffer->c_str();
+      glShaderSource(geom, 1, &v, nullptr);
+    }
     glCompileShader(geom);
 
     int success;
@@ -134,7 +148,7 @@ namespace mtEngine
     if (!success)
     {
       glGetShaderInfoLog(geom, 512, nullptr, infoLog);
-      PLOGD << "ERROR::SHADER::GEOMETRY::COMPILATION_FAILED" << infoLog;
+      PLOGD << "Geometry shader compilation failed" << infoLog;
     }
 
     PLOGI << "Shader frag compiled";
@@ -142,10 +156,13 @@ namespace mtEngine
 
   void Shader::Link()
   {
+    PLOGD << "Shader: try link program...";
     pid = glCreateProgram();
     glAttachShader(pid, vert);
     glAttachShader(pid, frag);
-    glAttachShader(pid, geom);
+    if(geom) {
+      glAttachShader(pid, geom);
+    }
     glLinkProgram(pid);
 
     int success;
@@ -155,11 +172,13 @@ namespace mtEngine
     if (!success)
     {
       glGetProgramInfoLog(pid, 512, NULL, infoLog);
-      PLOGD << "ERROR::SHADER::PROGRAM::LINKING_FAILED" << infoLog;
+      PLOGD << "Shader program link failed" << infoLog;
     }
     glDeleteShader(vert);
     glDeleteShader(frag);
-    glDeleteShader(geom);
+    if(geom) {
+      glDeleteShader(geom);
+    }
 
     PLOGI << "Shaders linked";
   }

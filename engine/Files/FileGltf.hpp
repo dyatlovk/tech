@@ -235,10 +235,10 @@ namespace mtEngine::Files
 
     struct Rotation
     {
-      float x = 1;
-      float y = 0;
+      float x = 0;
+      float y = 1;
       float z = 0;
-      float w = 0;
+      float w = 1;
     };
 
     struct Scale

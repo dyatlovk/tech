@@ -21,6 +21,7 @@ namespace Game
   {
   public:
     FPSCamera();
+    ~FPSCamera() override;
     void Start() override;
     void Update() override;
 

@@ -19,6 +19,7 @@ namespace Game
   {
     gui = std::make_unique<WorldGui>();
     notify = std::make_unique<Notify>();
+    m_grid = std::make_unique<Grid>();
     Keyboard::Get()->OnKey().Add([this](Key key, InputAction action, InputMod mods) {
       if(Gui::Get()->GetConsole()->IsVisible()) return;
       if(key == Key::I && action == InputAction::Press) {
@@ -71,6 +72,7 @@ namespace Game
     if(show_inv) gui->Inventory();
     notify->Render();
 
+    m_grid->Update();
     auto model = ResourcesManager::Get()->find<Model>("model");
     if(model) model->Draw();
   }
@@ -84,6 +86,7 @@ namespace Game
     CVars::Get()->RemoveName("scenes", "notify_add");
     gui = nullptr;
     notify = nullptr;
+    m_grid = nullptr;
     PLOGD << "world shutdown";
   }
 } // namespace Game

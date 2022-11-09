@@ -15,7 +15,7 @@ namespace mtEngine
 
     static std::shared_ptr<Shader> Create(const std::string &name);
 
-    static std::shared_ptr<Shader> Create(const std::string &name, const std::string &vert, const std::string &frag, const std::string &geom);
+    static std::shared_ptr<Shader> Create(const std::string &name, const std::string &vert, const std::string &frag, const std::string *geom = nullptr);
 
     static std::shared_ptr<Shader> CreateDefault();
 
@@ -60,13 +60,14 @@ namespace mtEngine
         "{\n"
         "   gl_Position = projection * view * model * vec4(aPos, 1.0);\n"
         "}\0";
+        
     const char *fragmentShaderDefaultSource =
         "#version 330 core\n"
         "out vec4 FragColor;\n"
         "void main()\n"
         "{\n"
         "   FragColor = vec4(0.43f, 0.6f, 0.52f, 0.4f);\n"
-        "}\n\0";
+        "}\0";
 
     const char *geometrySource =
         "#version 330 core\n"
@@ -74,9 +75,9 @@ namespace mtEngine
         "layout (points, max_vertices = 1) out;\n"
         "void main()\n"
         "{\n"
-        "gl_Position = gl_in[0].gl_Position;\n"
-        " EmitVertex();\n"
-        " EndPrimitive();\n"
-        "}\n\0";
+        "   gl_Position = gl_in[0].gl_Position;\n"
+        "   EmitVertex();\n"
+        "   EndPrimitive();\n"
+        "}\0";
   };
 } // namespace mtEngine

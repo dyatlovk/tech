@@ -18,6 +18,11 @@ namespace Game
     MouseCallback();
   }
 
+  FPSCamera::~FPSCamera()
+  {
+    Mouse::Get()->ShowCursor();
+  }
+
   void FPSCamera::Start() {}
 
   void FPSCamera::Update()
