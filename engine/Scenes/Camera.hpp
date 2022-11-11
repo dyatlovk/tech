@@ -37,6 +37,8 @@ namespace mtEngine
     const glm::mat4 &GetViewMatrix() const { return viewMatrix; }
     const glm::mat4 &GetProjectionMatrix() const { return projectionMatrix; }
 
+    void SetMoveIsPaused(bool state = false) { isPause = state; }
+
   protected:
     float nearPlane, farPlane;
     float fieldOfView;
@@ -47,5 +49,7 @@ namespace mtEngine
 
     glm::mat4 viewMatrix;
     glm::mat4 projectionMatrix;
+
+    bool isPause = false;
   };
 } // namespace mtEngine
