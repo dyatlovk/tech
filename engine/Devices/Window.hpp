@@ -71,6 +71,7 @@ namespace mtEngine {
       friend void CallbackFrameBufferSize(GLFWwindow *window, int32_t width, int32_t height);
       friend void CallbackWindowClose(GLFWwindow *window);
       friend void CallbackWindowSize(GLFWwindow *window, int32_t width, int32_t height);
+      friend void CallbackWindowFocus(GLFWwindow *window, int focused);
 
       Delegate<void()> onClose;
       Delegate<void(std::array<int, 2>)> onSize;

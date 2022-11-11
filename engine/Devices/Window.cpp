@@ -1,5 +1,6 @@
 #include "Window.hpp"
 #include "Engine/Engine.hpp"
+#include <Devices/Mouse.hpp>
 
 namespace mtEngine {
   void CallbackFrameBufferSize(GLFWwindow *window, int32_t width, int32_t height)
@@ -18,6 +19,13 @@ namespace mtEngine {
   {
     if (width <= 0 || height <= 0) return;
     Window::Get()->size = {width, height};
+  }
+
+  void CallbackWindowFocus(GLFWwindow *window, int focused)
+  {
+    if (!focused) {
+      Mouse::Get()->ShowCursor();
+    }
   }
 
   Window::Window(): title("Demo")
@@ -42,6 +50,7 @@ namespace mtEngine {
     glfwSetWindowCloseCallback(window, CallbackWindowClose);
     glfwSetFramebufferSizeCallback(window, CallbackFrameBufferSize);
     glfwSetWindowSizeCallback(window, CallbackWindowSize);
+    glfwSetWindowFocusCallback(window, CallbackWindowFocus);
 
     if (glfwRawMouseMotionSupported())
       glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
