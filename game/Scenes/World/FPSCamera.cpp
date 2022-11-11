@@ -13,20 +13,20 @@ namespace Game
       , Yaw(-90.0f)
       , Pitch(0.0f)
   {
-    Mouse::Get()->HideCursor();
     UpdateCameraVectors();
     MouseCallback();
   }
 
   FPSCamera::~FPSCamera()
   {
-    Mouse::Get()->ShowCursor();
   }
 
   void FPSCamera::Start() {}
 
   void FPSCamera::Update()
   {
+    if(isPause) return;
+
     auto delta = mtEngine::Engine::Get()->GetDelta().AsSeconds();
     auto window = Window::Get();
     auto mouse = Mouse::Get();

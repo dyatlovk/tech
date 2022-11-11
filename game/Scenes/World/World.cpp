@@ -21,11 +21,23 @@ namespace Game
     notify = std::make_unique<Notify>();
     m_grid = std::make_unique<Grid>();
     Keyboard::Get()->OnKey().Add([this](Key key, InputAction action, InputMod mods) {
+      auto camera = mtEngine::Scenes::Get()->GetCamera();
       if(Gui::Get()->GetConsole()->IsVisible()) return;
       if(key == Key::I && action == InputAction::Press) {
         show_inv = !show_inv;
+        if(show_inv) {
+          camera->SetMoveIsPaused(true);
+          Mouse::Get()->ShowCursor();
+        }
+        if(!show_inv) {
+          camera->SetMoveIsPaused(false);
+          Mouse::Get()->HideCursor();
+          Mouse::Get()->SetCenterPosition();
+        }
       }
     });
+
+    Mouse::Get()->HideCursor();
 
     using CVarParam = std::vector<std::string>;
     using Input = std::vector<std::string>;
@@ -43,6 +55,19 @@ namespace Game
       } catch (const std::out_of_range& oor) {}
 
       notify->Add({text, duration});
+    });
+
+    Gui::Get()->GetConsole()->OnShow().Add([]() {
+      Mouse::Get()->ShowCursor();
+      auto camera = mtEngine::Scenes::Get()->GetCamera();
+      if(camera) camera->SetMoveIsPaused(true);
+    });
+
+    Gui::Get()->GetConsole()->OnClose().Add([]() {
+      Mouse::Get()->HideCursor();
+      auto camera = mtEngine::Scenes::Get()->GetCamera();
+      if(camera) camera->SetMoveIsPaused(false);
+      Mouse::Get()->SetCenterPosition();
     });
 
     Engine::Get()->GetApp()->GetThreadPool().Enqueue([]() {
@@ -84,6 +109,8 @@ namespace Game
   void World::Shutdown()
   {
     CVars::Get()->RemoveName("scenes", "notify_add");
+    Gui::Get()->GetConsole()->OnClose().RemoveObservers();
+    Gui::Get()->GetConsole()->OnShow().RemoveObservers();
     gui = nullptr;
     notify = nullptr;
     m_grid = nullptr;

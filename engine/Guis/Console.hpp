@@ -18,7 +18,16 @@ namespace mtEngine {
       void Render();
       void Update();
 
-      bool ToggleVisible() { visible = !visible; return visible; };
+      bool ToggleVisible() { 
+        visible = !visible;
+        if(visible) {
+          onShow();
+        }
+        if(!visible) {
+          onClose();
+        }
+        return visible; 
+        };
       bool IsVisible() { return visible; };
 
       void AddHistory(const std::string &command) {
@@ -35,6 +44,10 @@ namespace mtEngine {
         history.clear();
       }
 
+      Delegate<void()> &OnClose() { return onClose; }
+
+      Delegate<void()> &OnShow() { return onShow; }
+
     private:
       bool visible = false;
       bool down = false;
@@ -45,5 +58,8 @@ namespace mtEngine {
       static int InputCallback(ImGuiInputTextCallbackData* data);
 
       History history;
+
+      Delegate<void()> onShow;
+      Delegate<void()> onClose;
   };
 }
