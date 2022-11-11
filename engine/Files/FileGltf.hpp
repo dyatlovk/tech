@@ -236,7 +236,7 @@ namespace mtEngine::Files
     struct Rotation
     {
       float x = 0;
-      float y = 1;
+      float y = 0;
       float z = 0;
       float w = 1;
     };
@@ -276,8 +276,8 @@ namespace mtEngine::Files
         if (i.contains("rotation"))
         {
           rot->x = i["rotation"][0];
-          rot->y = i["rotation"][1];
-          rot->z = i["rotation"][2];
+          rot->y = i["rotation"][2];
+          rot->z = i["rotation"][1];
           rot->w = i["rotation"][3];
          
         }

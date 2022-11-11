@@ -102,7 +102,7 @@ namespace mtEngine
 
     auto nodes = gltfSpec.nodes->GetItems();
 
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     for(const auto &buf : _glBuffers)
     {
       auto nodeTranslate = nodes.at(buf.nodeId).translation;
@@ -110,21 +110,20 @@ namespace mtEngine
 
       mtEngine::mtVec4f rot = {(float)nodeRotation->x, (float)nodeRotation->y, (float)nodeRotation->z, (float)nodeRotation->w};
       mtEngine::quatToAxisAngle q;
-      q.x = rot.x;
-      q.y = rot.y;
-      q.z = rot.z;
-      q.angle = rot.w;
+      q = rot;
 
       glBindVertexArray(buf.vao);
       glm::mat4 model = glm::mat4(1.0f);
       model = glm::translate(model, glm::vec3(nodeTranslate->x, nodeTranslate->y, nodeTranslate->z));
-      model = glm::rotate(model, q.angle, glm::vec3(q.x, q.y, q.z));
+      if((rot.x + rot.y + rot.z) > 0) {
+        model = glm::rotate(model, glm::radians(q.angle), glm::vec3(q.x, q.y, q.z));
+      }
       shader->setMat4("model", model);
       glDrawElements(GL_TRIANGLES, buf.indicesCount, GL_UNSIGNED_SHORT, nullptr);
       glBindVertexArray(0);
     }
 
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   }
 
   void Mesh::LoadSpecification(const std::filesystem::path &path)
