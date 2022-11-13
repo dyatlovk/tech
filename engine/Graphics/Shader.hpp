@@ -42,6 +42,16 @@ namespace mtEngine
       glUniformMatrix4fv(glGetUniformLocation(pid, name.c_str()), 1, GL_FALSE, &mat[0][0]);
     }
 
+    void setVec2(const std::string &name, const glm::vec2 &value)
+    {
+      glUniform2fv(glGetUniformLocation(pid, name.c_str()), 1, &value[0]);
+    }
+
+    void setVec3(const std::string &name, const glm::vec3 &value)
+    {
+      glUniform3f(glGetUniformLocation(pid, name.c_str()), value.x, value.y, value.z);
+    }
+
   private:
     int pid;
 
@@ -66,7 +76,12 @@ namespace mtEngine
         "out vec4 FragColor;\n"
         "void main()\n"
         "{\n"
-        "   FragColor = vec4(0.43f, 0.6f, 0.52f, 0.4f);\n"
+        "   float ambientStrength = 0.8;\n"
+        "   vec3 objectColor = vec4(0.43f, 0.6f, 0.52f);\n"
+        "   vec3 lightColor = vec4(1.00f, 1.00f, 1.00f);\n"
+        "   vec3 ambient = ambientStrength * lightColor;\n"
+        "   vec3 result = ambient * objectColor;\n"
+        "   FragColor = vec4(result, 1.0);\n"
         "}\0";
 
     const char *geometrySource =

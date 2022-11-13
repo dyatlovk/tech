@@ -27,9 +27,36 @@ namespace mtEngine
     if (auto resource = mgr->find<Shader>("default"))
       return resource;
 
+    const std::string p(RESOURCES);
     auto resource = std::make_shared<Shader>();
-    resource->VertCompile();
-    resource->FragCompile();
+
+    // Try loading vertex shader
+    try
+    {
+      auto vertexFile = new File();
+      vertexFile->Load(p + "/Game/shaders/default.vs");
+      auto vertBuf = vertexFile->GetBuffer();
+      resource->VertCompile(&vertBuf);
+      delete vertexFile;
+    }
+    catch (std::invalid_argument e)
+    {
+      resource->VertCompile();
+    }
+
+    try
+    {
+      auto fragFile = new File();
+      fragFile->Load(p + "/Game/shaders/default.fs");
+      auto fragBuf = fragFile->GetBuffer();
+      resource->FragCompile(&fragBuf);
+      delete fragFile;
+    }
+    catch (std::invalid_argument e)
+    {
+      resource->FragCompile();
+    }
+
     resource->Link();
     mgr->add("default", resource);
 
