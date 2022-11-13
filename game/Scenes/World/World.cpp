@@ -82,9 +82,20 @@ namespace Game
     });
 
     const std::string p(RESOURCES);
-    auto shader = Shader::CreateDefault();
-    auto mesh = Mesh::Create("mesh", p + "/Game/models/boxes.gltf");
-    Model::Create("model", shader.get(), mesh.get(), nullptr);
+
+    auto sunMesh = Mesh::Create("sun", p + "/Game/models/light.gltf");
+    auto sunShader = Shader::Create("sunShader", p + "/Game/shaders/ambient.vs", p + "/Game/shaders/ambient.fs");
+    Model::Create("ambientLightModel", sunShader.get(), sunMesh.get(), nullptr);
+
+    auto shaderDefault = Shader::CreateDefault();
+    auto mesh = Mesh::Create("mesh", p + "/Game/models/krushevka/krushevka.gltf");
+    Model::Create("model", shaderDefault.get(), mesh.get(), nullptr);
+
+    auto meshYard = Mesh::Create("yardMesh", p + "/Game/models/yard/yard.gltf");
+    Model::Create("yard", shaderDefault.get(), meshYard.get(), nullptr);
+
+    glEnable(GL_DEPTH_TEST);
+
     PLOGD << "world started";
   }
 
@@ -98,8 +109,17 @@ namespace Game
     notify->Render();
 
     m_grid->Update();
+
+    glClear(GL_DEPTH_BUFFER_BIT);
+    glDepthFunc(GL_LESS);
+    auto modelLight = ResourcesManager::Get()->find<Model>("ambientLightModel");
+    if(modelLight) modelLight->Draw();
+
     auto model = ResourcesManager::Get()->find<Model>("model");
     if(model) model->Draw();
+
+    auto modelYard = ResourcesManager::Get()->find<Model>("yard");
+    if(modelYard) modelYard->Draw();
   }
 
   void World::AfterUpdate() {
