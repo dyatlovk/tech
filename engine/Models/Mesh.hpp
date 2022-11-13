@@ -42,6 +42,10 @@ namespace mtEngine
 
     void Draw();
 
+    glm::vec3 GetTranslate() { return m_translate; }
+    glm::mat4 GetRotate() { return m_rotate; }
+    glm::mat4 GetScale() { return m_scale; }
+
   private:
     void LoadSpecification(const std::filesystem::path &path);
     void LoadGeometry();
@@ -51,7 +55,9 @@ namespace mtEngine
 
     [[nodiscard]] unsigned int PrimitiveVerticesSize(const std::vector<Accessors::Item>& accessors) const;
     [[nodiscard]] unsigned int PrimitiveIndicesSize(const Meshes::PrimitiveItem &item) const;
-    [[nodiscard]] unsigned int PrimitiveIndicesOrVerticesOffset(unsigned int position) const;
+    [[nodiscard]] unsigned int PrimitiveBufferOffset(unsigned int position) const;
+    [[nodiscard]] unsigned int PrimitiveNormalSize(unsigned int position) const;
+    [[nodiscard]] unsigned int PrimitiveNormalOffset(unsigned int position) const;
 
   private:
     std::string _fileBuffer;
@@ -68,5 +74,9 @@ namespace mtEngine
     std::vector<GLBuffer> _glBuffers;
 
     FileGltf::Spec gltfSpec{};
+
+    glm::vec3 m_translate;
+    glm::mat4 m_scale;
+    glm::mat4 m_rotate;
   };
 } // namespace mtEngine

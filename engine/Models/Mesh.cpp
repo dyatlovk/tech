@@ -57,9 +57,13 @@ namespace mtEngine
       const auto verticesSize = PrimitiveVerticesSize(accessorsPrimitive);
       const auto indicesSize = PrimitiveIndicesSize(primitive);
       const auto verticesPosition = primitive.attr.position;
-      const auto verticesOffset = PrimitiveIndicesOrVerticesOffset(verticesPosition);
+      const auto verticesOffset = PrimitiveBufferOffset(verticesPosition);
       const auto indicesPosition = *primitive.indices;
-      const auto indicesOffset = PrimitiveIndicesOrVerticesOffset(indicesPosition);
+      const auto indicesOffset = PrimitiveBufferOffset(indicesPosition);
+
+      const auto normalPosition = primitive.attr.normal;
+      const auto normalSize = PrimitiveNormalSize(normalPosition);
+      const auto normalOffset = PrimitiveBufferOffset(normalPosition);
 
       GLBuffer buf{};
       glGenVertexArrays(1, &buf.vao);
@@ -68,10 +72,12 @@ namespace mtEngine
       glBindVertexArray(buf.vao);
       glBindBuffer(GL_ARRAY_BUFFER, buf.vbo);
       glBufferData(GL_ARRAY_BUFFER, verticesSize, BufferOffset(verticesOffset), GL_STATIC_DRAW);
+      glEnableVertexAttribArray(0);
       glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)nullptr);
+      glEnableVertexAttribArray(1);
+      glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)nullptr);
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buf.ebo);
       glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize, BufferOffset(indicesOffset), GL_STATIC_DRAW);
-      glEnableVertexAttribArray(0);
       glBindBuffer(GL_ARRAY_BUFFER, 0);
 
       buf.indicesCount = accessors.at(indicesPosition).count;
@@ -102,11 +108,21 @@ namespace mtEngine
 
     auto nodes = gltfSpec.nodes->GetItems();
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    if(nodes.at(0).name->compare("Sun") != 0) {
+      auto sunMesh = ResourcesManager::Get()->find<Mesh>("sun");
+      shader->setVec3("light.position", sunMesh->GetTranslate());
+    }
+
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glEnable(GL_CULL_FACE);
+    glFrontFace(GL_CCW);
     for(const auto &buf : _glBuffers)
     {
       auto nodeTranslate = nodes.at(buf.nodeId).translation;
       auto nodeRotation = nodes.at(buf.nodeId).rotation;
+      auto nodeScale = nodes.at(buf.nodeId).scale;
+
+      m_translate = glm::vec3(nodeTranslate->x, nodeTranslate->y, nodeTranslate->z);
 
       mtEngine::mtVec4f rot = {(float)nodeRotation->x, (float)nodeRotation->y, (float)nodeRotation->z, (float)nodeRotation->w};
       mtEngine::quatToAxisAngle q;
@@ -116,14 +132,15 @@ namespace mtEngine
       glm::mat4 model = glm::mat4(1.0f);
       model = glm::translate(model, glm::vec3(nodeTranslate->x, nodeTranslate->y, nodeTranslate->z));
       if((rot.x + rot.y + rot.z) > 0) {
-        model = glm::rotate(model, glm::radians(q.angle), glm::vec3(q.x, q.y, q.z));
+        m_rotate = model = glm::rotate(model, glm::radians(q.angle), glm::vec3(q.x, q.y, q.z));
       }
+      m_scale = model = glm::scale(model, glm::vec3(nodeScale->x, nodeScale->y, nodeScale->z));
       shader->setMat4("model", model);
       glDrawElements(GL_TRIANGLES, buf.indicesCount, GL_UNSIGNED_SHORT, nullptr);
       glBindVertexArray(0);
     }
-
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glDisable(GL_CULL_FACE);
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   }
 
   void Mesh::LoadSpecification(const std::filesystem::path &path)
@@ -188,10 +205,26 @@ namespace mtEngine
     return bytes;
   }
 
-  unsigned int Mesh::PrimitiveIndicesOrVerticesOffset(const unsigned int position) const
+  unsigned int Mesh::PrimitiveBufferOffset(const unsigned int position) const
   {
     const auto buffers = gltfSpec.bufferViews->GetItems();
     unsigned int bytes = *buffers.at(position).byteOffset;
+
+    return bytes;
+  }
+
+  unsigned int Mesh::PrimitiveNormalOffset(unsigned int position) const
+  {
+    const auto buffers = gltfSpec.bufferViews->GetItems();
+    unsigned int bytes = *buffers.at(position).byteOffset;
+
+    return bytes;
+  }
+
+  unsigned int Mesh::PrimitiveNormalSize(unsigned int position) const
+  {
+    const auto buffers = gltfSpec.bufferViews->GetItems();
+    unsigned int bytes = buffers.at(position).byteLength;
 
     return bytes;
   }
