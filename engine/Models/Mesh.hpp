@@ -43,8 +43,8 @@ namespace mtEngine
     void Draw();
 
     glm::vec3 GetTranslate() { return m_translate; }
-    glm::mat4 GetRotate() { return m_rotate; }
-    glm::mat4 GetScale() { return m_scale; }
+    glm::vec3 GetRotate() { return m_rotate; }
+    glm::vec3 GetScale() { return m_scale; }
 
   private:
     void LoadSpecification(const std::filesystem::path &path);
@@ -76,7 +76,7 @@ namespace mtEngine
     FileGltf::Spec gltfSpec{};
 
     glm::vec3 m_translate;
-    glm::mat4 m_scale;
-    glm::mat4 m_rotate;
+    glm::vec3 m_scale;
+    glm::vec3 m_rotate;
   };
 } // namespace mtEngine

@@ -11,6 +11,8 @@
 
 namespace mtEngine
 {
+  #define BUFFER_OFFSET(i) ((char *)NULL + (i))
+
   Mesh::~Mesh() { CleanBuffers(); }
 
   std::shared_ptr<Mesh> Mesh::Create(
@@ -51,10 +53,11 @@ namespace mtEngine
   void Mesh::SetupPrimitives(const Meshes::PrimitiveItems &primitives, const unsigned int meshId)
   {
     auto accessors = gltfSpec.accessors->GetItems();
+    const auto buffers = gltfSpec.bufferViews->GetItems();
     for(const auto &primitive : primitives)
     {
       const auto accessorsPrimitive = FindPrimitiveAccessors(primitive);
-      const auto verticesSize = PrimitiveVerticesSize(accessorsPrimitive);
+      const auto verticesLength = PrimitiveVerticesSize(accessorsPrimitive);
       const auto indicesSize = PrimitiveIndicesSize(primitive);
       const auto verticesPosition = primitive.attr.position;
       const auto verticesOffset = PrimitiveBufferOffset(verticesPosition);
@@ -65,20 +68,32 @@ namespace mtEngine
       const auto normalSize = PrimitiveNormalSize(normalPosition);
       const auto normalOffset = PrimitiveBufferOffset(normalPosition);
 
+      const auto texPosition = primitive.attr.textcoord_0;
+      const auto texOffset = PrimitiveBufferOffset(primitive.attr.textcoord_0);
+      const auto texSize = PrimitiveNormalSize(texPosition);
+
       GLBuffer buf{};
       glGenVertexArrays(1, &buf.vao);
       glGenBuffers(1, &buf.vbo);
       glGenBuffers(1, &buf.ebo);
       glBindVertexArray(buf.vao);
+
       glBindBuffer(GL_ARRAY_BUFFER, buf.vbo);
-      glBufferData(GL_ARRAY_BUFFER, verticesSize, BufferOffset(verticesOffset), GL_STATIC_DRAW);
-      glEnableVertexAttribArray(0);
-      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)nullptr);
-      glEnableVertexAttribArray(1);
-      glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)nullptr);
+      glBufferData(GL_ARRAY_BUFFER, verticesLength, BufferOffset(verticesOffset), GL_STATIC_DRAW);
+
+      // positions
+      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, BUFFER_OFFSET(verticesOffset));
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buf.ebo);
       glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize, BufferOffset(indicesOffset), GL_STATIC_DRAW);
-      glBindBuffer(GL_ARRAY_BUFFER, 0);
+      glEnableVertexAttribArray(0);
+
+      //normals
+      glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, BUFFER_OFFSET(normalOffset));
+      glEnableVertexAttribArray(1);
+
+      //textures
+      glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, BUFFER_OFFSET(texOffset));
+      glEnableVertexAttribArray(2);
 
       buf.indicesCount = accessors.at(indicesPosition).count;
       buf.nodeId = meshId;
@@ -123,19 +138,21 @@ namespace mtEngine
       auto nodeScale = nodes.at(buf.nodeId).scale;
 
       m_translate = glm::vec3(nodeTranslate->x, nodeTranslate->y, nodeTranslate->z);
+      m_scale = glm::vec3(nodeScale->x, nodeScale->y, nodeScale->z);
+      m_rotate = glm::vec3(nodeRotation->x, nodeRotation->y, nodeRotation->z);
 
       mtEngine::mtVec4f rot = {(float)nodeRotation->x, (float)nodeRotation->y, (float)nodeRotation->z, (float)nodeRotation->w};
       mtEngine::quatToAxisAngle q;
       q = rot;
 
-      glBindVertexArray(buf.vao);
       glm::mat4 model = glm::mat4(1.0f);
       model = glm::translate(model, glm::vec3(nodeTranslate->x, nodeTranslate->y, nodeTranslate->z));
       if((rot.x + rot.y + rot.z) > 0) {
-        m_rotate = model = glm::rotate(model, glm::radians(q.angle), glm::vec3(q.x, q.y, q.z));
+        model = glm::rotate(model, glm::radians(q.angle), glm::vec3(q.x, q.y, q.z));
       }
-      m_scale = model = glm::scale(model, glm::vec3(nodeScale->x, nodeScale->y, nodeScale->z));
+      model = glm::scale(model, glm::vec3(nodeScale->x, nodeScale->y, nodeScale->z));
       shader->setMat4("model", model);
+      glBindVertexArray(buf.vao);
       glDrawElements(GL_TRIANGLES, buf.indicesCount, GL_UNSIGNED_SHORT, nullptr);
       glBindVertexArray(0);
     }
@@ -167,9 +184,10 @@ namespace mtEngine
 
   const char *Mesh::BufferOffset(const unsigned int &pos)
   {
-    auto buffer = _fileBuffer.begin() + pos;
+    auto buffer = _fileBuffer.begin();
+    auto result = buffer.base() + pos;
 
-    return buffer.base();
+    return result;
   }
 
   std::vector<Accessors::Item> Mesh::FindPrimitiveAccessors(const Meshes::PrimitiveItem &item) const
@@ -188,12 +206,12 @@ namespace mtEngine
   unsigned int Mesh::PrimitiveVerticesSize(const std::vector<Accessors::Item>& accessors) const
   {
     unsigned int bytes = 0;
-    const auto buffers = gltfSpec.bufferViews->GetItems();
-    for (const auto &accessor : accessors)
+    const auto buffers = gltfSpec.buffers->GetItems();
+    for (const auto &buf : buffers)
     {
-      const auto buffer = buffers.at(*accessor.bufferView);
-      bytes += buffer.byteLength;
+      bytes += buf.byteLength;
     }
+
     return bytes;
   }
 
@@ -208,15 +226,15 @@ namespace mtEngine
   unsigned int Mesh::PrimitiveBufferOffset(const unsigned int position) const
   {
     const auto buffers = gltfSpec.bufferViews->GetItems();
-    unsigned int bytes = *buffers.at(position).byteOffset;
+    const auto bytes = buffers.at(position).byteOffset;
 
-    return bytes;
+    return *bytes;
   }
 
   unsigned int Mesh::PrimitiveNormalOffset(unsigned int position) const
   {
     const auto buffers = gltfSpec.bufferViews->GetItems();
-    unsigned int bytes = *buffers.at(position).byteOffset;
+    const auto bytes = *buffers.at(position).byteOffset;
 
     return bytes;
   }

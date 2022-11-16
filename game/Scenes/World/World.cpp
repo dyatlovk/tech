@@ -5,6 +5,7 @@
 #include "Gui/Notify.hpp"
 #include "Guis/Gui.hpp"
 #include "Graphics/Texture.hpp"
+#include "Models/Material.hpp"
 #include "Resources/ResourcesManager.hpp"
 #include "Scenes/Scene.hpp"
 
@@ -37,7 +38,7 @@ namespace Game
       }
     });
 
-    Mouse::Get()->HideCursor();
+    // Mouse::Get()->HideCursor();
 
     using CVarParam = std::vector<std::string>;
     using Input = std::vector<std::string>;
@@ -83,16 +84,21 @@ namespace Game
 
     const std::string p(RESOURCES);
 
+    auto shaderDefault = Shader::CreateDefault();
+
     auto sunMesh = Mesh::Create("sun", p + "/Game/models/light.gltf");
     auto sunShader = Shader::Create("sunShader", p + "/Game/shaders/ambient.vs", p + "/Game/shaders/ambient.fs");
     Model::Create("ambientLightModel", sunShader.get(), sunMesh.get(), nullptr);
 
-    auto shaderDefault = Shader::CreateDefault();
-    auto mesh = Mesh::Create("mesh", p + "/Game/models/krushevka/krushevka.gltf");
-    Model::Create("model", shaderDefault.get(), mesh.get(), nullptr);
+    auto meshBox = Mesh::Create("box_mesh", p + "/Game/models/boxes.gltf");
+    auto textureBox = Texture::Create("box_texture", p + "/Game/textures/wood_box.jpg");
+    auto matBox = Material::Create("box_mat", textureBox.get());
+    Model::Create("box", shaderDefault.get(), meshBox.get(), matBox.get());
 
-    auto meshYard = Mesh::Create("yardMesh", p + "/Game/models/yard/yard.gltf");
-    Model::Create("yard", shaderDefault.get(), meshYard.get(), nullptr);
+    auto yardMesh = Mesh::Create("yard_mesh", p + "/Game/models/yard/yard.gltf");
+    auto textureYard = Texture::Create("yard_texture", p + "/Game/textures/yard/ground.jpg");
+    auto yardMat = Material::Create("yard_mat", textureYard.get());
+    Model::Create("yard", shaderDefault.get(), yardMesh.get(), yardMat.get());
 
     glEnable(GL_DEPTH_TEST);
 
@@ -115,11 +121,11 @@ namespace Game
     auto modelLight = ResourcesManager::Get()->find<Model>("ambientLightModel");
     if(modelLight) modelLight->Draw();
 
-    auto model = ResourcesManager::Get()->find<Model>("model");
-    if(model) model->Draw();
+    auto modelBox = ResourcesManager::Get()->find<Model>("box");
+    if(modelBox) modelBox->Draw();
 
-    auto modelYard = ResourcesManager::Get()->find<Model>("yard");
-    if(modelYard) modelYard->Draw();
+    auto yardModel = ResourcesManager::Get()->find<Model>("yard");
+    if(yardModel) yardModel->Draw();
   }
 
   void World::AfterUpdate() {
