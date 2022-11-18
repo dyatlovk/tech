@@ -61,6 +61,18 @@ namespace mtEngine::Files
       auto b = buf.get<nlohmann::json::array_t *>();
       spec.buffers = new Buffers(b);
 
+      auto mat = json["materials"];
+      auto _mat = mat.get<nlohmann::json::array_t *>();
+      spec.materials = new Materials(_mat);
+
+      auto tex = json["textures"];
+      auto _tex = mat.get<nlohmann::json::array_t *>();
+      spec.textures = new Textures(_tex);
+
+      auto imgs = json["images"];
+      auto _imgs = imgs.get<nlohmann::json::array_t *>();
+      spec.images = new Images(_imgs);
+
       if(json.contains("extras"))
       {
         auto extras = json["extras"];

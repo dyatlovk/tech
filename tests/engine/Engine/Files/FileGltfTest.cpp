@@ -1,4 +1,7 @@
 #include "Files/FileGltf.hpp"
+
+#include <gtest/gtest.h>
+
 #include "Fixtures/Files/FileGltfFixture.hpp"
 
 namespace EngineTest
@@ -10,6 +13,7 @@ namespace EngineTest
 
     EXPECT_EQ("Scene", *scenes.name);
     EXPECT_EQ(0, scenes.nodes.at(0));
+    EXPECT_EQ("/Game/models", scenes.extras->BinPath);
   }
 
   TEST_F(FileGltfFixture, checkNodes)
@@ -100,4 +104,39 @@ namespace EngineTest
     EXPECT_EQ("/Game/models", *extras.gameModelsRelativePath);
     EXPECT_EQ("/Game/textures", *extras.gameTexturesRelativePath);
   }
-}
+
+  TEST_F(FileGltfFixture, checkMaterials)
+  {
+    auto spec = instance->GetSpecification();
+    auto mats = spec.materials->GetItems();
+
+    EXPECT_TRUE(mats.at(0).doubleSided);
+    EXPECT_EQ("Cube", *mats.at(0).name);
+    EXPECT_EQ(0, mats.at(0).pbrMetallicRoughness->baseColorTexture->index);
+    EXPECT_EQ(0, mats.at(0).pbrMetallicRoughness->metallicFactor);
+    EXPECT_EQ(0.4000000059604645, mats.at(0).pbrMetallicRoughness->roughnessFactor);
+    EXPECT_EQ("/Game/shaders/default.vs", *mats.at(0).extras->shader_vs);
+    EXPECT_EQ("/Game/shaders/default.fs", *mats.at(0).extras->shader_fs);
+    EXPECT_EQ("", *mats.at(0).extras->shader_gs);
+    EXPECT_EQ("/Game/textures", *mats.at(0).extras->textures_path);
+  }
+
+  TEST_F(FileGltfFixture, checkTextures)
+  {
+    auto spec = instance->GetSpecification();
+    auto tex = spec.textures->GetItems();
+
+    EXPECT_EQ(0, tex->at(0).source);
+    EXPECT_EQ(0, tex->at(0).sampler);
+  }
+
+  TEST_F(FileGltfFixture, checkImages)
+  {
+    auto spec = instance->GetSpecification();
+    auto img = spec.images->GetItems();
+
+    EXPECT_EQ("image/jpeg", *img->at(0).mimeType);
+    EXPECT_EQ("wood_box", *img->at(0).name);
+    EXPECT_EQ("wood_box.jpg", *img->at(0).uri);
+  }
+} // namespace EngineTest

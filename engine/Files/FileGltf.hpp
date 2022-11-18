@@ -24,6 +24,9 @@ namespace mtEngine::Files
   class BufferViews;
   class Buffers;
   class Extras;
+  class Materials;
+  class Textures;
+  class Images;
 
   class FileGltf
   {
@@ -41,6 +44,9 @@ namespace mtEngine::Files
       BufferViews *bufferViews;
       Buffers *buffers;
       Extras *extras;
+      Materials *materials;
+      Textures *textures;
+      Images *images;
     } spec;
 
     /**
@@ -130,6 +136,8 @@ namespace mtEngine::Files
   {
   public:
     struct Item;
+    struct Extras;
+
     Scenes(nlohmann::json::array_t *json)
         : json(json)
     {
@@ -146,7 +154,13 @@ namespace mtEngine::Files
     {
       std::vector<unsigned int> nodes;
       std::string *name = nullptr;
+      Extras *extras = nullptr;
     } _item;
+
+    struct Extras
+    {
+      std::string BinPath;
+    } _extras;
 
     Item GetSection() { return _item; }
 
@@ -160,11 +174,23 @@ namespace mtEngine::Files
         _item.name = new std::string(section.at("name"));
       }
 
+      if (section.contains("extras"))
+      {
+        auto extras = section["extras"];
+        auto ex = extras.get<nlohmann::json::object_t *>();
+        if (ex->find("BinPath") != ex->end())
+        {
+          Extras *ex = new Extras();
+          ex->BinPath = extras["BinPath"];
+          _item.extras = ex;
+        }
+      }
+
       if (section.find("nodes") != section.end())
       {
         auto nodes = section.at("nodes");
         auto array = nodes.get<nlohmann::json::array_t *>();
-        for(const auto &i : *array)
+        for (const auto &i : *array)
         {
           _item.nodes.push_back(i);
         }
@@ -983,6 +1009,275 @@ namespace mtEngine::Files
       if (json->find("gameScenesRelativePath") != json->end())
       {
         _item.gameScenesRelativePath = new std::string(json->at("gameScenesRelativePath"));
+      }
+    }
+  };
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Materials
+  //////////////////////////////////////////////////////////////////////////////
+  class Materials
+  {
+    struct Item;
+    struct Extras;
+    struct PbrMetallicRoughness;
+    struct TextureInfo;
+
+  public:
+    using MaterialsItems = std::vector<Item>;
+
+    Materials(nlohmann::json::array_t *json)
+        : json(json)
+    {
+      Parse();
+    };
+
+    ~Materials()
+    {
+      _items.clear();
+      json = nullptr;
+    };
+
+    MaterialsItems GetItems() { return _items; }
+
+  private:
+    MaterialsItems _items;
+    nlohmann::json::array_t *json;
+
+    struct Item
+    {
+      std::string *name = nullptr;
+      PbrMetallicRoughness *pbrMetallicRoughness = nullptr;
+      bool doubleSided = false;
+      Extras *extras = nullptr;
+    };
+
+    struct Extras
+    {
+      std::string *shader_vs = nullptr;
+      std::string *shader_fs = nullptr;
+      std::string *shader_gs = nullptr;
+      std::string *textures_path = nullptr;
+    };
+
+    struct PbrMetallicRoughness
+    {
+      std::array<int, 4> baseColorFactor{1, 1, 1, 1};
+      double metallicFactor = 1;
+      double roughnessFactor = 1;
+      TextureInfo *baseColorTexture = nullptr;
+      TextureInfo *metallicRoughnessTexture = nullptr;
+    };
+
+    struct TextureInfo
+    {
+      int index;
+      int textCoord = 0;
+    };
+
+  private:
+    void Parse()
+    {
+      for (const auto &i : *json)
+      {
+        Item item;
+        // name
+        if (i.contains("name"))
+        {
+          item.name = new std::string(i["name"]);
+        }
+        // pbrMetallicRoughness
+        if (i.contains("pbrMetallicRoughness"))
+        {
+          auto pbrMetRoughSt = new PbrMetallicRoughness();
+          auto pbrMetRough = i["pbrMetallicRoughness"];
+          auto p = pbrMetRough.get<nlohmann::json::object_t *>();
+          // baseColorFactor
+          if (p->find("baseColorFactor") != p->end())
+          {
+            pbrMetRoughSt->baseColorFactor[0] = (unsigned int)p->at("baseColorFactor")[0];
+            pbrMetRoughSt->baseColorFactor[1] = (unsigned int)p->at("baseColorFactor")[1];
+            pbrMetRoughSt->baseColorFactor[2] = (unsigned int)p->at("baseColorFactor")[2];
+            pbrMetRoughSt->baseColorFactor[3] = (unsigned int)p->at("baseColorFactor")[3];
+          }
+          // metallicFactor
+          if (p->find("metallicFactor") != p->end())
+          {
+            pbrMetRoughSt->metallicFactor = p->at("metallicFactor");
+          }
+          // roughnessFactor
+          if (p->find("roughnessFactor") != p->end())
+          {
+            pbrMetRoughSt->roughnessFactor = p->at("roughnessFactor");
+          }
+          // baseColorTexture
+          if (p->find("baseColorTexture") != p->end())
+          {
+            auto baseColorTex = new TextureInfo();
+            auto b = p->at("baseColorTexture");
+            auto bjson = b.get<nlohmann::json::object_t *>();
+            baseColorTex->index = bjson->at("index");
+            if(bjson->find("textCoord") != bjson->end())
+            {
+              baseColorTex->textCoord = bjson->at("textCoord");
+            }
+            pbrMetRoughSt->baseColorTexture = baseColorTex;
+          }
+          // metallicRoughnessTexture
+          if(p->find("metallicRoughnessTexture") != p->end())
+          {
+            auto b = p->at("metallicRoughnessTexture");
+            auto bjson = b.get<nlohmann::json::object_t *>();
+            auto texInfo = new TextureInfo();
+            texInfo->index = bjson->at("index");
+            if(bjson->find("metallicRoughnessTexture") != bjson->end())
+            {
+              texInfo->textCoord = bjson->at("textCoord");
+            }
+            pbrMetRoughSt->metallicRoughnessTexture = texInfo;
+          }
+          item.pbrMetallicRoughness = pbrMetRoughSt;
+        }
+        // doubleSided
+        if (i.contains("doubleSided"))
+        {
+          item.doubleSided = i["doubleSided"];
+        }
+        if (i.contains("extras"))
+        {
+          Extras *e = new Extras();
+          auto extras = i["extras"];
+          auto exJson = extras.get<nlohmann::json::object_t *>();
+          if (exJson->find("ShaderVs") != exJson->end())
+          {
+            e->shader_vs = new std::string(exJson->at("ShaderVs"));
+          }
+          if (exJson->find("ShaderFs") != exJson->end())
+          {
+            e->shader_fs = new std::string(exJson->at("ShaderFs"));
+          }
+          if (exJson->find("ShaderGs") != exJson->end())
+          {
+            e->shader_gs = new std::string(exJson->at("ShaderGs"));
+          }
+          if (exJson->find("TexturesPath") != exJson->end())
+          {
+            e->textures_path = new std::string(exJson->at("TexturesPath"));
+          }
+          item.extras = e;
+        }
+        _items.push_back(item);
+      }
+    }
+  };
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Textures
+  //////////////////////////////////////////////////////////////////////////////
+  class Textures
+  {
+    struct Item;
+
+  public:
+    using TexturesItems = std::vector<Item>;
+
+    Textures(nlohmann::json::array_t *json)
+        : json(json)
+    {
+      Parse();
+    };
+    ~Textures();
+
+    TexturesItems *GetItems() { return &_items; }
+
+  private:
+    TexturesItems _items;
+    nlohmann::json::array_t *json;
+
+    struct Item
+    {
+      int *sampler = nullptr;
+      int *source = nullptr;
+      std::string *name = nullptr;
+    };
+
+  private:
+    void Parse()
+    {
+      for (const auto &i : *json)
+      {
+        Item item;
+        if (i.contains("sampler"))
+        {
+          item.sampler = new int(i["sampler"]);
+        }
+        if (i.contains("source"))
+        {
+          item.source = new int(i["source"]);
+        }
+        if (i.contains("name"))
+        {
+          item.name = new std::string(i["name"]);
+        }
+        _items.push_back(item);
+      }
+    }
+  };
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Images
+  //////////////////////////////////////////////////////////////////////////////
+  class Images
+  {
+    struct Item;
+
+  public:
+    using ImagesItems = std::vector<Item>;
+
+    Images(nlohmann::json::array_t *json)
+        : json(json)
+    {
+      Parse();
+    };
+    ~Images();
+
+    ImagesItems *GetItems() { return &_items; }
+
+  private:
+    ImagesItems _items;
+    nlohmann::json::array_t *json;
+
+    struct Item
+    {
+      std::string *uri = nullptr;
+      std::string *mimeType = nullptr;
+      int *bufferView = nullptr;
+      std::string *name = nullptr;
+    };
+
+  private:
+    void Parse()
+    {
+      for (const auto &i : *json)
+      {
+        Item item;
+        if (i.contains("uri"))
+        {
+          item.uri = new std::string(i["uri"]);
+        }
+        if (i.contains("mimeType"))
+        {
+          item.mimeType = new std::string(i["mimeType"]);
+        }
+        if (i.contains("bufferView"))
+        {
+          item.bufferView = new int(i["bufferView"]);
+        }
+        if (i.contains("name"))
+        {
+          item.name = new std::string(i["name"]);
+        }
+        _items.push_back(item);
       }
     }
   };

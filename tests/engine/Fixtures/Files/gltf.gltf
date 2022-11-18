@@ -6,6 +6,9 @@
     "scene" : 0,
     "scenes" : [
         {
+            "extras" : {
+                "BinPath" : "/Game/models"
+            },
             "name" : "Scene",
             "nodes" : [
                 0
@@ -18,8 +21,8 @@
             "name" : "Cube",
             "rotation" : [
                 0,
-                0.3826834261417389,
                 0,
+                0.3826834261417389,
                 0.9238795638084412
             ],
             "translation" : [
@@ -31,6 +34,12 @@
     ],
     "materials" : [
         {
+            "extras" : {
+                "ShaderVs" : "/Game/shaders/default.vs",
+                "ShaderFs" : "/Game/shaders/default.fs",
+                "ShaderGs" : "",
+                "TexturesPath" : "/Game/textures"
+            },
             "doubleSided" : true,
             "name" : "Cube",
             "pbrMetallicRoughness" : {
