@@ -1,15 +1,16 @@
 #include "Scenes.hpp"
 
-#include "Engine/Engine.hpp"
-
-namespace mtEngine {
-  Scenes::Scenes() {};
+namespace mtEngine
+{
+  Scenes::Scenes(){};
 
   void Scenes::Update()
   {
-    if(!scene) return;
+    if (!scene)
+      return;
 
-    if(!scene->started) {
+    if (!scene->started)
+    {
       scene->Start();
       scene->started = true;
     }
@@ -19,6 +20,8 @@ namespace mtEngine {
 
     scene->BeforeUpdate();
     scene->Update();
+    if (scene->GetStructure())
+      scene->GetStructure()->Update();
     scene->AfterUpdate();
   }
 
@@ -27,4 +30,4 @@ namespace mtEngine {
     scene->Shutdown();
     PLOGD << "scenes shutdown";
   }
-}
+} // namespace mtEngine

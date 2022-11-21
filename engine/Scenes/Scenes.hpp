@@ -1,51 +1,60 @@
 #pragma once
 
 #include <memory>
+
+#include "Engine/Log.hpp"
 #include "Engine/Module.hpp"
 #include "Scene.hpp"
-#include "Engine/Log.hpp"
 
-namespace mtEngine {
-  class Scenes: public Module::Registrar<Scenes>
+namespace mtEngine
+{
+  class Scenes : public Module::Registrar<Scenes>
   {
     inline static const bool Registered = Register(Stage::Normal);
-    public:
-      Scenes();
 
-      void Update() override;
+  public:
+    Scenes();
 
-      Scene *GetScene() const { return scene.get(); }
+    void Update() override;
 
-      void SetScene(std::unique_ptr<Scene> &&scene) {
-        if(!scene) {
-          this->scene = nullptr;
-          return;
-        }
+    Scene *GetScene() const { return scene.get(); }
 
-        if(this->scene) this->scene->Shutdown();
-        
-        // remove previous scene;
-        this->scene = nullptr;
-
-        // set new scene
-        this->scene = std::move(scene);
-        thread_lock = false;
-      }
-
-      void Reload(std::unique_ptr<Scene> &&scene)
+    void SetScene(std::unique_ptr<Scene> &&scene)
+    {
+      if (!scene)
       {
-        if(this->scene->GetName() == scene->GetName()) return;
-        SetScene(std::move(scene));
+        this->scene = nullptr;
+        return;
       }
 
-      void Shutdown() override;
+      if (this->scene)
+        this->scene->Shutdown();
 
-      Camera *GetCamera() const { return scene ? scene->GetCamera() : nullptr; }
+      // remove previous scene;
+      this->scene = nullptr;
 
-      bool IsPaused() const { return scene ? scene->IsPaused() : false; }
+      // set new scene
+      this->scene = std::move(scene);
+      thread_lock = false;
+    }
 
-    private:
-      std::unique_ptr<Scene> scene = nullptr;
-      bool thread_lock = false;
+    void Reload(std::unique_ptr<Scene> &&scene)
+    {
+      if (this->scene->GetName() == scene->GetName())
+        return;
+      SetScene(std::move(scene));
+    }
+
+    void Shutdown() override;
+
+    Camera *GetCamera() const { return scene ? scene->GetCamera() : nullptr; }
+
+    bool IsPaused() const { return scene ? scene->IsPaused() : false; }
+
+    SceneStructure *GetStructure() const { return scene ? scene->GetStructure() : nullptr; };
+
+  private:
+    std::unique_ptr<Scene> scene = nullptr;
+    bool thread_lock = false;
   };
-}
+} // namespace mtEngine

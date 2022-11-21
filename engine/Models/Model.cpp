@@ -1,39 +1,97 @@
 #include "Model.hpp"
+#include <Scenes/Components/Transform.hpp>
 
 namespace mtEngine
 {
-  Model::Model(const Shader *shader, const Mesh *mesh, const Material *mat)
+  Model::Model(std::shared_ptr<Model> model)
+      : m_model(std::move(model))
   {
-    this->mesh = const_cast<Mesh *>(mesh);
-    this->shader = const_cast<Shader *>(shader);
-    this->material = const_cast<Material *>(mat);
+    if (m_model)
+    {
+      m_file_path = m_model.get()->m_file_path;
+      m_gltfSpec = m_model.get()->m_gltfSpec;
+      m_fileBuffer = m_model.get()->m_fileBuffer;
+      BindNodes();
+    }
   }
 
-  auto Model::Create(const std::string &name, const Shader *shader, const Mesh *mesh, const Material *material)
-      -> std::shared_ptr<Model>
+  auto Model::Create(const std::filesystem::path &path) -> std::shared_ptr<Model>
   {
+    PLOGD << "try creating model " << path;
+    const std::size_t hash = std::hash<std::string>{}(path);
+    const std::string name = std::to_string(hash);
+
     auto mgr = ResourcesManager::Get();
-    if (auto resource = mgr->find<Model>(name))
-      return resource;
+    if (auto res = mgr->find<Model>(name))
+      return res;
 
-    auto resource = std::make_shared<Model>(shader, mesh, material);
-    resource->material = const_cast<Material *>(material);
-    resource->shader = const_cast<Shader *>(shader);
-    resource->mesh = const_cast<Mesh *>(mesh);
-    mgr->add(name, resource);
+    auto res = std::make_shared<Model>();
+    res->CreateFromFile(path);
+    mgr->add(name, std::dynamic_pointer_cast<Resource>(res));
 
-    return resource;
+    return res;
   }
 
-  void Model::Draw()
+  void Model::Start() {}
+
+  auto Model::CreateFromFile(const std::filesystem::path &path) -> void
   {
-    if (shader)
-      shader->Use();
+    m_gltfSpec = LoadSpecification(path);
 
-    if (material)
-      material->Draw();
+    const std::string p(RESOURCES);
+    const auto binFile = *m_gltfSpec.buffers->GetItems().at(0).uri;
+    const auto binFindPath = m_gltfSpec.scenes->GetSection().extras->BinPath;
+    const auto binPath = p + binFindPath + "/" + binFile;
+    m_fileBuffer = LoadGeometry(binPath);
+  }
 
-    if (mesh)
-      mesh->Draw();
+  void Model::BindNodes()
+  {
+    auto nodes = m_gltfSpec.nodes->GetItems();
+    for (const auto &node : nodes)
+    {
+      const auto meshPos = node.mesh;
+      if (meshPos)
+      {
+        const auto mesh = Mesh::Create(*meshPos, m_fileBuffer, m_gltfSpec);
+        m_meshes.push_back(mesh);
+      }
+    }
+  }
+
+  void Model::Update()
+  {
+    auto transform = GetEntity()->GetComponent<Transform>();
+    for (const auto &mesh : m_meshes)
+    {
+      mesh->SetModelTransform(transform);
+      mesh->Update();
+    }
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  // PRIVATE
+  //////////////////////////////////////////////////////////////////////////////
+
+  const std::string Model::LoadGeometry(const std::filesystem::path &path)
+  {
+    if (!m_gltfSpec.buffers)
+    {
+      PLOGE << "gltf specification not loaded";
+      return "";
+    }
+
+    auto binFile = new File(path);
+    const auto buffer = std::string(binFile->GetBuffer());
+    delete binFile;
+
+    return buffer;
+  }
+
+  const Files::FileGltf::Spec Model::LoadSpecification(const std::filesystem::path &path)
+  {
+    auto gltf = Files::FileGltf::Create(path);
+
+    return gltf->GetSpecification();
   }
 } // namespace mtEngine

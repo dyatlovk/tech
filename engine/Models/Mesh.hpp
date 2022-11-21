@@ -1,82 +1,70 @@
 #pragma once
 
+#include <GL/glew.h>
 #include <filesystem>
 
 #include <Devices/Window.hpp>
 #include <Files/FileGltf.hpp>
-#include <Resources/Resource.hpp>
+#include <Models/Material.hpp>
 #include <Resources/ResourcesManager.hpp>
+#include <Scenes/Entity.hpp>
 #include <Scenes/Scenes.hpp>
 
-#include <third_party/glm/glm.hpp>
-#include <third_party/glm/gtc/matrix_transform.hpp>
-#include <third_party/glm/gtc/type_ptr.hpp>
-#include <third_party/glm/gtx/quaternion.hpp>
+#include "Scenes/Components/Transform.hpp"
 
 namespace mtEngine
 {
-  using namespace Files;
-
   class Mesh : public Resource
   {
-    struct GLBuffer;
+    constexpr static const char *postfix = "_mesh";
+
   public:
-    Mesh() = default;
+    Mesh();
 
     ~Mesh() override;
 
-    static std::shared_ptr<Mesh> Create(const std::string &name, const std::filesystem::path &path);
+    static std::shared_ptr<Mesh> Create(
+        const uint16_t meshId, const std::string &buffer, const Files::FileGltf::Spec &spec);
 
-    [[nodiscard]] std::type_index GetTypeIndex() const override
-    {
-      return typeid(Mesh);
-    }
+    [[nodiscard]] std::type_index GetTypeIndex() const override { return typeid(Mesh); }
 
-    void CleanBuffers();
+    void Update();
 
-    void SetupPrimitives(const Meshes::PrimitiveItems &primitives, unsigned int meshId);
-
-    void SetupMeshes(unsigned int meshId);
-
-    void SetupNodes();
-
-    void Draw();
-
-    glm::vec3 GetTranslate() { return m_translate; }
-    glm::vec3 GetRotate() { return m_rotate; }
-    glm::vec3 GetScale() { return m_scale; }
+  public:
+    Transform *_model_transform;
+    void SetModelTransform(const Transform *transform) { _model_transform = const_cast<Transform *>(transform); };
 
   private:
-    void LoadSpecification(const std::filesystem::path &path);
-    void LoadGeometry();
-    const char *BufferOffset(const unsigned int &pos);
-
-    [[nodiscard]] std::vector<Accessors::Item> FindPrimitiveAccessors(const Meshes::PrimitiveItem &item) const;
-
-    [[nodiscard]] unsigned int PrimitiveVerticesSize(const std::vector<Accessors::Item>& accessors) const;
-    [[nodiscard]] unsigned int PrimitiveIndicesSize(const Meshes::PrimitiveItem &item) const;
-    [[nodiscard]] unsigned int PrimitiveBufferOffset(unsigned int position) const;
-    [[nodiscard]] unsigned int PrimitiveNormalSize(unsigned int position) const;
-    [[nodiscard]] unsigned int PrimitiveNormalOffset(unsigned int position) const;
+    std::string m_fileBuffer;
+    Files::FileGltf::Spec m_gltfSpec;
+    Files::Meshes::Item m_meshItem;
+    uint16_t m_meshId;
 
   private:
-    std::string _fileBuffer;
-
     struct GLBuffer
     {
       unsigned int vao;
       unsigned int vbo;
       unsigned int ebo;
       unsigned int indicesCount;
-      unsigned int nodeId;
     };
 
-    std::vector<GLBuffer> _glBuffers;
+    using GLBuffers = std::vector<GLBuffer>;
+    GLBuffers m_gl_buffers;
 
-    FileGltf::Spec gltfSpec{};
+  private:
+    std::shared_ptr<Material> m_material;
 
-    glm::vec3 m_translate;
-    glm::vec3 m_scale;
-    glm::vec3 m_rotate;
+  private:
+    void SetupPrimitives();
+    void CleanBuffers();
+    [[nodiscard]] std::vector<Files::Accessors::Item> FindPrimitiveAccessors(
+        const Files::Meshes::PrimitiveItem &item) const;
+    [[nodiscard]] unsigned int PrimitiveVerticesSize(const std::vector<Files::Accessors::Item> &accessors) const;
+    [[nodiscard]] unsigned int PrimitiveIndicesSize(const Files::Meshes::PrimitiveItem &item) const;
+    [[nodiscard]] unsigned int PrimitiveBufferOffset(const unsigned int position) const;
+    [[nodiscard]] unsigned int PrimitiveNormalSize(unsigned int position) const;
+    [[nodiscard]] const char *FileBufferOffset(const unsigned int &pos);
+    [[nodiscard]] const char *BufferOffset(unsigned int offset);
   };
 } // namespace mtEngine
