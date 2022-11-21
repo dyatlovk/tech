@@ -2,13 +2,10 @@
 
 #include <memory>
 
-#include "Devices/Window.hpp"
 #include "Graphics/Texture.hpp"
 #include "Gui/Notify.hpp"
 #include "Guis/Gui.hpp"
-#include "Scenes/Components/Transform.hpp"
-#include "third_party/glm/ext/matrix_float4x4.hpp"
-#include "Scenes/Scenes.hpp"
+#include "Scenes/EntityManager.hpp"
 
 namespace Game
 {
@@ -105,20 +102,13 @@ namespace Game
         });
 
     const std::string p(RESOURCES);
-    auto boxes = mtEngine::Scenes::Get()->GetStructure()->CreateEntity();
-    boxes->AddComponent<Model>(Model::Create(p + "/Game/models/boxes.gltf"));
-    boxes->AddComponent<Transform>(glm::vec3(0.0, 0.0, 0.0), glm::vec4(0.0, 0.0, 0.0, 1.0), glm::vec3(1.0, 1.0, 1.0));
-    auto yard = mtEngine::Scenes::Get()->GetStructure()->CreateEntity();
-    yard->AddComponent<Model>(Model::Create(p + "/Game/models/yard/yard.gltf"));
-    yard->AddComponent<Transform>(glm::vec3(0.0, -1.0, 0.0), glm::vec4(0.0, 0.0, 0.0, 1.0), glm::vec3(1.0, 1.0, 1.0));
+    EntityManager::CreateFromFile(p + "/Game/scenes/World.json");
     glEnable(GL_DEPTH_TEST);
 
     PLOGD << "world started";
   }
 
-  void World::BeforeUpdate() {
-
-  }
+  void World::BeforeUpdate() {}
 
   void World::Update()
   {

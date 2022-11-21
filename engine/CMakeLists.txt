@@ -40,6 +40,7 @@ add_library(${PROJECT_NAME} SHARED
   States/States.cpp
   Scenes/Scenes.cpp
   Scenes/SceneStructure.cpp
+  Scenes/EntityManager.cpp
   Scenes/Entity.cpp
   Scenes/Components/Transform.cpp
   Resources/ResourcesManager.cpp
