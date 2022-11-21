@@ -17,17 +17,17 @@ namespace EngineTest
     EXPECT_EQ(2, entities.size());
     auto transform = entities.at(0).transform;
     EXPECT_EQ("/Game/models/boxes.gltf", entities.at(0).model);
-    EXPECT_EQ(0, transform->translation->x);
-    EXPECT_EQ(0, transform->translation->y);
-    EXPECT_EQ(0, transform->translation->z);
+    EXPECT_FLOAT_EQ(1.0, transform->translation->x);
+    EXPECT_FLOAT_EQ(5.0, transform->translation->y);
+    EXPECT_FLOAT_EQ(2.0, transform->translation->z);
 
-    EXPECT_EQ(0, transform->rotation->x);
-    EXPECT_EQ(0, transform->rotation->y);
-    EXPECT_EQ(0, transform->rotation->z);
-    EXPECT_EQ(1.0, transform->rotation->w);
+    EXPECT_FLOAT_EQ(0.5, transform->rotation->x);
+    EXPECT_FLOAT_EQ(0.89, transform->rotation->y);
+    EXPECT_FLOAT_EQ(0.1, transform->rotation->z);
+    EXPECT_FLOAT_EQ(1.0, transform->rotation->w);
 
-    EXPECT_EQ(1.0, transform->scale->x);
-    EXPECT_EQ(1.0, transform->scale->y);
-    EXPECT_EQ(1.0, transform->scale->z);
+    EXPECT_FLOAT_EQ(1.0, transform->scale->x);
+    EXPECT_FLOAT_EQ(1.0, transform->scale->y);
+    EXPECT_FLOAT_EQ(1.0, transform->scale->z);
   }
 } // namespace EngineTest

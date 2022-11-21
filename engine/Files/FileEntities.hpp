@@ -43,7 +43,7 @@ namespace mtEngine::Files
       Translation *translation;
       Rotation *rotation;
       Scale *scale;
-    } _transform;
+    };
 
     struct Rotation
     {
@@ -51,21 +51,21 @@ namespace mtEngine::Files
       float y = 0;
       float z = 0;
       float w = 1;
-    } _rotation;
+    };
 
     struct Scale
     {
       float x = 1;
       float y = 1;
       float z = 1;
-    } _scale;
+    };
 
     struct Translation
     {
       float x = 0;
       float y = 0;
       float z = 0;
-    } _translation;
+    };
 
   private:
     std::string _buffer;

@@ -58,29 +58,33 @@ namespace mtEngine::Files
         if (p.contains("transform"))
         {
           const auto transform = p.at("transform");
+          Transform *s_transform = new Transform();
           if (transform.contains("translation"))
           {
-            _translation.x = transform.at("translation")[0];
-            _translation.y = transform.at("translation")[1];
-            _translation.z = transform.at("translation")[2];
-            _transform.translation = &_translation;
+            Translation *s_translation = new Translation();
+            s_translation->x = (float)transform.at("translation")[0];
+            s_translation->y = (float)transform.at("translation")[1];
+            s_translation->z = (float)transform.at("translation")[2];
+            s_transform->translation = s_translation;
           }
           if (transform.contains("rotation"))
           {
-            _rotation.x = transform.at("rotation")[0];
-            _rotation.y = transform.at("rotation")[1];
-            _rotation.z = transform.at("rotation")[2];
-            _rotation.w = transform.at("rotation")[3];
-            _transform.rotation = &_rotation;
+            Rotation *s_rotation = new Rotation();
+            s_rotation->x = (float)transform.at("rotation")[0];
+            s_rotation->y = (float)transform.at("rotation")[1];
+            s_rotation->z = (float)transform.at("rotation")[2];
+            s_rotation->w = (float)transform.at("rotation")[3];
+            s_transform->rotation = s_rotation;
           }
           if (transform.contains("scale"))
           {
-            _scale.x = transform.at("scale")[0];
-            _scale.y = transform.at("scale")[1];
-            _scale.z = transform.at("scale")[2];
-            _transform.scale = &_scale;
+            Scale *s_scale = new Scale();
+            s_scale->x = (float)transform.at("scale")[0];
+            s_scale->y = (float)transform.at("scale")[1];
+            s_scale->z = (float)transform.at("scale")[2];
+            s_transform->scale = s_scale;
           }
-          entity.transform = &_transform;
+          entity.transform = s_transform;
         }
         spec.entities.push_back(entity);
       }
