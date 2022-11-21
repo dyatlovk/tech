@@ -50,6 +50,7 @@ add_library(${PROJECT_NAME} SHARED
   Utils/ThreadPool.cpp
   Files/File.cpp
   Files/FileGltf.cpp
+  Files/FileEntities.cpp
   Models/Model.cpp
   Models/Mesh.cpp
   Models/Material.cpp

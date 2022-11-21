@@ -6,6 +6,7 @@ file(GLOB SOURCES
         Engine/CVarsTest.cpp
         Engine/Files/FileTest.cpp
         Engine/Files/FileGltfTest.cpp
+        Engine/Files/FileEntitiesTest.cpp
         Engine/Resources/ResourcesManagerTest.cpp
         Engine/Maths/TransformationTest.cpp
         )

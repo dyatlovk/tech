@@ -1,0 +1,24 @@
+{
+	"name": "World",
+	"author": "Kirill Dyatlov",
+	"description": "Test game scene",
+	"version": "1.0",
+	"entities": [
+		{
+			"model": "/Game/models/boxes.gltf",
+			"transform": {
+				"translation": [0.0, 0.0, 0.0],
+				"rotation": [0.0, 0.0, 0.0, 1.0],
+				"scale": [1.0, 1.0, 1.0]	
+			}
+		},
+		{
+			"model": "/Game/yard/yard.gltf",
+			"transform": {
+				"translation": [0.0, 0.0, 0.0],
+				"rotation": [0.0, 0.0, 0.0, 1.0],
+				"scale": [1.0, 1.0, 1.0]	
+			}
+		}
+	]
+}
