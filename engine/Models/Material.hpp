@@ -1,8 +1,11 @@
 #pragma once
 
+#include <cstdint>
 #include <memory>
 #include <string>
 
+#include <Files/FileGltf.hpp>
+#include <Graphics/Shader.hpp>
 #include <Graphics/Texture.hpp>
 #include <Resources/Resource.hpp>
 
@@ -11,16 +14,37 @@ namespace mtEngine
   class Material : public Resource
   {
   public:
-    Material() = default;
+    Material(std::shared_ptr<Texture> texture, std::shared_ptr<Shader> shader);
 
-    static auto Create(const std::string &name, const Texture *texture) -> std::shared_ptr<Material>;
+    static auto Create(const uint16_t id, const Files::FileGltf::Spec &spec) -> std::shared_ptr<Material>;
+
+    static auto CreateDefault() -> std::shared_ptr<Material>;
 
     void Draw();
+
+    auto GetShader() -> std::shared_ptr<Shader>
+    {
+      return ResourcesManager::Get()->find<Shader>("default");
+    }
+    auto GetTexture() -> std::shared_ptr<Texture> { return m_texture; }
+
+    const bool isDefault() { return _isDefault; }
+
+    const bool isDoubleSided() { return _isDoubleSides; }
 
     [[nodiscard]] auto GetTypeIndex() const -> std::type_index override { return typeid(Material); }
 
   private:
-    Texture *m_texture{};
+    std::shared_ptr<Texture> m_texture;
+    std::shared_ptr<Shader> m_shader;
+    Files::FileGltf::Spec m_gltfSpec;
+    bool _isDefault;
+    bool _isDoubleSides;
+
+    static auto GetMaterialSpec(const unsigned int id, const Files::FileGltf::Spec &spec) -> Files::Materials::Item;
+    static auto GetTextureSpec(const unsigned int id, const Files::FileGltf::Spec &spec) -> Files::Textures::Item;
+    static auto GetImagesSpec(const unsigned int id, const Files::FileGltf::Spec &spec) -> Files::Images::Item;
+    static auto CheckIsDoubleSided(const unsigned int id, const Files::FileGltf::Spec &spec) -> const bool;
   };
 
 } // namespace mtEngine
