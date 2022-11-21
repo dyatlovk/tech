@@ -15,7 +15,7 @@ namespace mtEngine
     resource->VertCompile();
     resource->FragCompile();
     resource->Link();
-    mgr->add(name, resource);
+    mgr->add(name, std::dynamic_pointer_cast<Resource>(resource));
 
     return resource;
   }
@@ -58,7 +58,7 @@ namespace mtEngine
     }
 
     resource->Link();
-    mgr->add("default", resource);
+    mgr->add("default", std::dynamic_pointer_cast<Resource>(resource));
 
     return resource;
   }
@@ -94,7 +94,7 @@ namespace mtEngine
     }
 
     resource->Link();
-    mgr->add(name, resource);
+    mgr->add(name, std::dynamic_pointer_cast<Resource>(resource));
 
     return resource;
   }
