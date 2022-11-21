@@ -203,13 +203,14 @@ namespace mtEngine::Files
   //////////////////////////////////////////////////////////////////////////////
   class Nodes
   {
+  public:
+    struct Item;
     struct Children;
     struct Rotation;
     struct Scale;
     struct Translation;
 
   public:
-    struct Item;
     using NodesItems = std::vector<Item>;
     Nodes(nlohmann::json::array_t *json)
         : json(json)
@@ -251,9 +252,7 @@ namespace mtEngine::Files
       std::string *name = nullptr;
     };
 
-  private:
-    NodesItems _items;
-
+  public:
     struct Children
     {
       std::vector<int> childs;
@@ -280,6 +279,9 @@ namespace mtEngine::Files
       float y = 0;
       float z = 0;
     };
+
+  private:
+    NodesItems _items;
 
     nlohmann::json::array_t *json;
 
@@ -367,15 +369,7 @@ namespace mtEngine::Files
     Item &FindBy(const int &id)
     {
       Item *result;
-      static int foundId = 0;
-      for (const auto &it : _items)
-      {
-        if (foundId == id)
-        {
-          result = &_items.at(id);
-        }
-        foundId++;
-      }
+      result = &_items.at(id);
 
       return *result;
     }
@@ -1018,6 +1012,7 @@ namespace mtEngine::Files
   //////////////////////////////////////////////////////////////////////////////
   class Materials
   {
+  public:
     struct Item;
     struct Extras;
     struct PbrMetallicRoughness;
@@ -1044,6 +1039,7 @@ namespace mtEngine::Files
     MaterialsItems _items;
     nlohmann::json::array_t *json;
 
+  public:
     struct Item
     {
       std::string *name = nullptr;
@@ -1176,6 +1172,7 @@ namespace mtEngine::Files
   //////////////////////////////////////////////////////////////////////////////
   class Textures
   {
+  public:
     struct Item;
 
   public:
@@ -1194,6 +1191,7 @@ namespace mtEngine::Files
     TexturesItems _items;
     nlohmann::json::array_t *json;
 
+  public:
     struct Item
     {
       int *sampler = nullptr;
@@ -1229,6 +1227,7 @@ namespace mtEngine::Files
   //////////////////////////////////////////////////////////////////////////////
   class Images
   {
+  public:
     struct Item;
 
   public:
@@ -1247,6 +1246,7 @@ namespace mtEngine::Files
     ImagesItems _items;
     nlohmann::json::array_t *json;
 
+  public:
     struct Item
     {
       std::string *uri = nullptr;

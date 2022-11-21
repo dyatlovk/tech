@@ -126,8 +126,8 @@ namespace EngineTest
     auto spec = instance->GetSpecification();
     auto tex = spec.textures->GetItems();
 
-    EXPECT_EQ(0, tex->at(0).source);
-    EXPECT_EQ(0, tex->at(0).sampler);
+    EXPECT_EQ(0, *tex->at(0).source);
+    EXPECT_EQ(0, *tex->at(0).sampler);
   }
 
   TEST_F(FileGltfFixture, checkImages)

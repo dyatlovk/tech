@@ -6,7 +6,10 @@ namespace mtEngine::Files
 {
   FileGltf::FileGltf() {}
 
-  FileGltf::~FileGltf() { CleanSpec(); }
+  FileGltf::~FileGltf()
+  {
+    CleanSpec();
+  }
 
   std::shared_ptr<FileGltf> FileGltf::Create(const std::filesystem::path path)
   {
@@ -36,7 +39,7 @@ namespace mtEngine::Files
       auto scenes = json["scenes"];
       auto sc = scenes.get<nlohmann::json::array_t *>();
       spec.scenes = new Scenes(sc);
-      
+
       auto assets = json["asset"];
       auto as = assets.get<nlohmann::json::object_t *>();
       spec.assets = new Asset(as);
@@ -61,25 +64,30 @@ namespace mtEngine::Files
       auto b = buf.get<nlohmann::json::array_t *>();
       spec.buffers = new Buffers(b);
 
-      auto mat = json["materials"];
-      auto _mat = mat.get<nlohmann::json::array_t *>();
-      spec.materials = new Materials(_mat);
+      if (json.contains("materials"))
+      {
+        auto mat = json["materials"];
+        auto _mat = mat.get<nlohmann::json::array_t *>();
+        spec.materials = new Materials(_mat);
 
-      auto tex = json["textures"];
-      auto _tex = mat.get<nlohmann::json::array_t *>();
-      spec.textures = new Textures(_tex);
+        auto tex = json["textures"];
+        auto _tex = tex.get<nlohmann::json::array_t *>();
+        spec.textures = new Textures(_tex);
 
-      auto imgs = json["images"];
-      auto _imgs = imgs.get<nlohmann::json::array_t *>();
-      spec.images = new Images(_imgs);
+        auto imgs = json["images"];
+        auto _imgs = imgs.get<nlohmann::json::array_t *>();
+        spec.images = new Images(_imgs);
+      }
 
-      if(json.contains("extras"))
+      if (json.contains("extras"))
       {
         auto extras = json["extras"];
         auto ex = extras.get<nlohmann::json::object_t *>();
         spec.extras = new Extras(ex);
       }
-    } catch(nlohmann::json::parse_error& e) {
+    }
+    catch (nlohmann::json::parse_error &e)
+    {
       PLOGE << e.what();
     }
   }
@@ -95,4 +103,4 @@ namespace mtEngine::Files
     spec.bufferViews = nullptr;
     spec.extras = nullptr;
   }
-} // namespace mtEngine
+} // namespace mtEngine::Files
