@@ -47,6 +47,7 @@ namespace mtEngine {
 
   void SceneStructure::Update()
   {
+    glEnable(GL_DEPTH_TEST);
     glClear(GL_DEPTH_BUFFER_BIT);
     glDepthFunc(GL_LESS);
     for (auto it = objects.begin(); it != objects.end();) {

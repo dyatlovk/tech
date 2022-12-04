@@ -103,12 +103,12 @@ namespace Game
 
     const std::string p(RESOURCES);
     EntityManager::CreateFromFile(p + "/Game/scenes/World.json");
-    glEnable(GL_DEPTH_TEST);
 
     PLOGD << "world started";
   }
 
-  void World::BeforeUpdate() {}
+  void World::BeforeUpdate() {
+  }
 
   void World::Update()
   {

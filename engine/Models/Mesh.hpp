@@ -32,7 +32,7 @@ namespace mtEngine
 
   public:
     Transform *_model_transform;
-    void SetModelTransform(const Transform *transform) { _model_transform = const_cast<Transform *>(transform); };
+    void SetModelTransform(const Transform *transform) { _model_transform = const_cast<Transform *>(transform); }
 
   private:
     std::string m_fileBuffer;
@@ -41,16 +41,21 @@ namespace mtEngine
     uint16_t m_meshId;
 
   private:
-    struct GLBuffer
+    struct Primitive
     {
       unsigned int vao;
       unsigned int vbo;
       unsigned int ebo;
       unsigned int indicesCount;
+      unsigned int verticesSize;
+      const char *posPointer = nullptr;
+      const char *normPointer = nullptr;
+      const char *texPointer = nullptr;
+      const char *indicesPointer = nullptr;
     };
 
-    using GLBuffers = std::vector<GLBuffer>;
-    GLBuffers m_gl_buffers;
+    using Primitives = std::vector<Primitive>;
+    Primitives m_primitives;
 
   private:
     std::shared_ptr<Material> m_material;
@@ -60,11 +65,35 @@ namespace mtEngine
     void CleanBuffers();
     [[nodiscard]] std::vector<Files::Accessors::Item> FindPrimitiveAccessors(
         const Files::Meshes::PrimitiveItem &item) const;
-    [[nodiscard]] unsigned int PrimitiveVerticesSize(const std::vector<Files::Accessors::Item> &accessors) const;
+    [[nodiscard]] unsigned int PrimitiveVerticesSize(const Files::Meshes::PrimitiveItem &primitive) const;
     [[nodiscard]] unsigned int PrimitiveIndicesSize(const Files::Meshes::PrimitiveItem &item) const;
     [[nodiscard]] unsigned int PrimitiveBufferOffset(const unsigned int position) const;
     [[nodiscard]] unsigned int PrimitiveNormalSize(unsigned int position) const;
     [[nodiscard]] const char *FileBufferOffset(const unsigned int &pos);
     [[nodiscard]] const char *BufferOffset(unsigned int offset);
+
+  private:
+    static inline int32_t GetComponentSizeInBytes(uint32_t componentType) {
+      if (componentType == 5120) {
+        return 1;
+      } else if (componentType == 5121) {
+        return 1;
+      } else if (componentType == 5122) {
+        return 2;
+      } else if (componentType == 5123) {
+        return 2;
+      } else if (componentType == 5124) {
+        return 4;
+      } else if (componentType == 5125) {
+        return 4;
+      } else if (componentType == 5126) {
+        return 4;
+      } else if (componentType == 5130) {
+        return 8;
+      } else {
+        // Unknown component type
+        return -1;
+      }
+    }
   };
 } // namespace mtEngine

@@ -8,7 +8,7 @@
 
 namespace mtEngine
 {
-#define BUFFER_OFFSET(i) ((char *)NULL + (i))
+#define BUFFER_OFFSET(i) ((char *)nullptr + (i))
 
   Mesh::Mesh()
       : _model_transform(nullptr)
@@ -61,13 +61,14 @@ namespace mtEngine
     shader->setMat4("projection", camera->GetProjectionMatrix());
     shader->setMat4("view", camera->GetViewMatrix());
     auto nodes = m_gltfSpec.nodes->GetItems();
-    shader->setVec3("light.position", glm::vec3(10.0, 5.0, 1.0));
+    shader->setVec3("light.position", glm::vec3(4.0, 15.0, 33.0));
     if (!m_material->isDoubleSided())
     {
       glEnable(GL_CULL_FACE);
     }
-    glFrontFace(GL_CCW);
-    for (const auto &buf : m_gl_buffers)
+    // glFrontFace(GL_CCW);
+
+    for (const auto &buf : m_primitives)
     {
       auto nodeTranslate = nodes.at(m_meshId).translation;
       auto nodeRotation = nodes.at(m_meshId).rotation;
@@ -110,26 +111,30 @@ namespace mtEngine
 
     for (const auto &primitive : primitives)
     {
-      GLBuffer buf{};
-      glGenVertexArrays(1, &buf.vao);
-      glGenBuffers(1, &buf.vbo);
-      glGenBuffers(1, &buf.ebo);
-      glBindVertexArray(buf.vao);
+      Primitive _primitive{};
+      glGenVertexArrays(1, &_primitive.vao);
+      glGenBuffers(1, &_primitive.vbo);
+      glGenBuffers(1, &_primitive.ebo);
+      glBindVertexArray(_primitive.vao);
 
       const auto accessorsPrimitive = FindPrimitiveAccessors(primitive);
-      const auto verticesBytesLength = PrimitiveVerticesSize(accessorsPrimitive);
+      const auto verticesBytesLength = PrimitiveVerticesSize(primitive);
+      _primitive.verticesSize = verticesBytesLength;
       const auto verticesPosition = primitive.attr.position;
       const auto verticesOffset = PrimitiveBufferOffset(verticesPosition);
 
-      glBindBuffer(GL_ARRAY_BUFFER, buf.vbo);
-      glBufferData(GL_ARRAY_BUFFER, verticesBytesLength, FileBufferOffset(verticesOffset), GL_STATIC_DRAW);
+      glBindBuffer(GL_ARRAY_BUFFER, _primitive.vbo);
+      glBufferData(GL_ARRAY_BUFFER, m_fileBuffer.length(), m_fileBuffer.data(), GL_STATIC_DRAW);
 
       // positions
       const auto indicesPosition = *primitive.indices;
       const auto indicesSize = PrimitiveIndicesSize(primitive);
       const auto indicesOffset = PrimitiveBufferOffset(indicesPosition);
-      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, BUFFER_OFFSET(verticesOffset));
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buf.ebo);
+      const auto posAccessorCount = accessors.at(verticesPosition).count;
+      _primitive.posPointer = BUFFER_OFFSET(verticesOffset);
+      _primitive.indicesPointer = FileBufferOffset(indicesOffset);
+      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 4 * 3, _primitive.posPointer);
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _primitive.ebo);
       glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize, FileBufferOffset(indicesOffset), GL_STATIC_DRAW);
       glEnableVertexAttribArray(0);
 
@@ -137,20 +142,25 @@ namespace mtEngine
       const auto normalPosition = primitive.attr.normal;
       const auto normalSize = PrimitiveNormalSize(normalPosition);
       const auto normalOffset = PrimitiveBufferOffset(normalPosition);
-      glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, BUFFER_OFFSET(normalOffset));
+      const auto normalAccessorCount = accessors.at(normalPosition).count;
+      _primitive.normPointer = BUFFER_OFFSET(normalOffset);
+      glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 4 * 3, _primitive.normPointer);
       glEnableVertexAttribArray(1);
 
       // textures
       const auto texPosition = primitive.attr.textcoord_0;
       const auto texOffset = PrimitiveBufferOffset(primitive.attr.textcoord_0);
       const auto texSize = PrimitiveNormalSize(texPosition);
-      glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, BUFFER_OFFSET(texOffset));
+      _primitive.texPointer = BUFFER_OFFSET(texOffset);
+      const auto texAccessorCount = accessors.at(texPosition).count;
+      glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 4 * 2, _primitive.texPointer);
       glEnableVertexAttribArray(2);
 
-      buf.indicesCount = accessors.at(indicesPosition).count;
+      _primitive.indicesCount = accessors.at(indicesPosition).count;
 
+      m_primitives.push_back(_primitive);
+      glBindBuffer(GL_ARRAY_BUFFER, 0);
       glBindVertexArray(0);
-      m_gl_buffers.push_back(buf);
 
       if (primitive.material)
       {
@@ -165,7 +175,7 @@ namespace mtEngine
 
   void Mesh::CleanBuffers()
   {
-    for (const auto &buf : m_gl_buffers)
+    for (const auto &buf : m_primitives)
     {
       glDeleteVertexArrays(1, &buf.vao);
       glDeleteBuffers(1, &buf.vbo);
@@ -186,14 +196,12 @@ namespace mtEngine
     return result;
   }
 
-  unsigned int Mesh::PrimitiveVerticesSize(const std::vector<Files::Accessors::Item> &accessors) const
+  unsigned int Mesh::PrimitiveVerticesSize(const Files::Meshes::PrimitiveItem &primitive) const
   {
     unsigned int bytes = 0;
-    const auto buffers = m_gltfSpec.buffers->GetItems();
-    for (const auto &buf : buffers)
-    {
-      bytes += buf.byteLength;
-    }
+    const auto buffers = m_gltfSpec.bufferViews->GetItems();
+    const auto endAt = primitive.indices;
+    bytes = *buffers.at(*endAt).byteOffset + buffers.at(*endAt).byteLength;
 
     return bytes;
   }
