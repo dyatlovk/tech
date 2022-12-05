@@ -19,13 +19,13 @@ namespace Game
         return;
       }
       isValid = true;
-      
+
       int flag = std::stoi(input.at(0));
 
       if(flag == 1) {
         showStats = true;
       }
-      
+
       if(flag == 0) {
         showStats = false;
       }
@@ -41,9 +41,9 @@ namespace Game
         return;
       }
       isValid = true;
-      
+
       int flag = std::stoi(input.at(0));
-      
+
       if(flag == 0) {
         showUIDebug = false;
       }
@@ -91,7 +91,7 @@ namespace Game
       auto fps = Engine::Get()->GetFps();
       auto deltaUpdate = Engine::Get()->GetDelta();
       auto camera = mtEngine::Scenes::Get()->GetCamera();
-      
+
       ImGui::Text("%s", "Console: ~");
       ImGui::Text("%s", "UI Demo: F12");
       ImGui::Separator();
@@ -100,9 +100,14 @@ namespace Game
       ImGui::Text("FPS: %d", fps);
       ImGui::Separator();
       if(camera) {
-        ImGui::Text("Camera x: %f", camera->GetPosition().x);
-        ImGui::Text("Camera y: %f", camera->GetPosition().y);
-        ImGui::Text("Camera z: %f", camera->GetPosition().z);
+        ImGui::Text("Camera");
+        ImGui::Separator();
+        ImGui::Text("Pos x: %f", camera->GetPosition().x);
+        ImGui::Text("Pos y: %f", camera->GetPosition().y);
+        ImGui::Text("Pos z: %f", camera->GetPosition().z);
+        ImGui::Text("Dir x: %f", camera->GetRotation().x);
+        ImGui::Text("Dir y: %f", camera->GetRotation().y);
+        ImGui::Text("Dir z: %f", camera->GetRotation().z);
       }
     }
     ImGui::PopFont();

@@ -122,6 +122,10 @@ namespace Game
         Pitch = -89.0f;
     }
 
+    rotation.x = viewMatrix[0][0];
+    rotation.y = viewMatrix[1][1];
+    rotation.z = viewMatrix[2][2];
+
     // Обновляем значения вектора-прямо, вектора-вправо и вектора-вверх,
     // используя обновленные значения углов Эйлера
     UpdateCameraVectors();
