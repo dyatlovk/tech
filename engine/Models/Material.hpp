@@ -24,10 +24,7 @@ namespace mtEngine
 
     void Draw();
 
-    auto GetShader() -> std::shared_ptr<Shader>
-    {
-      return ResourcesManager::Get()->find<Shader>("default");
-    }
+    auto GetShader() -> std::shared_ptr<Shader> { return m_shader; }
     auto GetTexture() -> std::shared_ptr<Texture> { return m_texture; }
 
     const bool isDefault() { return _isDefault; }
