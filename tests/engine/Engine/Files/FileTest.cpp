@@ -85,4 +85,14 @@ namespace EngineTest
     EXPECT_EQ(j["pi"], 3.141);
     EXPECT_EQ(j["happy"], true);
   }
+
+  TEST_F(FileTest, nameFromPath)
+  {
+    const std::string path = "/Path/to/file.ext";
+    const auto found = mtEngine::File::CreatePathInfo(path);
+
+    EXPECT_EQ(found.fullName, path);
+    EXPECT_EQ(found.ext, "ext");
+    EXPECT_EQ(found.fileName, "file");
+  }
 } // namespace EngineTest

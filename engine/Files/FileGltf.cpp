@@ -70,13 +70,17 @@ namespace mtEngine::Files
         auto _mat = mat.get<nlohmann::json::array_t *>();
         spec.materials = new Materials(_mat);
 
-        auto tex = json["textures"];
-        auto _tex = tex.get<nlohmann::json::array_t *>();
-        spec.textures = new Textures(_tex);
+        if(json.contains("textures")) {
+          auto tex = json["textures"];
+          auto _tex = tex.get<nlohmann::json::array_t *>();
+          spec.textures = new Textures(_tex);
+        }
 
-        auto imgs = json["images"];
-        auto _imgs = imgs.get<nlohmann::json::array_t *>();
-        spec.images = new Images(_imgs);
+        if(json.contains("images")) {
+          auto imgs = json["images"];
+          auto _imgs = imgs.get<nlohmann::json::array_t *>();
+          spec.images = new Images(_imgs);
+        }
       }
 
       if (json.contains("extras"))

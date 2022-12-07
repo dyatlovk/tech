@@ -61,7 +61,7 @@ namespace mtEngine
     shader->setMat4("projection", camera->GetProjectionMatrix());
     shader->setMat4("view", camera->GetViewMatrix());
     auto nodes = m_gltfSpec.nodes->GetItems();
-    shader->setVec3("light.position", glm::vec3(4.0, 15.0, 33.0));
+    shader->setVec3("light.position", glm::vec3(-31.0, 9.0, -31.0));
     if (!m_material->isDoubleSided())
     {
       glEnable(GL_CULL_FACE);

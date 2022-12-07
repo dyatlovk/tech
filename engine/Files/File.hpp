@@ -10,6 +10,9 @@ namespace mtEngine
   class File
   {
   public:
+    struct Path;
+
+  public:
     File() = default;
     File(std::filesystem::path filename);
 
@@ -35,6 +38,15 @@ namespace mtEngine
 
     const bool isWorkReady() { return isReady; }
 
+    const static Path CreatePathInfo(const std::string &path);
+
+  public:
+    struct Path {
+      std::string fileName;
+      std::string ext;
+      std::string fullName;
+    };
+
   private:
     const bool isAscii();
 
@@ -45,5 +57,9 @@ namespace mtEngine
     std::stringstream buf;
     int size;
     bool isReady;
+
+    private:
+      const static std::string FindPathExtension(const std::string &path);
+      const static std::string FindFileName(const std::string &path);
   };
 } // namespace mtEngine

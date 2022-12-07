@@ -16,7 +16,7 @@ namespace mtEngine
     resource->file = new File();
     resource->file->Load(path);
     resource->LoadFromMemory(resource->file->GetBuffer());
-    
+
     mgr->add(name, std::dynamic_pointer_cast<Resource>(resource));
 
     PLOGD << "texture " << name << " created...";

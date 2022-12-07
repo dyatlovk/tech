@@ -27,6 +27,7 @@ namespace mtEngine
 
     bool LoadTextureFromFile(const std::string &filename);
     bool LoadFromMemory(const std::string &buf);
+    void static Unbind() { glBindTexture(GL_TEXTURE_2D, 0); }
 
     void Update();
 

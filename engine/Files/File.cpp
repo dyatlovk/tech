@@ -1,4 +1,5 @@
 #include "File.hpp"
+#include "Utils/String.hpp"
 
 namespace mtEngine
 {
@@ -72,4 +73,39 @@ namespace mtEngine
 
     return false;
   }
+
+  const File::Path File::CreatePathInfo(const std::string &path)
+  {
+    const auto _path = String::trim(path);
+    auto p = File::Path();
+
+    const auto fileName = FindFileName(_path);
+    p.fileName = fileName;
+
+    const auto ext = FindPathExtension(_path);
+    p.ext = ext;
+    p.fullName = _path;
+
+    return p;
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  // PRIVATE
+  //////////////////////////////////////////////////////////////////////////////
+
+  const std::string File::FindPathExtension(const std::string &path)
+  {
+    std::string found = std::filesystem::path(path).extension();
+    found.replace(0, 1, "");
+
+    return found;
+  }
+
+  const std::string File::FindFileName(const std::string &path)
+  {
+    std::string found = std::filesystem::path(path).stem();
+
+    return found;
+  }
+
 } // namespace mtEngine
