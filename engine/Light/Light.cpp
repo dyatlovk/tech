@@ -2,9 +2,10 @@
 
 namespace mtEngine
 {
-  Light::Light(const std::string &color, const int size, glm::vec3 direction)
-      : m_size(size)
-      , m_color(color)
+  Light::Light(const glm::vec3 &color, const int size, const float strength, const glm::vec3 &direction)
+      : m_color(color)
+      , m_size(size)
+      , m_strength(strength)
       , m_direction(direction){};
 
   void Light::Start() {}

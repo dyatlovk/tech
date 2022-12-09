@@ -1,10 +1,5 @@
 #include "Mesh.hpp"
-
-#include <Maths/Vectors/Vector4d.hpp>
-
-#include "Maths/Transformation.hpp"
-#include "Models/Material.hpp"
-#include "Resources/ResourcesManager.hpp"
+#include "Light/Light.hpp"
 
 namespace mtEngine
 {
@@ -61,7 +56,14 @@ namespace mtEngine
     shader->setMat4("projection", camera->GetProjectionMatrix());
     shader->setMat4("view", camera->GetViewMatrix());
     auto nodes = m_gltfSpec.nodes->GetItems();
-    shader->setVec3("light.position", glm::vec3(-31.0, 9.0, -31.0));
+
+    const auto sun = Scenes::Get()->GetStructure()->GetEntity("Sun");
+    if(sun) {
+      const auto sunComponent = sun->GetComponent<Light>();
+      shader->setVec3("light.direction", sunComponent->GetDirection());
+      shader->setFloat("light.strength", sunComponent->GetStrength());
+      shader->setVec3("light.color", sunComponent->GetColor());
+    }
     if (!m_material->isDoubleSided())
     {
       glEnable(GL_CULL_FACE);

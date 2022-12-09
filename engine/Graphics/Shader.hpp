@@ -52,9 +52,14 @@ namespace mtEngine
       glUniform3f(glGetUniformLocation(pid, name.c_str()), value.x, value.y, value.z);
     }
 
-    void setBool(const std::string &name, bool value)
+    void setBool(const std::string &name, const bool value)
     {
       glUniform1i(glGetUniformLocation(pid, name.c_str()), (int)value); 
+    }
+
+    void setFloat(const std::string &name, const float value)
+    {
+      glUniform1f(glGetUniformLocation(pid, name.c_str()), value);
     }
 
   private:
