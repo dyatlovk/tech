@@ -1,8 +1,10 @@
 #include "EntityManager.hpp"
 
+#include "Light/Light.hpp"
 #include "Models/Model.hpp"
 #include "Scenes/Components/Transform.hpp"
 #include "Scenes/Scenes.hpp"
+#include "third_party/glm/ext/vector_float3.hpp"
 
 namespace mtEngine
 {
@@ -30,12 +32,28 @@ namespace mtEngine
     {
       auto _e = mtEngine::Scenes::Get()->GetStructure()->CreateEntity();
       _e->AddComponent<Model>(Model::Create(p + e.model));
-      const auto translate =
-          glm::vec3(e.transform->translation->x, e.transform->translation->y, e.transform->translation->z);
-      const auto rotation = glm::vec4(
-          e.transform->rotation->x, e.transform->rotation->y, e.transform->rotation->z, e.transform->rotation->w);
-      const auto scale = glm::vec3(e.transform->scale->x, e.transform->scale->y, e.transform->scale->z);
+
+      const auto translate = glm::vec3(e.transform->translation->x, e.transform->translation->y, e.transform->translation->z);
+      const auto rotation  = glm::vec4(e.transform->rotation->x, e.transform->rotation->y, e.transform->rotation->z, e.transform->rotation->w);
+      const auto scale     = glm::vec3(e.transform->scale->x, e.transform->scale->y, e.transform->scale->z);
       _e->AddComponent<Transform>(translate, rotation, scale);
+    }
+
+    const auto env = spec.environment;
+    const auto lights = env->lights;
+    for (const auto &l : lights)
+    {
+      auto _e = mtEngine::Scenes::Get()->GetStructure()->CreateEntity();
+      _e->SetName("Sun");
+
+      const auto translate = glm::vec3(l->transform->translation->x, l->transform->translation->y, l->transform->translation->z);
+      const auto rotation  = glm::vec4(l->transform->rotation->x, l->transform->rotation->y, l->transform->rotation->z, l->transform->rotation->w);
+      const auto scale     = glm::vec3(l->transform->scale->x, l->transform->scale->y, l->transform->scale->z);
+      _e->AddComponent<Transform>(translate, rotation, scale);
+
+      const auto _dir   = glm::vec3(l->direction.x, l->direction.y, l->direction.z);
+      const auto _color = glm::vec3(l->color.r, l->color.g, l->color.b);
+      _e->AddComponent<Light>(_color, l->size, l->strength, _dir);
     }
   }
 } // namespace mtEngine

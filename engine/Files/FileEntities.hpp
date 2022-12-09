@@ -10,12 +10,20 @@ namespace mtEngine::Files
   class FileEntities
   {
   public:
+    // entity
     struct Entity;
     using EntityItems = std::vector<Entity>;
     struct Transform;
     struct Rotation;
     struct Scale;
     struct Translation;
+    // environment
+    struct Environment;
+    struct Light;
+    using Lights = std::vector<Light *>;
+    struct LightDirection;
+    struct Color;
+
     struct Spec
     {
       std::string name;
@@ -23,6 +31,7 @@ namespace mtEngine::Files
       std::string description;
       std::string version;
       EntityItems entities;
+      Environment *environment;
     } spec;
 
   public:
@@ -67,9 +76,40 @@ namespace mtEngine::Files
       float z = 0;
     };
 
+    struct Environment
+    {
+      Lights lights;
+    };
+
+    struct LightDirection
+    {
+      float x = 0;
+      float y = 0;
+      float z = 0;
+    };
+
+    struct Color
+    {
+      float r = 0.0f;
+      float g = 0.0f;
+      float b = 0.0f;
+    };
+
+    struct Light
+    {
+      int size;
+      std::string type;
+      float strength = 1.0;
+      Color color;
+      LightDirection direction;
+      Transform *transform;
+    };
+
   private:
     std::string _buffer;
     nlohmann::json _jsonParser;
+
+    Lights m_lights;
 
     std::string LoadFromFile(const std::filesystem::path &path) const;
     void CreateSpec();

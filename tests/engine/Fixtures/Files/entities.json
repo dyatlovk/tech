@@ -20,5 +20,32 @@
 				"scale": [1.0, 1.0, 1.0]	
 			}
 		}
-	]
+	],
+	"environment": {
+		"lights": [
+			{
+				"size": 12,
+				"type": "Sun",
+				"color": [1.0, 1.0, 1.0],
+				"strength": 2.0,
+				"direction": [0.0, 1.0, 0.0],
+				"transform": {
+					"translation": [0.0, 10.0, 0.0],
+					"rotation": [0.0, 0.0, 0.0, 1.0],
+					"scale": [1.0, 1.0, 1.0]	
+				}
+			}
+		],
+		"skybox": {
+			"textures": {
+				"positiveX": "/path/",
+				"negativeX": "/path/",
+				"positiveY": "/path/",
+				"negativeY": "/path/",
+				"positiveZ": "/path/",
+				"negativeZ": "/path/"
+			},
+			"size": 500
+		}
+	}
 }

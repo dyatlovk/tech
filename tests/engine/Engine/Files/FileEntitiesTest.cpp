@@ -4,7 +4,7 @@
 
 namespace EngineTest
 {
-  TEST_F(FileEntitiesFixture, spec)
+  TEST_F(FileEntitiesFixture, entities)
   {
     auto s = instance->GetSpecification();
 
@@ -29,5 +29,38 @@ namespace EngineTest
     EXPECT_FLOAT_EQ(1.0, transform->scale->x);
     EXPECT_FLOAT_EQ(1.0, transform->scale->y);
     EXPECT_FLOAT_EQ(1.0, transform->scale->z);
+  }
+
+  TEST_F(FileEntitiesFixture, environment_lights)
+  {
+    auto s = instance->GetSpecification();
+    auto env = s.environment;
+
+    auto light = env->lights.front();
+    EXPECT_EQ(12, light->size);
+    EXPECT_EQ("Sun", light->type);
+
+    auto transform = light->transform;
+    EXPECT_FLOAT_EQ(0.0, transform->translation->x);
+    EXPECT_FLOAT_EQ(10.0, transform->translation->y);
+    EXPECT_FLOAT_EQ(0.0, transform->translation->z);
+    EXPECT_FLOAT_EQ(0.0, transform->rotation->x);
+    EXPECT_FLOAT_EQ(0.0, transform->rotation->y);
+    EXPECT_FLOAT_EQ(0.0, transform->rotation->z);
+    EXPECT_FLOAT_EQ(1.0, transform->rotation->w);
+    EXPECT_FLOAT_EQ(1.0, transform->scale->x);
+    EXPECT_FLOAT_EQ(1.0, transform->scale->y);
+    EXPECT_FLOAT_EQ(1.0, transform->scale->z);
+
+    auto direction = light->direction;
+    EXPECT_FLOAT_EQ(0.0, direction.x);
+    EXPECT_FLOAT_EQ(1.0, direction.y);
+    EXPECT_FLOAT_EQ(0.0, direction.z);
+
+    EXPECT_FLOAT_EQ(1.0, light->color.r);
+    EXPECT_FLOAT_EQ(1.0, light->color.g);
+    EXPECT_FLOAT_EQ(1.0, light->color.b);
+
+    EXPECT_FLOAT_EQ(2.0, light->strength);
   }
 } // namespace EngineTest

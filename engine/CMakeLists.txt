@@ -55,6 +55,7 @@ add_library(${PROJECT_NAME} SHARED
   Models/Model.cpp
   Models/Mesh.cpp
   Models/Material.cpp
+  Light/Light.cpp
   )
 set(ENGINE_INCLUDE ${PROJECT_SOURCE_DIR})
 set(ENGINE_INCLUDE ${ENGINE_INCLUDE} PARENT_SCOPE)

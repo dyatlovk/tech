@@ -88,6 +88,77 @@ namespace mtEngine::Files
         }
         spec.entities.push_back(entity);
       }
+
+      // environment
+      auto env = json["environment"];
+      auto env_json = env.get<nlohmann::json::object_t *>();
+      Environment *_e = new Environment();
+      if (env_json->find("lights") != env_json->end())
+      {
+        auto lights_json = env_json->at("lights");
+        for (const auto &l : lights_json)
+        {
+          auto _l = new Light();
+          _l->size = (int)l["size"];
+          _l->type = std::string(l["type"]);
+          if (l.contains("transform"))
+          {
+            const auto transform = l.at("transform");
+            Transform *s_transform = new Transform();
+            if (transform.contains("translation"))
+            {
+              Translation *s_translation = new Translation();
+              s_translation->x = (float)transform.at("translation")[0];
+              s_translation->y = (float)transform.at("translation")[1];
+              s_translation->z = (float)transform.at("translation")[2];
+              s_transform->translation = s_translation;
+            }
+            if (transform.contains("rotation"))
+            {
+              Rotation *s_rotation = new Rotation();
+              s_rotation->x = (float)transform.at("rotation")[0];
+              s_rotation->y = (float)transform.at("rotation")[1];
+              s_rotation->z = (float)transform.at("rotation")[2];
+              s_rotation->w = (float)transform.at("rotation")[3];
+              s_transform->rotation = s_rotation;
+            }
+            if (transform.contains("scale"))
+            {
+              Scale *s_scale = new Scale();
+              s_scale->x = (float)transform.at("scale")[0];
+              s_scale->y = (float)transform.at("scale")[1];
+              s_scale->z = (float)transform.at("scale")[2];
+              s_transform->scale = s_scale;
+            }
+            _l->transform = s_transform;
+          }
+          if (l.contains("direction"))
+          {
+            const auto light_dir_json = l["direction"];
+            LightDirection s_lightDir;
+            s_lightDir.x = (float)light_dir_json[0];
+            s_lightDir.y = (float)light_dir_json[1];
+            s_lightDir.z = (float)light_dir_json[2];
+            _l->direction = s_lightDir;
+          }
+          if (l.contains("color"))
+          {
+            const auto light_color_json = l["color"];
+            Color s_light_color;
+            s_light_color.r = (float)light_color_json[0];
+            s_light_color.g = (float)light_color_json[1];
+            s_light_color.b = (float)light_color_json[2];
+            _l->color = s_light_color;
+          }
+          if (l.contains("strength"))
+          {
+            _l->strength = (float)l["strength"];
+          }
+          m_lights.push_back(_l);
+        }
+        _e->lights = m_lights;
+      }
+      spec.environment = _e;
     }
     catch (nlohmann::json::parse_error &e)
     {
@@ -110,5 +181,6 @@ namespace mtEngine::Files
     spec.author.clear();
     spec.description.clear();
     spec.entities.clear();
+    spec.environment->lights.clear();
   }
 } // namespace mtEngine::Files
