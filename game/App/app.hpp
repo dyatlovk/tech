@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/App.hpp"
+#include <Engine/App.hpp>
 #include "Graphics/Graphics.hpp"
 #include "Gui/GameGui.hpp"
 #include "Scenes/MainMenu/MainMenu.hpp"

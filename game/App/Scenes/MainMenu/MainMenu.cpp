@@ -14,7 +14,7 @@ namespace Game
     gui = std::make_unique<MenuGui>();
     Engine::Get()->GetApp()->GetThreadPool().Enqueue([]() {
       const std::string p(RESOURCES);
-      Texture::Create("bg", p + "/Game/textures/bg.jpg");
+      Texture::Create("bg", p + "/Game/textures/Menu/tayga.jpg");
     });
     PLOGD << "main menu started";
   }
@@ -38,7 +38,7 @@ namespace Game
     }
     ImGui::PopStyleVar();
     ImGui::End();
-    
+
     gui->RenderList();
   }
 

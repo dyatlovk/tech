@@ -25,6 +25,7 @@ set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 
 # Set resources dir
 set(RESOURCES_DIR ${CMAKE_INSTALL_PREFIX}/data CACHE STRING "" FORCE)
+set(ROOT_DIR ${CMAKE_INSTALL_PREFIX} CACHE STRING "" FORCE)
 
 # Uses Git to find the current git branch and commit.
 execute_process(
