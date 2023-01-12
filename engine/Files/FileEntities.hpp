@@ -23,6 +23,8 @@ namespace mtEngine::Files
     using Lights = std::vector<Light *>;
     struct LightDirection;
     struct Color;
+    struct Skybox;
+    struct SkyboxFaces;
 
     struct Spec
     {
@@ -76,9 +78,26 @@ namespace mtEngine::Files
       float z = 0;
     };
 
+    struct SkyboxFaces
+    {
+      std::string positiveX;
+      std::string negativeX;
+      std::string positiveY;
+      std::string negativeY;
+      std::string positiveZ;
+      std::string negativeZ;
+    };
+
+    struct Skybox
+    {
+      int size;
+      SkyboxFaces faces;
+    };
+
     struct Environment
     {
       Lights lights;
+      Skybox skybox;
     };
 
     struct LightDirection

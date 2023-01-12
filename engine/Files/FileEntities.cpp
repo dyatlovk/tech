@@ -158,6 +158,29 @@ namespace mtEngine::Files
         }
         _e->lights = m_lights;
       }
+
+      if (env_json->find("skybox") != env_json->end())
+      {
+        auto skybox_json = env_json->at("skybox");
+        Skybox s_skybox;
+        if (skybox_json.contains("size"))
+        {
+          s_skybox.size = skybox_json["size"];
+        }
+        if (skybox_json.contains("textures"))
+        {
+          SkyboxFaces s_faces;
+          auto skybox_faces = skybox_json["textures"];
+          s_faces.positiveX = skybox_faces["positiveX"];
+          s_faces.negativeX = skybox_faces["negativeX"];
+          s_faces.positiveY = skybox_faces["positiveY"];
+          s_faces.negativeY = skybox_faces["negativeY"];
+          s_faces.positiveZ = skybox_faces["positiveZ"];
+          s_faces.negativeZ = skybox_faces["negativeZ"];
+          s_skybox.faces = s_faces;
+        }
+        _e->skybox = s_skybox;
+      }
       spec.environment = _e;
     }
     catch (nlohmann::json::parse_error &e)
