@@ -21,13 +21,13 @@ namespace Game {
     PLOGD << "app start";
     std::string p(RESOURCES);
     Input::Get()->LoadConfig(p + "/Game/keysmap.ini");
-    
-    ImFontConfig config; 
+
+    ImFontConfig config;
     config.GlyphMinAdvanceX = 17.0f;
     static const ImWchar icon_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
     Font::Load("icons", p + "/Game/fonts/fa-solid-900.ttf", 20.0f, &config, icon_ranges);
     Font::Load("ui_bold", p + "/Game/fonts/Roboto-Bold.ttf", 17.0f, nullptr, nullptr);
-    
+
     Window::Get()->SetPositionOnCenter();
     Graphics::Get()->SetRenderer(std::make_unique<GameRender>());
     mtEngine::Scenes::Get()->SetScene(std::make_unique<MainMenu>());
@@ -126,11 +126,23 @@ namespace Game {
           const auto itemSize = item.first.size();
           const auto itemSpaces = maxSpaces - itemSize;
           const auto _space = String::spaces(itemSpaces);
-          PLOGI << item.first << _space << " | " << item.second->GetTypeIndex().name();
+          PLOGI << item.first << _space << " | " << item.second->GetTypeIndex().name() << " | uses: " << item.second.use_count();
         }
       }
       PLOGI;
       isValid = true;
+    });
+
+    CVars::Get()->Add("app", "resource_rm", {""}, "Remove resource by name", "resource_rm <name>",
+      [](CVarParam &args, Input &input, bool &isValid) {
+      if(input.empty()) {
+        PLOGD << "empty command args";
+        isValid = false;
+        return;
+      }
+      isValid = true;
+      const auto name = input.at(0);
+      ResourcesManager::Get()->remove(name);
     });
   }
 

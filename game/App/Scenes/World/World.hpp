@@ -1,14 +1,15 @@
 #pragma once
 
 #include <memory>
+
+#include "FPSCamera.hpp"
 #include "Gui/Grid.hpp"
 #include "Gui/Notify.hpp"
 #include "Gui/WorldGui.hpp"
 #include "Models/Model.hpp"
 #include "Scenes/Scene.hpp"
 #include "Scenes/Scenes.hpp"
-#include "FPSCamera.hpp"
-#include "Gui/Grid.hpp"
+#include "Scenes/World/Vars/Entities.hpp"
 
 using namespace mtEngine;
 
@@ -38,5 +39,6 @@ namespace Game
     std::unique_ptr<Notify> notify;
     std::unique_ptr<Model> model;
     std::unique_ptr<Grid> m_grid;
+    std::unique_ptr<Entities> m_var_entities;
   };
 } // namespace Game

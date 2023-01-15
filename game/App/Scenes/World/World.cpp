@@ -6,19 +6,21 @@
 #include "Gui/Notify.hpp"
 #include "Guis/Gui.hpp"
 #include "Scenes/EntityManager.hpp"
+#include "Scenes/World/Vars/Entities.hpp"
 
 namespace Game
 {
   World::World()
       : Scene(std::make_unique<FPSCamera>())
+      , m_var_entities(std::make_unique<Entities>())
+      , gui(std::make_unique<WorldGui>())
+      , notify(std::make_unique<Notify>())
+      , m_grid(std::make_unique<Grid>())
   {
   }
 
   void World::Start()
   {
-    gui = std::make_unique<WorldGui>();
-    notify = std::make_unique<Notify>();
-    m_grid = std::make_unique<Grid>();
     Keyboard::Get()->OnKey().Add(
         [this](Key key, InputAction action, InputMod mods)
         {
@@ -107,8 +109,7 @@ namespace Game
     PLOGD << "world started";
   }
 
-  void World::BeforeUpdate() {
-  }
+  void World::BeforeUpdate() {}
 
   void World::Update()
   {
@@ -129,6 +130,7 @@ namespace Game
     gui = nullptr;
     notify = nullptr;
     m_grid = nullptr;
+    m_var_entities = nullptr;
     PLOGD << "world shutdown";
   }
 } // namespace Game
