@@ -27,4 +27,20 @@ namespace EngineTest
     EXPECT_EQ(1, found->checkFlag);
     EXPECT_EQ(0, resourse->checkFlag);
   }
-}
+
+  TEST_F(ResourcesManagerTest, remove)
+  {
+    instance->add("test", resourse);
+    instance->remove("test");
+    auto all = instance->GetAll();
+    EXPECT_EQ(0, all.size());
+  }
+
+  TEST_F(ResourcesManagerTest, remove_not_found_cmd)
+  {
+    instance->add("test", resourse);
+    instance->remove("test2");
+    auto all = instance->GetAll();
+    EXPECT_EQ(1, all.size());
+  }
+} // namespace EngineTest

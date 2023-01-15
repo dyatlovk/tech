@@ -17,6 +17,7 @@ namespace EngineTest
     EXPECT_EQ(2, entities.size());
     auto transform = entities.at(0).transform;
     EXPECT_EQ("/Game/models/boxes.gltf", entities.at(0).model);
+    EXPECT_EQ("Boxes", entities.at(0).name);
     EXPECT_FLOAT_EQ(1.0, transform->translation->x);
     EXPECT_FLOAT_EQ(5.0, transform->translation->y);
     EXPECT_FLOAT_EQ(2.0, transform->translation->z);
