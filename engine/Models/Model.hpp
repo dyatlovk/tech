@@ -15,6 +15,7 @@ namespace mtEngine
 
   public:
     explicit Model(std::shared_ptr<Model> model = nullptr);
+    ~Model() override;
 
     static auto Create(const std::filesystem::path &path) -> std::shared_ptr<Model>;
 
@@ -32,6 +33,8 @@ namespace mtEngine
 
     void RenderMeshes();
 
+    auto GetName() -> std::string const { return m_name; };
+
   private:
     const Files::FileGltf::Spec LoadSpecification(const std::filesystem::path &path);
     const std::string LoadGeometry(const std::filesystem::path &path);
@@ -42,6 +45,7 @@ namespace mtEngine
     std::filesystem::path m_file_path;
     std::string m_fileBuffer;
     Files::FileGltf::Spec m_gltfSpec{};
+    std::string m_name;
 
     void UpdateTransformFromSpec(const Files::Nodes::Item &item);
   };

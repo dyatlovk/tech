@@ -16,6 +16,7 @@ namespace mtEngine
   private:
     struct TextureInfo;
   public:
+    constexpr static const char *DEFAULT_NAME = "default";
     Material(std::shared_ptr<Texture> texture = nullptr, std::shared_ptr<Shader> shader = nullptr);
 
     static auto Create(const uint16_t id, const Files::FileGltf::Spec &spec) -> std::shared_ptr<Material>;

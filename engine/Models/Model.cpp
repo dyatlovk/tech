@@ -1,4 +1,5 @@
 #include "Model.hpp"
+
 #include <Scenes/Components/Transform.hpp>
 
 namespace mtEngine
@@ -11,21 +12,36 @@ namespace mtEngine
       m_file_path = m_model.get()->m_file_path;
       m_gltfSpec = m_model.get()->m_gltfSpec;
       m_fileBuffer = m_model.get()->m_fileBuffer;
+      m_name = m_model.get()->m_name;
       BindNodes();
     }
+  }
+
+  Model::~Model()
+  {
+    ResourcesManager::Get()->remove(m_name);
+    for(auto &m :m_meshes) {
+      ResourcesManager::Get()->remove(m->GetName());
+    }
+    m_meshes.clear();
+    m_model = nullptr;
+    m_file_path.clear();
+    m_fileBuffer.clear();
+    PLOGD << "model destruct: " << m_name;
   }
 
   auto Model::Create(const std::filesystem::path &path) -> std::shared_ptr<Model>
   {
     PLOGD << "try creating model " << path;
     const std::size_t hash = std::hash<std::string>{}(path);
-    const std::string name = std::to_string(hash);
+    const std::string name = path.stem();
 
     auto mgr = ResourcesManager::Get();
     if (auto res = mgr->find<Model>(name))
       return res;
 
     auto res = std::make_shared<Model>();
+    res->m_name = name;
     res->CreateFromFile(path);
     mgr->add(name, std::dynamic_pointer_cast<Resource>(res));
 

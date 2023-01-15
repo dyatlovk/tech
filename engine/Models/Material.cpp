@@ -40,7 +40,7 @@ namespace mtEngine
   auto Material::CreateDefault() -> std::shared_ptr<Material>
   {
     auto mgr = ResourcesManager::Get();
-    if (auto resource = mgr->find<Material>("default"))
+    if (auto resource = mgr->find<Material>(Material::DEFAULT_NAME))
       return resource;
 
     auto res = std::make_shared<Material>(nullptr, Shader::CreateDefault());

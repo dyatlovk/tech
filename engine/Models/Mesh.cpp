@@ -5,23 +5,21 @@ namespace mtEngine
 {
 #define BUFFER_OFFSET(i) ((char *)nullptr + (i))
 
-  Mesh::Mesh()
-      : _model_transform(nullptr)
-      , m_material(nullptr)
+  Mesh::Mesh() : _model_transform(nullptr)
   {
   }
 
   Mesh::~Mesh()
   {
+    CleanResources();
     CleanBuffers();
   }
 
-  std::shared_ptr<Mesh> Mesh::Create(
-      const uint16_t meshId, const std::string &buffer, const Files::FileGltf::Spec &spec)
+  std::shared_ptr<Mesh> Mesh::Create(const uint16_t meshId, const std::string &buffer, const Files::FileGltf::Spec &spec)
   {
     auto mgr = ResourcesManager::Get();
     const auto meshItem = spec.meshes->FindBy(meshId);
-    const auto name = *meshItem.name + postfix;
+    const auto name = *meshItem.name + POSTFIX;
     PLOGD << "try creating mesh " << name;
 
     if (auto res = mgr->find<Mesh>(name))
@@ -32,6 +30,7 @@ namespace mtEngine
     res->m_gltfSpec = spec;
     res->m_meshItem = meshItem;
     res->m_meshId = meshId;
+    res->m_name = name;
     res->SetupPrimitives();
 
     mgr->add(name, std::dynamic_pointer_cast<Resource>(res));
@@ -40,22 +39,14 @@ namespace mtEngine
 
   void Mesh::Update()
   {
-    auto shader = m_material->GetShader();
+    auto nodes = m_gltfSpec.nodes->GetItems();
+    auto mat = ResourcesManager::Get()->find<Material>(Material::DEFAULT_NAME);
+    auto shader = ResourcesManager::Get()->find<Shader>("default");
     shader->Use();
-    if (m_material->isDefault())
-    {
-      shader->setBool("nomaterial", true);
-    }
-    if (!m_material->isDefault())
-    {
-      shader->setBool("nomaterial", false);
-      m_material->Draw();
-    }
     auto camera = mtEngine::Scenes::Get()->GetCamera();
     auto window = Window::Get();
     shader->setMat4("projection", camera->GetProjectionMatrix());
     shader->setMat4("view", camera->GetViewMatrix());
-    auto nodes = m_gltfSpec.nodes->GetItems();
 
     const auto sun = Scenes::Get()->GetStructure()->GetEntity("Sun");
     if(sun) {
@@ -64,17 +55,31 @@ namespace mtEngine
       shader->setFloat("light.strength", sunComponent->GetStrength());
       shader->setVec3("light.color", sunComponent->GetColor());
     }
-    if (!m_material->isDoubleSided())
-    {
-      glEnable(GL_CULL_FACE);
-    }
-    // glFrontFace(GL_CCW);
 
+    int _count = 0;
     for (const auto &buf : m_primitives)
     {
       auto nodeTranslate = nodes.at(m_meshId).translation;
       auto nodeRotation = nodes.at(m_meshId).rotation;
       auto nodeScale = nodes.at(m_meshId).scale;
+
+      const auto matItem = FindMaterialItem(_count);
+      if(matItem) {
+        mat = ResourcesManager::Get()->find<Material>(*matItem->name);
+      }
+      if(!mat) {
+        shader->setBool("nomaterial", true);
+      }
+
+      if(mat) {
+        shader = mat->GetShader();
+        shader->setBool("nomaterial", false);
+        mat->Draw();
+      }
+      if (mat && mat->isDoubleSided())
+      {
+        glEnable(GL_CULL_FACE);
+      }
 
       glm::mat4 model = glm::mat4(1.0f);
       const auto translate = glm::vec3(nodeTranslate->x, nodeTranslate->y, nodeTranslate->z) + _model_transform->GetTranslation();
@@ -98,6 +103,7 @@ namespace mtEngine
       glBindVertexArray(buf.vao);
       glDrawElements(GL_TRIANGLES, buf.indicesCount, GL_UNSIGNED_SHORT, nullptr);
       glBindVertexArray(0);
+      _count++;
     }
     glDisable(GL_CULL_FACE);
   }
@@ -166,11 +172,11 @@ namespace mtEngine
 
       if (primitive.material)
       {
-        m_material = Material::Create(*primitive.material, m_gltfSpec);
+        Material::Create(*primitive.material, m_gltfSpec);
       }
       else
       {
-        m_material = Material::CreateDefault();
+        Material::CreateDefault();
       }
     }
   }
@@ -238,5 +244,47 @@ namespace mtEngine
     unsigned int bytes = buffers.at(position).byteLength;
 
     return bytes;
+  }
+
+  auto Mesh::FindMaterialItem() -> Files::Materials::Item *const
+  {
+    const auto matId = m_meshItem.primitives.at(0).material;
+    if(!matId) return nullptr;
+    const auto matItem = m_gltfSpec.materials->GetItems().at(*matId);
+
+    return new Files::Materials::Item(matItem);
+  }
+
+  auto Mesh::FindMaterialItem(const int primitiveId) -> Files::Materials::Item *const
+  {
+    const auto matId = m_meshItem.primitives.at(primitiveId).material;
+    if(!matId) return nullptr;
+    const auto matItem = m_gltfSpec.materials->GetItems().at(*matId);
+
+    return new Files::Materials::Item(matItem);
+  }
+
+  auto Mesh::FindTextureItem() -> Files::Textures::Item *const
+  {
+    const auto imgs = m_gltfSpec.images->GetItems();
+
+    return nullptr;
+  }
+
+  auto Mesh::CleanResources() -> void
+  {
+    const auto matItemFound = FindMaterialItem();
+    if(matItemFound) ResourcesManager::Get()->remove(*matItemFound->name);
+
+    const auto imgs = m_gltfSpec.images->GetItems();
+    for(const auto &i : *imgs) {
+      ResourcesManager::Get()->remove(*i.name);
+    }
+
+    m_primitives.clear();
+    m_fileBuffer.clear();
+    m_gltfSpec = {};
+    m_meshItem = {};
+    PLOGD << "mesh res clean: " << m_name;
   }
 } // namespace mtEngine
