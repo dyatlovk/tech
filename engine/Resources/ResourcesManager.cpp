@@ -39,12 +39,8 @@ namespace mtEngine
   void ResourcesManager::remove(const std::string &name)
   {
     std::size_t hash = std::hash<std::string>{}(name);
-    auto _res = this->resources[hash];
-    PLOGD << name;
-    for (auto it = _res.begin(); it != _res.end(); ++it)
-    {
-      if (it->first == name)
-        _res.erase(it);
+    if(find(name)) {
+      resources.erase(hash);
     }
   }
 
