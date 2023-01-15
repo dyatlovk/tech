@@ -20,6 +20,25 @@ namespace mtEngine
     return inst;
   }
 
+  auto EntityManager::Remove(const std::string &name) -> void
+  {
+    auto _e = mtEngine::Scenes::Get()->GetStructure()->GetEntity(name);
+    if (!_e) return;
+    auto model = _e->GetComponent<Model>();
+    mtEngine::Scenes::Get()->GetStructure()->Remove(_e);
+    _e = nullptr;
+    PLOGD << "entity "<< name << " removed";
+  }
+
+  auto EntityManager::Add(const std::string &path, const std::string &name) -> void
+  {
+    auto _e = mtEngine::Scenes::Get()->GetStructure()->CreateEntity();
+    _e->SetName(name);
+    _e->AddComponent<Model>(Model::Create(path));
+    _e->AddComponent<Transform>(glm::vec3(0.0, 0.0, 0.0), glm::vec4(0.0, 0.0, 0.0, 1.0), glm::vec3(1.0, 1.0, 1.0));
+    PLOGD << "entity: " << name << " added";
+  }
+
   //////////////////////////////////////////////////////////////////////////////
   // PRIVATE
   //////////////////////////////////////////////////////////////////////////////
@@ -31,6 +50,7 @@ namespace mtEngine
     for (const auto &e : ents)
     {
       auto _e = mtEngine::Scenes::Get()->GetStructure()->CreateEntity();
+      _e->SetName(e.name);
       _e->AddComponent<Model>(Model::Create(p + e.model));
 
       const auto translate = glm::vec3(e.transform->translation->x, e.transform->translation->y, e.transform->translation->z);
