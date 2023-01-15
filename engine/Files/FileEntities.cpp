@@ -50,6 +50,10 @@ namespace mtEngine::Files
       for (const auto &p : *ent_json)
       {
         Entity entity;
+        if (p.contains("name"))
+        {
+          entity.name = std::string(p["name"]);
+        }
         if (p.contains("model"))
         {
           entity.model = std::string(p["model"]);

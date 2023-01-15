@@ -45,6 +45,7 @@ namespace mtEngine::Files
 
     struct Entity
     {
+      std::string name;
       std::string model;
       Transform *transform;
     };
