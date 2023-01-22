@@ -9,11 +9,12 @@
 #include <unistd.h>
 
 #include "Network/Sockets/ServerSocket.hpp"
+#include "Utils/NonCopyable.hpp"
 #include "third_party/plog/Log.h"
 
 namespace mtEngine
 {
-  class ClientSocket
+  class ClientSocket : public NonCopyable
   {
   public:
     constexpr static const unsigned int s_recv_len = 200;

@@ -7,11 +7,12 @@
 #include <sys/un.h>
 #include <vector>
 
+#include "Utils/NonCopyable.hpp"
 #include "third_party/plog/Log.h"
 
 namespace mtEngine
 {
-  class ServerSocket
+  class ServerSocket : public NonCopyable
   {
   public:
     constexpr static const char *SOCKET_PATH = "/tmp/mtEngine.sock";
