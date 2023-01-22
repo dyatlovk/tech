@@ -56,6 +56,8 @@ add_library(${PROJECT_NAME} SHARED
   Models/Mesh.cpp
   Models/Material.cpp
   Light/Light.cpp
+  Network/Sockets/ServerSocket.cpp
+  Network/Sockets/ClientSocket.cpp
   )
 set(ENGINE_INCLUDE ${PROJECT_SOURCE_DIR})
 set(ENGINE_INCLUDE ${ENGINE_INCLUDE} PARENT_SCOPE)

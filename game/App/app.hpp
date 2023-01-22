@@ -1,8 +1,10 @@
 #pragma once
 
 #include <Engine/App.hpp>
+
 #include "Graphics/Graphics.hpp"
 #include "Gui/GameGui.hpp"
+#include "Network/Sockets/ClientSocket.hpp"
 #include "Scenes/MainMenu/MainMenu.hpp"
 #include "Scenes/World/World.hpp"
 #include "States/GameStates.hpp"
@@ -20,8 +22,10 @@ namespace Game
     void BeforeUpdate() override;
     void Update() override;
     void AfterUpdate() override;
+
   private:
     std::unique_ptr<GameGui> gameGui;
     std::unique_ptr<Scene> scene;
+    std::unique_ptr<ClientSocket> socketClient;
   };
 } // namespace Game

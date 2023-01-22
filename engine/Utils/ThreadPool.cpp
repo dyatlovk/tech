@@ -1,9 +1,12 @@
 #include "ThreadPool.hpp"
 
+#include "third_party/plog/Log.h"
+
 namespace mtEngine
 {
   ThreadPool::ThreadPool(uint32_t threadCount)
   {
+    PLOGI << "Threads workers start...";
     workers.reserve(threadCount);
 
     for (std::size_t i = 0; i < threadCount; ++i)
@@ -34,6 +37,7 @@ namespace mtEngine
 
   ThreadPool::~ThreadPool()
   {
+    PLOGI << "Threads workers destroy...";
     {
       std::unique_lock<std::mutex> lock(queueMutex);
       stop = true;
@@ -43,6 +47,8 @@ namespace mtEngine
 
     for (auto &worker : workers)
       worker.join();
+
+    PLOGI << "Threads workers terminated";
   }
 
   void ThreadPool::Wait()

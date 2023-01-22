@@ -8,19 +8,26 @@
 
 namespace Game {
   using namespace mtEngine;
-  GameApp::GameApp(): App("Game") {
+  GameApp::GameApp():
+    App("Game")
+    , socketClient(ClientSocket::Init())
+  {
   }
 
   GameApp::~GameApp() {
     Graphics::Get()->SetRenderer(nullptr);
     mtEngine::Scenes::Get()->SetScene(nullptr);
-    gameGui = nullptr;
+    socketClient->requestShutdown();
   }
 
   void GameApp::Start() {
     PLOGD << "app start";
     std::string p(RESOURCES);
     Input::Get()->LoadConfig(p + "/Game/keysmap.ini");
+    GetThreadPool().Enqueue([this]() {
+      auto server = ServerSocket::Get()->Init();
+      server->run();
+    });
 
     ImFontConfig config;
     config.GlyphMinAdvanceX = 17.0f;
