@@ -16,6 +16,7 @@ namespace Game
     constexpr static std::string_view NAME = "main_menu";
 
     MainMenu();
+    ~MainMenu() override;
     void Start() override;
     void BeforeUpdate() override;
     void Update() override;

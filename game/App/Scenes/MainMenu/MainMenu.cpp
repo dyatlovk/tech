@@ -9,6 +9,12 @@ namespace Game
     ServerSocket::Get()->emit("on main menu");
   }
 
+  MainMenu::~MainMenu()
+  {
+    ResourcesManager::Get()->remove("bg");
+    PLOGD << "main menu terminated";
+  }
+
   void MainMenu::Start() {
     Mouse::Get()->ShowCursor();
     gui = std::make_unique<MenuGui>();

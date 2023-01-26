@@ -2,12 +2,12 @@
 
 #include <Engine/App.hpp>
 
+#include "Commands/AppCommands.hpp"
 #include "Graphics/Graphics.hpp"
 #include "Gui/GameGui.hpp"
 #include "Network/Sockets/ClientSocket.hpp"
 #include "Scenes/MainMenu/MainMenu.hpp"
 #include "Scenes/World/World.hpp"
-#include "States/GameStates.hpp"
 #include "Utils/ThreadPool.hpp"
 
 namespace Game
@@ -27,5 +27,6 @@ namespace Game
     std::unique_ptr<GameGui> gameGui;
     std::unique_ptr<Scene> scene;
     std::unique_ptr<ClientSocket> socketClient;
+    std::unique_ptr<AppCommands> commands;
   };
 } // namespace Game

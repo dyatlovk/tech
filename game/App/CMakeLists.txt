@@ -4,6 +4,7 @@ add_library(${PROJECT_NAME} SHARED
     Render/GameRender.cpp
     Gui/GameGui.cpp
     Gui/Notify.cpp
+    Commands/AppCommands.cpp
     Scenes/MainMenu/MainMenu.cpp
     Scenes/MainMenu/Gui/MenuGui.cpp
     Scenes/World/World.cpp
