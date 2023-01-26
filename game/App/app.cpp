@@ -149,6 +149,8 @@ namespace Game {
       const auto name = input.at(0);
       ResourcesManager::Get()->remove(name);
     });
+
+    ServerSocket::Get()->emit("on app");
   }
 
   void GameApp::BeforeUpdate() {

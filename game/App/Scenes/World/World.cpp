@@ -17,6 +17,7 @@ namespace Game
       , notify(std::make_unique<Notify>())
       , m_grid(std::make_unique<Grid>())
   {
+    ServerSocket::Get()->emit("on world");
   }
 
   void World::Start()
@@ -109,7 +110,8 @@ namespace Game
     PLOGD << "world started";
   }
 
-  void World::BeforeUpdate() {}
+  void World::BeforeUpdate() {
+  }
 
   void World::Update()
   {

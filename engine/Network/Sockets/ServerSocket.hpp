@@ -43,14 +43,30 @@ namespace mtEngine
     auto recieve() -> std::string const { return m_lastMessage; }
 
     // ---------------------------------------------------------------------------
-    // Waiting all detached threads is finished
+    // Waiting all clients threads is finished
     auto waitAllClientsDisconnected() -> void;
 
     // ---------------------------------------------------------------------------
     // Listen for accepting connection
     auto startListen() -> void;
 
+    // ---------------------------------------------------------------------------
+    // Disconnect all clients.
+    auto disconnectAll() -> void;
+
+    // ---------------------------------------------------------------------------
+    // Force disconnect clients and shutdown server.
+    // If <wait=true> server waiting all clients then shutdown.
+    // If <wait=false> server stopped immediately,
+    // but clients will be running in background on separated threads.
+    // In this case jobs in threads are not controllable. They are stopped when are will be done.
+    auto shutdown(const bool &wait = true) -> void;
+
   private:
+    // ---------------------------------------------------------------------------
+    // Call all sockets routine in on function
+    auto socketInit() -> bool;
+
     // ---------------------------------------------------------------------------
     // Create and open socket file description
     auto socketOpen(const char *path) -> bool;
@@ -64,10 +80,6 @@ namespace mtEngine
     auto socketListen(int max) -> bool;
 
     // ---------------------------------------------------------------------------
-    // Call all sockets routine in on function
-    auto socketInit() -> bool;
-
-    // ---------------------------------------------------------------------------
     // Accept a connection on a socket
     // This is run in a separate thread for each socket.
     auto socketAccept() -> int;
@@ -78,12 +90,16 @@ namespace mtEngine
     auto socketAcceptNonBlocking() -> int;
 
     // ---------------------------------------------------------------------------
+    // Disconnect specific client.
+    auto disconnectClient(const int socket) -> void;
+
+    // ---------------------------------------------------------------------------
     // Process a connection.
     // This is run in a separate thread for each socket.
     auto connectionHandler(const int client) -> void;
 
-    auto disconnectClient(const int socket) -> void;
-
+    // ---------------------------------------------------------------------------
+    // Get socket descriptor.
     auto getDescriptor() -> SocketFD *;
 
   private:

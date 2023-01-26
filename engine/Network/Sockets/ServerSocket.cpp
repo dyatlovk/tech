@@ -9,6 +9,7 @@ namespace mtEngine
 {
   ServerSocket *ServerSocket::Instance = nullptr;
 
+  // ---------------------------------------------------------------------------
   ServerSocket::ServerSocket()
       : m_ServerRun(true)
       , m_lastMessage("")
@@ -20,6 +21,7 @@ namespace mtEngine
     Instance = this;
   }
 
+  // ---------------------------------------------------------------------------
   ServerSocket::~ServerSocket()
   {
     m_clients.clear();
@@ -29,6 +31,7 @@ namespace mtEngine
     Instance = nullptr;
   }
 
+  // ---------------------------------------------------------------------------
   auto ServerSocket::Init() -> std::unique_ptr<ServerSocket>
   {
     auto s = std::make_unique<ServerSocket>();
@@ -45,6 +48,26 @@ namespace mtEngine
     return s;
   }
 
+  // ---------------------------------------------------------------------------
+  auto ServerSocket::emit(const std::string &msg) -> void
+  {
+    for (const auto &c : m_clients)
+    {
+      send(c, msg.c_str(), strlen(msg.c_str()) * sizeof(char), 0);
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  auto ServerSocket::waitAllClientsDisconnected() -> void
+  {
+    PLOGI << "waiting connected clients: " << m_clients.size();
+    while (m_clients.size() > 0)
+    {
+      continue;
+    }
+  }
+
+  // ---------------------------------------------------------------------------
   auto ServerSocket::startListen() -> void
   {
     PLOGD << "Server listen ready...";
@@ -65,69 +88,31 @@ namespace mtEngine
     PLOGD << "Server stop listen";
   }
 
-  auto ServerSocket::emit(const std::string &msg) -> void
+  // ---------------------------------------------------------------------------
+  auto ServerSocket::disconnectAll() -> void
   {
     for (const auto &c : m_clients)
     {
-      send(c, msg.c_str(), strlen(msg.c_str()) * sizeof(char), 0);
+      close(c);
     }
   }
 
-  auto ServerSocket::waitAllClientsDisconnected() -> void
+  // ---------------------------------------------------------------------------
+  auto ServerSocket::shutdown(const bool &wait) -> void
   {
-    PLOGI << "waiting connected clients: " << m_clients.size();
-    while (m_clients.size() > 0)
+    emit(ServerSocket::STOP_COMMAND);
+    if (wait)
     {
-      continue;
+      waitAllClientsDisconnected();
     }
+    disconnectAll();
   }
 
-  auto ServerSocket::getDescriptor() -> SocketFD *
-  {
-    return sockFd;
-  }
+  //////////////////////////////////////////////////////////////////////////////
+  // PRIVATE
+  //////////////////////////////////////////////////////////////////////////////
 
-  auto ServerSocket::socketOpen(const char *path) -> bool
-  {
-    sockFd->fd = socket(AF_UNIX, SOCK_STREAM, 0);
-    sockFd->unix_address = path;
-
-    if (-1 == sockFd->fd)
-    {
-      PLOGF << "Error on socket() call";
-      return false;
-    }
-
-    sockFd->local.sun_family = AF_UNIX;
-    strcpy(sockFd->local.sun_path, sockFd->unix_address);
-    unlink(sockFd->local.sun_path);
-    sockFd->fd_len = strlen(sockFd->local.sun_path) + sizeof(sockFd->local.sun_family);
-
-    return true;
-  }
-
-  auto ServerSocket::socketBind() -> bool
-  {
-    if (bind(sockFd->fd, (struct sockaddr *)&sockFd->local, sockFd->fd_len) != 0)
-    {
-      PLOGF << "Error on binding socket";
-      return false;
-    }
-
-    return true;
-  }
-
-  auto ServerSocket::socketListen(int max) -> bool
-  {
-    if (listen(sockFd->fd, max) != 0)
-    {
-      PLOGF << "Error on listen call";
-      return false;
-    }
-
-    return true;
-  }
-
+  // ---------------------------------------------------------------------------
   auto ServerSocket::socketInit() -> bool
   {
     if (!socketOpen(SOCKET_PATH))
@@ -151,6 +136,51 @@ namespace mtEngine
     return true;
   }
 
+  // ---------------------------------------------------------------------------
+  auto ServerSocket::socketOpen(const char *path) -> bool
+  {
+    sockFd->fd = socket(AF_UNIX, SOCK_STREAM, 0);
+    sockFd->unix_address = path;
+
+    if (-1 == sockFd->fd)
+    {
+      PLOGF << "Error on socket() call";
+      return false;
+    }
+
+    sockFd->local.sun_family = AF_UNIX;
+    strcpy(sockFd->local.sun_path, sockFd->unix_address);
+    unlink(sockFd->local.sun_path);
+    sockFd->fd_len = strlen(sockFd->local.sun_path) + sizeof(sockFd->local.sun_family);
+
+    return true;
+  }
+
+  // ---------------------------------------------------------------------------
+  auto ServerSocket::socketBind() -> bool
+  {
+    if (bind(sockFd->fd, (struct sockaddr *)&sockFd->local, sockFd->fd_len) != 0)
+    {
+      PLOGF << "Error on binding socket";
+      return false;
+    }
+
+    return true;
+  }
+
+  // ---------------------------------------------------------------------------
+  auto ServerSocket::socketListen(int max) -> bool
+  {
+    if (listen(sockFd->fd, max) != 0)
+    {
+      PLOGF << "Error on listen call";
+      return false;
+    }
+
+    return true;
+  }
+
+  // ---------------------------------------------------------------------------
   auto ServerSocket::socketAccept() -> int
   {
     const auto descriptor = getDescriptor();
@@ -167,6 +197,7 @@ namespace mtEngine
     return socket;
   }
 
+  // ---------------------------------------------------------------------------
   auto ServerSocket::socketAcceptNonBlocking() -> int
   {
     const auto descriptor = getDescriptor();
@@ -202,12 +233,14 @@ namespace mtEngine
     return -1;
   }
 
+  // ---------------------------------------------------------------------------
   auto ServerSocket::disconnectClient(const int client) -> void
   {
     m_clients.erase(std::find(m_clients.begin(), m_clients.end(), client));
     close(client);
   }
 
+  // ---------------------------------------------------------------------------
   auto ServerSocket::connectionHandler(const int client) -> void
   {
     PLOGI << "Client connected: [" << client << "]";
@@ -259,5 +292,11 @@ namespace mtEngine
     disconnectClient(client);
 
     PLOGI << "Client [" << client << "] disconnect";
+  }
+
+  // ---------------------------------------------------------------------------
+  auto ServerSocket::getDescriptor() -> SocketFD *
+  {
+    return sockFd;
   }
 } // namespace mtEngine

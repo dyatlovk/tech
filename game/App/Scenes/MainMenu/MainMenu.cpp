@@ -6,7 +6,7 @@ namespace Game
 {
   MainMenu::MainMenu(): Scene(nullptr)
   {
-
+    ServerSocket::Get()->emit("on main menu");
   }
 
   void MainMenu::Start() {
@@ -19,7 +19,8 @@ namespace Game
     PLOGD << "main menu started";
   }
 
-  void MainMenu::BeforeUpdate() {}
+  void MainMenu::BeforeUpdate() {
+  }
 
   void MainMenu::Update() {
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;

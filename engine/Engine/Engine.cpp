@@ -65,7 +65,7 @@ namespace mtEngine
     ModuleShutdown();
     app = nullptr;
     Module::Registry().clear();
-    server->waitAllClientsDisconnected();
+    server->shutdown(true);
     server = nullptr;
     PLOGD << "engine terminated";
   }
