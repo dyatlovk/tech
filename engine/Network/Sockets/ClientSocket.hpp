@@ -23,13 +23,18 @@ namespace mtEngine
     ClientSocket();
     ~ClientSocket();
 
-    static auto Init() -> std::unique_ptr<ClientSocket>;
+    auto static Init() -> std::unique_ptr<ClientSocket>;
 
-    auto makeConnection() -> void;
+    auto static CloseConnection() -> void;
+
+    auto static Get() -> ClientSocket *const { return m_instance; };
 
     auto requestShutdown() -> void;
 
+  private:
     auto closeConnection() -> void { close(sock); }
+
+    auto makeConnection() -> void;
 
   private:
     struct sockaddr_un remote;
@@ -37,5 +42,7 @@ namespace mtEngine
     int data_len;
     char recv_msg[s_recv_len];
     char send_msg[s_send_len];
+
+    static ClientSocket *m_instance;
   };
 } // namespace mtEngine

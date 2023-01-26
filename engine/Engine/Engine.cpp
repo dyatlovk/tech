@@ -20,6 +20,7 @@ namespace mtEngine
     commands  = Commands::Init();
     iniParser = IniParser::Init();
     server    = ServerSocket::Init();
+    if(!server) exit(1);
 
     // TODO: Optimize and clean up!
     std::vector<TypeId> created;
@@ -64,6 +65,9 @@ namespace mtEngine
     ModuleShutdown();
     app = nullptr;
     Module::Registry().clear();
+    server->waitAllClientsDisconnected();
+    server = nullptr;
+    PLOGD << "engine terminated";
   }
 
   int32_t Engine::Run()
@@ -114,8 +118,7 @@ namespace mtEngine
       Window::Get()->SwapBuffers();
     }
 
-    PLOGI << "engine stopped successfully";
-    server->shutdown();
+    PLOGI << "engine stopped OK";
     return EXIT_SUCCESS;
   }
 

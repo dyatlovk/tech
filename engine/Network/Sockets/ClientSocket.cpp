@@ -2,16 +2,20 @@
 
 namespace mtEngine
 {
+  ClientSocket *ClientSocket::m_instance = nullptr;
+
   ClientSocket::ClientSocket()
       : sock(-1)
       , data_len(0)
   {
+    m_instance = this;
     PLOGI << "Internal client starting...";
   };
 
   ClientSocket::~ClientSocket()
   {
     closeConnection();
+    m_instance = nullptr;
     PLOGI << "Internal client terminated...";
   };
 
@@ -20,6 +24,11 @@ namespace mtEngine
     auto socket = std::make_unique<ClientSocket>();
     socket->makeConnection();
     return socket;
+  }
+
+  auto ClientSocket::CloseConnection() -> void
+  {
+    ClientSocket::Get()->closeConnection();
   }
 
   auto ClientSocket::makeConnection() -> void
@@ -48,6 +57,7 @@ namespace mtEngine
 
   auto ClientSocket::requestShutdown() -> void
   {
+    PLOGI << "Internal client send shutdown command";
     send(sock, ServerSocket::STOP_COMMAND, strlen(ServerSocket::STOP_COMMAND), 0);
   }
 } // namespace mtEngine

@@ -9,25 +9,22 @@
 namespace Game {
   using namespace mtEngine;
   GameApp::GameApp():
-    App("Game")
-    , socketClient(ClientSocket::Init())
+    App("Game"),
+    socketClient(ClientSocket::Init())
   {
   }
 
   GameApp::~GameApp() {
     Graphics::Get()->SetRenderer(nullptr);
     mtEngine::Scenes::Get()->SetScene(nullptr);
-    socketClient->requestShutdown();
+    ClientSocket::CloseConnection();
+    PLOGI << "app terminated";
   }
 
   void GameApp::Start() {
     PLOGD << "app start";
     std::string p(RESOURCES);
     Input::Get()->LoadConfig(p + "/Game/keysmap.ini");
-    GetThreadPool().Enqueue([this]() {
-      auto server = ServerSocket::Get()->Init();
-      server->run();
-    });
 
     ImFontConfig config;
     config.GlyphMinAdvanceX = 17.0f;
@@ -138,6 +135,7 @@ namespace Game {
       }
       PLOGI;
       isValid = true;
+      ServerSocket::Get()->emit("app resources command");
     });
 
     CVars::Get()->Add("app", "resource_rm", {""}, "Remove resource by name", "resource_rm <name>",

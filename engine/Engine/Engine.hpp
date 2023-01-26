@@ -54,10 +54,6 @@ namespace mtEngine
     Time valueTime;
   };
 
-  /**
-   * @brief Main class for Acid, manages modules and updates. After creating your Engine object call {@link Engine#Run}
-   * to start.
-   */
   class Engine : NonCopyable
   {
   public:
@@ -74,7 +70,7 @@ namespace mtEngine
      * @param moduleFilter A filter for blacklisting/whitelisting modules.
      */
     explicit Engine(std::string argv0, ModuleFilter &&moduleFilter = {});
-    ~Engine();
+    ~Engine() override;
 
     /**
      * The update function for the updater.

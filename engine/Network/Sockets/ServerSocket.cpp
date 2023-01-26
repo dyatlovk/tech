@@ -1,5 +1,8 @@
 #include "ServerSocket.hpp"
 
+#include <algorithm>
+#include <thread>
+
 #include "Engine/Engine.hpp"
 
 namespace mtEngine
@@ -7,148 +10,254 @@ namespace mtEngine
   ServerSocket *ServerSocket::Instance = nullptr;
 
   ServerSocket::ServerSocket()
-      : sock(0)
-      , fd(0)
-      , running(true)
+      : m_ServerRun(true)
+      , m_lastMessage("")
+      , m_clients({})
+      , m_whaitClientsBeforeQuit(true)
+      , sockFd(nullptr)
   {
+    sockFd = new SocketFD;
     Instance = this;
-    PLOGI << "Server starting...";
   }
 
   ServerSocket::~ServerSocket()
   {
-    PLOGI << "Server shutdown";
+    m_clients.clear();
+    m_ServerRun = false;
+    m_lastMessage = "";
+    delete sockFd;
+    Instance = nullptr;
   }
 
   auto ServerSocket::Init() -> std::unique_ptr<ServerSocket>
   {
-    auto socket = std::make_unique<ServerSocket>();
-    socket->create();
+    auto s = std::make_unique<ServerSocket>();
+    if (!s->socketInit())
+    {
+      PLOGE << "error on open socket";
+
+      return nullptr;
+    }
+
+    std::thread trd(&ServerSocket::startListen, s.get());
+    trd.detach();
+
+    return s;
+  }
+
+  auto ServerSocket::startListen() -> void
+  {
+    PLOGD << "Server listen ready...";
+    while (m_ServerRun)
+    {
+      int sock = socketAccept();
+      if (sock > 0)
+      {
+        std::thread trd(&ServerSocket::connectionHandler, this, std::ref(sock));
+        trd.detach();
+      }
+      else
+      {
+        PLOGE << "error on accept socket";
+      }
+    }
+
+    PLOGD << "Server stop listen";
+  }
+
+  auto ServerSocket::emit(const std::string &msg) -> void
+  {
+    for (const auto &c : m_clients)
+    {
+      send(c, msg.c_str(), strlen(msg.c_str()) * sizeof(char), 0);
+    }
+  }
+
+  auto ServerSocket::waitAllClientsDisconnected() -> void
+  {
+    PLOGI << "waiting connected clients: " << m_clients.size();
+    while (m_clients.size() > 0)
+    {
+      continue;
+    }
+  }
+
+  auto ServerSocket::getDescriptor() -> SocketFD *
+  {
+    return sockFd;
+  }
+
+  auto ServerSocket::socketOpen(const char *path) -> bool
+  {
+    sockFd->fd = socket(AF_UNIX, SOCK_STREAM, 0);
+    sockFd->unix_address = path;
+
+    if (-1 == sockFd->fd)
+    {
+      PLOGF << "Error on socket() call";
+      return false;
+    }
+
+    sockFd->local.sun_family = AF_UNIX;
+    strcpy(sockFd->local.sun_path, sockFd->unix_address);
+    unlink(sockFd->local.sun_path);
+    sockFd->fd_len = strlen(sockFd->local.sun_path) + sizeof(sockFd->local.sun_family);
+
+    return true;
+  }
+
+  auto ServerSocket::socketBind() -> bool
+  {
+    if (bind(sockFd->fd, (struct sockaddr *)&sockFd->local, sockFd->fd_len) != 0)
+    {
+      PLOGF << "Error on binding socket";
+      return false;
+    }
+
+    return true;
+  }
+
+  auto ServerSocket::socketListen(int max) -> bool
+  {
+    if (listen(sockFd->fd, max) != 0)
+    {
+      PLOGF << "Error on listen call";
+      return false;
+    }
+
+    return true;
+  }
+
+  auto ServerSocket::socketInit() -> bool
+  {
+    if (!socketOpen(SOCKET_PATH))
+    {
+      PLOGF << "error open socket";
+      return false;
+    }
+
+    if (!socketBind())
+    {
+      PLOGF << "error bind socket";
+      return false;
+    }
+
+    if (!socketListen(nIncomingConnections))
+    {
+      PLOGF << "error listen socket";
+      return false;
+    }
+
+    return true;
+  }
+
+  auto ServerSocket::socketAccept() -> int
+  {
+    const auto descriptor = getDescriptor();
+    int socket = -1;
+    unsigned int sock_len = 0;
+    if ((socket = accept(descriptor->fd, (struct sockaddr *)&descriptor->remote, &sock_len)) == SOCKET_ERROR)
+    {
+      PLOGF << "error accept socket";
+      return SOCKET_ERROR;
+    }
+
+    m_clients.push_back(socket);
 
     return socket;
   }
 
-  auto ServerSocket::create() -> void
+  auto ServerSocket::socketAcceptNonBlocking() -> int
   {
-    int len = 0;
+    const auto descriptor = getDescriptor();
+    fd_set readfds;
+    struct timeval timeout;
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 0;
+    int activity;
+    FD_ZERO(&readfds);
+    FD_SET(descriptor->fd, &readfds);
+    getsockopt(descriptor->fd, SOL_SOCKET, SO_RCVTIMEO, NULL, NULL);
 
-    fd = socket(AF_UNIX, SOCK_STREAM, 0);
-    if (-1 == fd)
+    activity = select(descriptor->fd + 1, &readfds, NULL, NULL, &timeout);
+
+    if ((activity < 0) && (errno != EINTR))
     {
-      PLOGE << "Error on socket() call";
-      return;
+      PLOGE << "select error";
     }
 
-    local.sun_family = AF_UNIX;
-    strcpy(local.sun_path, SOCKET_PATH);
-    unlink(local.sun_path);
-    len = strlen(local.sun_path) + sizeof(local.sun_family);
-    if (bind(fd, (struct sockaddr *)&local, len) != 0)
+    if (activity > 0)
     {
-      PLOGE << "Error on bind() call";
-      return;
+      if (FD_ISSET(descriptor->fd, &readfds))
+      {
+        int sock = socketAccept();
+        if (sock == SOCKET_ERROR)
+        {
+          return -1;
+        }
+        return sock;
+      }
     }
 
-    if (listen(fd, nIncomingConnections) != 0)
-    {
-      PLOGE << "Error on listen call";
-    }
+    return -1;
   }
 
-  auto ServerSocket::run() -> void
+  auto ServerSocket::disconnectClient(const int client) -> void
   {
-    std::thread task_;
-    while (running)
-    {
-      unsigned int sock_len = 0;
-      PLOGI << "Waiting for connection...";
-      if ((sock = accept(fd, (struct sockaddr *)&remote, &sock_len)) == -1)
-      {
-        PLOGI << "Error on accept() call";
-        return;
-      }
-      clients.push_back(sock);
-
-      PLOGI << "Server connected";
-
-      task_ = std::thread([this]() { this->handler(sock, std::ref(running)); });
-      task_.detach();
-    }
-    close(sock);
+    m_clients.erase(std::find(m_clients.begin(), m_clients.end(), client));
+    close(client);
   }
 
-  auto ServerSocket::shutdown() -> void
+  auto ServerSocket::connectionHandler(const int client) -> void
   {
+    PLOGI << "Client connected: [" << client << "]";
+
+    char client_message[1024];
+    memset(&client_message, 0, 1024);
+
+    while (m_ServerRun)
     {
-      // some sockets thread may stay worked after request
-      // reconnect to server, send stop command and close at once: forcing shutdown
-      static const unsigned int s_recv_len = 200;
-      static const unsigned int s_send_len = 100;
+      m_lastMessage = "";
+      size_t message_size = 0;
 
-      int _sock = 0;
-      int data_len = 0;
-      struct sockaddr_un remote;
-      char recv_msg[s_recv_len];
-      char send_msg[s_send_len];
-
-      memset(recv_msg, 0, s_recv_len * sizeof(char));
-      memset(send_msg, 0, s_send_len * sizeof(char));
-
-      if ((_sock = socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
-      {
-        return;
-      }
-
-      remote.sun_family = AF_UNIX;
-      strcpy(remote.sun_path, SOCKET_PATH);
-      data_len = strlen(remote.sun_path) + sizeof(remote.sun_family);
-
-      if (connect(_sock, (struct sockaddr *)&remote, data_len) == -1)
-      {
-        return;
-      }
-      send(_sock, STOP_COMMAND, strlen(STOP_COMMAND) * sizeof(char), 0);
-      close(_sock);
-    }
-
-    running = false;
-    Engine::Get()->RequestClose();
-    PLOGI << "server request shutdown";
-  }
-
-  //////////////////////////////////////////////////////////////////////////////
-  // PRIVATE
-  //////////////////////////////////////////////////////////////////////////////
-
-  auto ServerSocket::handler(int socket, std::atomic_bool &running) -> void
-  {
-    char client_message[256];
-    memset(&client_message, 0, 256);
-    size_t message_size = 0;
-
-    PLOGI << "Client Connected";
-
-    while ((message_size = recv(socket, client_message, sizeof(client_message) - 1, 0)) > 0)
-    {
+      message_size = recv(client, client_message, sizeof(client_message) - 1, 0);
       client_message[message_size] = '\0';
-      PLOGI << "Client message: " << client_message;
-
-      if (strstr(client_message, "quit") != 0)
+      if (message_size == -1)
       {
-        PLOGD << "Client requested quit";
-        shutdown();
-        send(socket, "Server shutdown", strlen("Server shutdown") * sizeof(char), 0);
+        if (errno == EWOULDBLOCK || errno == EAGAIN)
+        {
+          PLOGE << std::strerror(errno);
+          continue;
+        }
+      }
+
+      if (message_size == 0)
+      {
         break;
       }
 
-      if (write(socket, client_message, message_size) == -1)
+      if (strstr(client_message, STOP_COMMAND) != 0)
       {
-        PLOGI << "Client message sendig failed";
+        emit("shutdown");
+        m_ServerRun = false;
+        Engine::Get()->RequestClose();
+        break;
+      }
+
+      PLOGI << "Client [ " << client << " ]"
+            << " message:" << client_message;
+      m_lastMessage = client_message;
+
+      if (write(client, client_message, message_size) == -1)
+      {
+        PLOGE << "Client: [" << client << "] message sending failed";
+        m_ServerRun = false;
         break;
       }
     }
 
-    PLOGI << "Client Thread finished";
-  }
+    disconnectClient(client);
 
+    PLOGI << "Client [" << client << "] disconnect";
+  }
 } // namespace mtEngine

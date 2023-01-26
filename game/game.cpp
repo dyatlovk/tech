@@ -10,5 +10,6 @@ int main(int argc, char **argv)
   auto engine = std::make_unique<Engine>(argv[0]);
   engine->SetApp(std::make_unique<GameApp>());
   auto exitCode = engine->Run();
+  PLOGI << "game stopped OK";
   return exitCode;
 }

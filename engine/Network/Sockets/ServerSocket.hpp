@@ -14,34 +14,101 @@ namespace mtEngine
 {
   class ServerSocket : public NonCopyable
   {
+  private:
+    struct SocketFD;
+    SocketFD *sockFd;
+
   public:
     constexpr static const char *SOCKET_PATH = "/tmp/mtEngine.sock";
-    constexpr static const char *STOP_COMMAND = "stop";
+    constexpr static const char *STOP_COMMAND = "shutdown";
     constexpr static const unsigned int nIncomingConnections = 5;
+    constexpr static const int SOCKET_ERROR = -1;
 
     ServerSocket();
+
     ~ServerSocket();
 
     auto static Init() -> std::unique_ptr<ServerSocket>;
 
-    static ServerSocket *Get() { return Instance; }
+    auto IsRun() -> bool const { return m_ServerRun; }
 
-    auto create() -> void;
+    auto static Get() -> ServerSocket *const { return Instance; }
 
-    auto run() -> void;
+    // ---------------------------------------------------------------------------
+    // Server emit message to all connected clients
+    auto emit(const std::string &msg) -> void;
 
-    auto shutdown() -> void;
+    // ---------------------------------------------------------------------------
+    // Get last message sending by any client
+    auto recieve() -> std::string const { return m_lastMessage; }
+
+    // ---------------------------------------------------------------------------
+    // Waiting all detached threads is finished
+    auto waitAllClientsDisconnected() -> void;
+
+    // ---------------------------------------------------------------------------
+    // Listen for accepting connection
+    auto startListen() -> void;
 
   private:
-    auto handler(int socket, std::atomic_bool &running) -> void;
+    // ---------------------------------------------------------------------------
+    // Create and open socket file description
+    auto socketOpen(const char *path) -> bool;
+
+    // ---------------------------------------------------------------------------
+    // Bind a name to a opened socket
+    auto socketBind() -> bool;
+
+    // ---------------------------------------------------------------------------
+    // Start listen for connection
+    auto socketListen(int max) -> bool;
+
+    // ---------------------------------------------------------------------------
+    // Call all sockets routine in on function
+    auto socketInit() -> bool;
+
+    // ---------------------------------------------------------------------------
+    // Accept a connection on a socket
+    // This is run in a separate thread for each socket.
+    auto socketAccept() -> int;
+
+    // ---------------------------------------------------------------------------
+    // Accept a non blocking connection on a socket
+    // This is run in a separate thread for each socket.
+    auto socketAcceptNonBlocking() -> int;
+
+    // ---------------------------------------------------------------------------
+    // Process a connection.
+    // This is run in a separate thread for each socket.
+    auto connectionHandler(const int client) -> void;
+
+    auto disconnectClient(const int socket) -> void;
+
+    auto getDescriptor() -> SocketFD *;
 
   private:
+    struct SocketFD
+    {
+      int fd = 0;
+      int fd_len = 0;
+      struct sockaddr_un local;
+      struct sockaddr_un remote;
+      const char *unix_address;
+      unsigned int socket_len = 0;
+    };
+
+    // server run flag
+    std::atomic_bool m_ServerRun;
+
+    // last message sended by any client
+    std::string m_lastMessage;
+
+    // connected clients storage
+    std::vector<int> m_clients;
+
+    // whait clients in detached threads before server shutdown
+    bool m_whaitClientsBeforeQuit;
+
     static ServerSocket *Instance;
-    std::atomic_bool running;
-
-    struct sockaddr_un local, remote;
-    int sock;
-    int fd;
-    std::vector<int> clients;
   };
 } // namespace mtEngine
