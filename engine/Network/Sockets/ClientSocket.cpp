@@ -35,7 +35,7 @@ namespace mtEngine
   {
     memset(recv_msg, 0, s_recv_len * sizeof(char));
     memset(send_msg, 0, s_send_len * sizeof(char));
-    if ((sock = socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
+    if ((sock = socket(AF_UNIX, SOCK_SEQPACKET, 0)) == -1)
     {
       PLOGE << "Internal client: Error on socket() call";
       return;

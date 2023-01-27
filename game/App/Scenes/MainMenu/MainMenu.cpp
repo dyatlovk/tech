@@ -6,7 +6,7 @@ namespace Game
 {
   MainMenu::MainMenu(): Scene(nullptr)
   {
-    ServerSocket::Get()->emit("on main menu");
+    ServerSocket::Get()->emit("scene_name:" + std::string(NAME));
   }
 
   MainMenu::~MainMenu()

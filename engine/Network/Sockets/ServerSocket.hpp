@@ -1,12 +1,14 @@
 #pragma once
 
 #include <atomic>
+#include <functional>
 #include <memory>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/un.h>
 #include <vector>
 
+#include "Utils/Delegate.hpp"
 #include "Utils/NonCopyable.hpp"
 #include "third_party/plog/Log.h"
 
@@ -61,6 +63,11 @@ namespace mtEngine
     // but clients will be running in background on separated threads.
     // In this case jobs in threads are not controllable. They are stopped when are will be done.
     auto shutdown(const bool &wait = true) -> void;
+
+    // ---------------------------------------------------------------------------
+    // Event server on recieved message.
+    // Event work only if filter equals message
+    auto OnRecieve() -> Delegate<void(std::string)> &;
 
   private:
     // ---------------------------------------------------------------------------
@@ -126,5 +133,9 @@ namespace mtEngine
     bool m_whaitClientsBeforeQuit;
 
     static ServerSocket *Instance;
+
+    u_int16_t totalSend;
+
+    Delegate<void(std::string)> onRecieve;
   };
 } // namespace mtEngine

@@ -17,7 +17,7 @@ namespace Game
       , notify(std::make_unique<Notify>())
       , m_grid(std::make_unique<Grid>())
   {
-    ServerSocket::Get()->emit("on world");
+    ServerSocket::Get()->emit("scene_name:" + std::string(NAME));
   }
 
   void World::Start()

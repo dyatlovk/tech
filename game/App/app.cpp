@@ -10,7 +10,6 @@ namespace Game
   using namespace mtEngine;
   GameApp::GameApp()
       : App("Game")
-      , socketClient(ClientSocket::Init())
       , commands(std::make_unique<AppCommands>())
   {
   }
@@ -19,7 +18,6 @@ namespace Game
   {
     Graphics::Get()->SetRenderer(nullptr);
     mtEngine::Scenes::Get()->SetScene(nullptr);
-    ClientSocket::CloseConnection();
     commands = nullptr;
     PLOGI << "app terminated";
   }
@@ -45,8 +43,15 @@ namespace Game
     commands->ResourceInfo();
     commands->ResourcesGet();
     commands->ResourceRemove();
-
-    ServerSocket::Get()->emit("on app");
+    ServerSocket::Get()->OnRecieve().Add(
+        [](std::string msg)
+        {
+          if (msg.compare("scene_name") == 0)
+          {
+            const auto sceneName = mtEngine::Scenes::Get()->GetScene()->GetName();
+            ServerSocket::Get()->emit("scene_name:" + sceneName);
+          }
+        });
   }
 
   void GameApp::BeforeUpdate() {}

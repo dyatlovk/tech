@@ -1,7 +1,9 @@
 #include "ServerSocket.hpp"
 
 #include <algorithm>
+#include <filesystem>
 #include <thread>
+#include <unistd.h>
 
 #include "Engine/Engine.hpp"
 
@@ -16,6 +18,7 @@ namespace mtEngine
       , m_clients({})
       , m_whaitClientsBeforeQuit(true)
       , sockFd(nullptr)
+      , totalSend(0)
   {
     sockFd = new SocketFD;
     Instance = this;
@@ -51,8 +54,12 @@ namespace mtEngine
   // ---------------------------------------------------------------------------
   auto ServerSocket::emit(const std::string &msg) -> void
   {
+    if (!m_ServerRun)
+      return;
+
     for (const auto &c : m_clients)
     {
+      totalSend += msg.size();
       send(c, msg.c_str(), strlen(msg.c_str()) * sizeof(char), 0);
     }
   }
@@ -73,15 +80,20 @@ namespace mtEngine
     PLOGD << "Server listen ready...";
     while (m_ServerRun)
     {
-      int sock = socketAccept();
+      int sock = socketAcceptNonBlocking();
+
+      if (sock == -1)
+      {
+        if (errno == EWOULDBLOCK && errno == EAGAIN)
+        {
+          continue;
+        }
+      }
+
       if (sock > 0)
       {
-        std::thread trd(&ServerSocket::connectionHandler, this, std::ref(sock));
+        std::thread trd(&ServerSocket::connectionHandler, this, sock);
         trd.detach();
-      }
-      else
-      {
-        PLOGE << "error on accept socket";
       }
     }
 
@@ -106,6 +118,12 @@ namespace mtEngine
       waitAllClientsDisconnected();
     }
     disconnectAll();
+    std::filesystem::remove(SOCKET_PATH);
+  }
+
+  auto ServerSocket::OnRecieve() -> Delegate<void(std::string)> &
+  {
+    return onRecieve;
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -139,14 +157,20 @@ namespace mtEngine
   // ---------------------------------------------------------------------------
   auto ServerSocket::socketOpen(const char *path) -> bool
   {
-    sockFd->fd = socket(AF_UNIX, SOCK_STREAM, 0);
+    remove(path);
+    sockFd->fd = socket(AF_UNIX, SOCK_SEQPACKET, 0);
     sockFd->unix_address = path;
+    int flags = fcntl(sockFd->fd, F_GETFL);
+    fcntl(sockFd->fd, F_SETFL, flags | O_NONBLOCK);
 
     if (-1 == sockFd->fd)
     {
       PLOGF << "Error on socket() call";
       return false;
     }
+
+    int a = 65535;
+    setsockopt(sockFd->fd, SOL_SOCKET, SO_SNDBUF, &a, sizeof(int));
 
     sockFd->local.sun_family = AF_UNIX;
     strcpy(sockFd->local.sun_path, sockFd->unix_address);
@@ -188,7 +212,6 @@ namespace mtEngine
     unsigned int sock_len = 0;
     if ((socket = accept(descriptor->fd, (struct sockaddr *)&descriptor->remote, &sock_len)) == SOCKET_ERROR)
     {
-      PLOGF << "error accept socket";
       return SOCKET_ERROR;
     }
 
@@ -244,9 +267,10 @@ namespace mtEngine
   auto ServerSocket::connectionHandler(const int client) -> void
   {
     PLOGI << "Client connected: [" << client << "]";
-
-    char client_message[1024];
-    memset(&client_message, 0, 1024);
+    int bufferSize = 65536;
+    int bytesRecieved = 0;
+    char client_message[65536];
+    memset(&client_message, 0, bufferSize);
 
     while (m_ServerRun)
     {
@@ -255,19 +279,13 @@ namespace mtEngine
 
       message_size = recv(client, client_message, sizeof(client_message) - 1, 0);
       client_message[message_size] = '\0';
-      if (message_size == -1)
-      {
-        if (errno == EWOULDBLOCK || errno == EAGAIN)
-        {
-          PLOGE << std::strerror(errno);
-          continue;
-        }
-      }
 
       if (message_size == 0)
       {
         break;
       }
+
+      onRecieve(client_message);
 
       if (strstr(client_message, STOP_COMMAND) != 0)
       {
@@ -277,17 +295,14 @@ namespace mtEngine
         break;
       }
 
-      PLOGI << "Client [ " << client << " ]"
+      PLOGI << "Client [" << client << "]"
             << " message:" << client_message;
       m_lastMessage = client_message;
-
-      if (write(client, client_message, message_size) == -1)
-      {
-        PLOGE << "Client: [" << client << "] message sending failed";
-        m_ServerRun = false;
-        break;
-      }
+      bytesRecieved += message_size;
     }
+
+    PLOGI << "bytes recieved: " << bytesRecieved;
+    PLOGI << "bytes sended: " << totalSend;
 
     disconnectClient(client);
 
