@@ -22,6 +22,7 @@ namespace mtEngine
 
   public:
     constexpr static const char *SOCKET_PATH = "/tmp/mtEngine.sock";
+    constexpr static const char *USER_AGENT = "mtEngine";
     constexpr static const char *STOP_COMMAND = "shutdown";
     constexpr static const unsigned int nIncomingConnections = 5;
     constexpr static const int SOCKET_ERROR = -1;

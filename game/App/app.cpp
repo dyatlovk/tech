@@ -1,5 +1,7 @@
 #include "app.hpp"
 
+#include <third_party/json/json.hpp>
+
 #include "Guis/Font.hpp"
 #include "Guis/IconsFontAwesome6.h"
 #include "Inputs/Input.hpp"
@@ -8,6 +10,7 @@
 namespace Game
 {
   using namespace mtEngine;
+  using json = nlohmann::json;
   GameApp::GameApp()
       : App("Game")
       , commands(std::make_unique<AppCommands>())
@@ -46,10 +49,13 @@ namespace Game
     ServerSocket::Get()->OnRecieve().Add(
         [](std::string msg)
         {
-          if (msg.compare("scene_name") == 0)
+          if (msg.compare("scene_info") == 0)
           {
             const auto sceneName = mtEngine::Scenes::Get()->GetScene()->GetName();
-            ServerSocket::Get()->emit("scene_name:" + sceneName);
+            json j;
+            j["scene_info"]["name"] = sceneName;
+            PLOGI << j.dump();
+            ServerSocket::Get()->emit(j.dump());
           }
         });
   }

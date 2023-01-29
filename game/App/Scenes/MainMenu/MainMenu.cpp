@@ -1,12 +1,17 @@
 #include "MainMenu.hpp"
+#include <third_party/json/json.hpp>
 #include "Engine/Engine.hpp"
 #include "Scenes/Scene.hpp"
 
 namespace Game
 {
+  using json = nlohmann::json;
   MainMenu::MainMenu(): Scene(nullptr)
   {
-    ServerSocket::Get()->emit("scene_name:" + std::string(NAME));
+    json j;
+    j["scene_info"]["name"] = std::string(NAME);
+    PLOGI << j.dump();
+    ServerSocket::Get()->emit(j.dump());
   }
 
   MainMenu::~MainMenu()

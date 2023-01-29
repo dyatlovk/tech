@@ -5,10 +5,15 @@
 #include <thread>
 #include <unistd.h>
 
+#include <third_party/json/json.hpp>
+
 #include "Engine/Engine.hpp"
+#include "Network/Request.hpp"
 
 namespace mtEngine
 {
+  using json = nlohmann::json;
+
   ServerSocket *ServerSocket::Instance = nullptr;
 
   // ---------------------------------------------------------------------------
@@ -59,8 +64,9 @@ namespace mtEngine
 
     for (const auto &c : m_clients)
     {
+      std::cout << msg << std::endl;
       totalSend += msg.size();
-      send(c, msg.c_str(), strlen(msg.c_str()) * sizeof(char), 0);
+      send(c, msg.c_str(), msg.size(), 0);
     }
   }
 
@@ -112,7 +118,10 @@ namespace mtEngine
   // ---------------------------------------------------------------------------
   auto ServerSocket::shutdown(const bool &wait) -> void
   {
-    emit(ServerSocket::STOP_COMMAND);
+    const std::string stopCommand = std::string(ServerSocket::STOP_COMMAND);
+    json j;
+    j["command"] = "shutdown";
+    emit(j.dump());
     if (wait)
     {
       waitAllClientsDisconnected();
@@ -289,7 +298,7 @@ namespace mtEngine
 
       if (strstr(client_message, STOP_COMMAND) != 0)
       {
-        emit("shutdown");
+        emit("{\"command\":\"shutdown\"}");
         m_ServerRun = false;
         Engine::Get()->RequestClose();
         break;

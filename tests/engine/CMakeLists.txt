@@ -10,6 +10,7 @@ file(GLOB SOURCES
         Engine/Resources/ResourcesManagerTest.cpp
         Engine/Maths/TransformationTest.cpp
         Engine/Network/Sockets/ServerSocketTest.cpp
+        Engine/Network/Sockets/RequestTest.cpp
         )
 set(TEST_INCLUDE .)
 

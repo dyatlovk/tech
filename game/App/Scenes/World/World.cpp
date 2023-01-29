@@ -2,6 +2,8 @@
 
 #include <memory>
 
+#include <third_party/json/json.hpp>
+
 #include "Graphics/Texture.hpp"
 #include "Gui/Notify.hpp"
 #include "Guis/Gui.hpp"
@@ -10,6 +12,8 @@
 
 namespace Game
 {
+  using json = nlohmann::json;
+
   World::World()
       : Scene(std::make_unique<FPSCamera>())
       , m_var_entities(std::make_unique<Entities>())
@@ -17,7 +21,10 @@ namespace Game
       , notify(std::make_unique<Notify>())
       , m_grid(std::make_unique<Grid>())
   {
-    ServerSocket::Get()->emit("scene_name:" + std::string(NAME));
+    json j;
+    j["scene_info"]["name"] = std::string(NAME);
+    PLOGI << j.dump();
+    ServerSocket::Get()->emit(j.dump());
   }
 
   void World::Start()
@@ -110,8 +117,7 @@ namespace Game
     PLOGD << "world started";
   }
 
-  void World::BeforeUpdate() {
-  }
+  void World::BeforeUpdate() {}
 
   void World::Update()
   {
