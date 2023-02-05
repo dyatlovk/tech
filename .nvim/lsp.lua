@@ -30,8 +30,3 @@ lsp['clangd'].setup{
   },
   capabilities = capabilities,
 }
-
-vim.api.nvim_set_keymap('n', "<leader>ff", ":Lspsaga lsp_finder<CR>", {desc = "Lspsaga: Finder"});
-vim.api.nvim_set_keymap('n', "<leader>fc", ":Lspsaga code_action<CR>", {desc = "Lspsaga: Code Action"});
-vim.api.nvim_set_keymap('n', "<leader>fr", ":Lspsaga rename<CR>", {desc = "Lspsaga: Rename"});
-vim.api.nvim_set_keymap('n', "<C-]>", ":lua vim.lsp.buf.definition()<CR>", {desc = "LSP: definition"});
