@@ -1,0 +1,30 @@
+{
+	"scene_info": {
+    "entities": [
+      {
+        "name": "box",
+        "transform": {
+            "translation": [5.0, 1.0, 2.0],
+            "rotation": [0.0, 0.0, 0.0, 1.0],
+            "scale": [1.0, 1.0, 1.0]	
+        }
+      }
+    ],
+    "environment": {
+      "lights": [
+        {
+          "size": 12,
+          "type": "Sun",
+          "color": [1.0, 1.0, 1.0],
+          "strength": 2.0,
+          "direction": [0.0, 0.0, 0.0],
+          "transform": {
+            "translation": [10.0, 1.0, 0.0],
+            "rotation": [0.0, 0.0, 0.0, 1.0],
+            "scale": [1.0, 1.0, 1.0]	
+          }
+        }
+      ]
+    }
+	}
+}

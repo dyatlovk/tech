@@ -1,11 +1,13 @@
 #include "Mesh.hpp"
+
 #include "Light/Light.hpp"
 
 namespace mtEngine
 {
 #define BUFFER_OFFSET(i) ((char *)nullptr + (i))
 
-  Mesh::Mesh() : _model_transform(nullptr)
+  Mesh::Mesh()
+      : _model_transform(nullptr)
   {
   }
 
@@ -15,7 +17,8 @@ namespace mtEngine
     CleanBuffers();
   }
 
-  std::shared_ptr<Mesh> Mesh::Create(const uint16_t meshId, const std::string &buffer, const Files::FileGltf::Spec &spec)
+  std::shared_ptr<Mesh> Mesh::Create(
+      const uint16_t meshId, const std::string &buffer, const Files::FileGltf::Spec &spec)
   {
     auto mgr = ResourcesManager::Get();
     const auto meshItem = spec.meshes->FindBy(meshId);
@@ -49,13 +52,15 @@ namespace mtEngine
     shader->setMat4("view", camera->GetViewMatrix());
 
     const auto sun = Scenes::Get()->GetStructure()->GetEntity("Sun");
-    if(sun) {
+    if (sun)
+    {
       const auto sunComponent = sun->GetComponent<Light>();
       shader->setVec3("light.direction", sunComponent->GetDirection());
       shader->setFloat("light.strength", sunComponent->GetStrength());
       shader->setVec3("light.color", sunComponent->GetColor());
     }
 
+    const auto modelTranslate = _model_transform->GetTranslation();
     int _count = 0;
     for (const auto &buf : m_primitives)
     {
@@ -64,14 +69,17 @@ namespace mtEngine
       auto nodeScale = nodes.at(m_meshId).scale;
 
       const auto matItem = FindMaterialItem(_count);
-      if(matItem) {
+      if (matItem)
+      {
         mat = ResourcesManager::Get()->find<Material>(*matItem->name);
       }
-      if(!mat) {
+      if (!mat)
+      {
         shader->setBool("nomaterial", true);
       }
 
-      if(mat) {
+      if (mat)
+      {
         shader = mat->GetShader();
         shader->setBool("nomaterial", false);
         mat->Draw();
@@ -82,14 +90,15 @@ namespace mtEngine
       }
 
       glm::mat4 model = glm::mat4(1.0f);
-      const auto translate = glm::vec3(nodeTranslate->x, nodeTranslate->y, nodeTranslate->z) + _model_transform->GetTranslation();
-      model = glm::translate(model, translate);
+      const auto translate = glm::vec3(nodeTranslate->x, nodeTranslate->y, nodeTranslate->z);
+      const auto tr = modelTranslate + translate;
+      model = glm::translate(model, tr);
       const auto scale = glm::vec3(nodeScale->x, nodeScale->y, nodeScale->z);
       model = glm::scale(model, scale);
-      mtEngine::mtVec4f rot = { (float)nodeRotation->x, (float)nodeRotation->y, (float)nodeRotation->z, (float)nodeRotation->w };
+      mtEngine::mtVec4f rot = { (float)nodeRotation->x, (float)nodeRotation->y, (float)nodeRotation->z, (float)nodeRotation->w};
       mtEngine::quatToAxisAngle q;
       q = rot;
-      mtEngine::mtVec4f entityRotation = {_model_transform->GetScale().x, _model_transform->GetScale().y, _model_transform->GetScale().z};
+      mtEngine::mtVec4f entityRotation = { _model_transform->GetScale().x, _model_transform->GetScale().y, _model_transform->GetScale().z};
       mtEngine::quatToAxisAngle entityQuat;
       entityQuat = entityRotation;
       if ((rot.x + rot.y + rot.z) > 0)
@@ -249,7 +258,8 @@ namespace mtEngine
   auto Mesh::FindMaterialItem() -> Files::Materials::Item *const
   {
     const auto matId = m_meshItem.primitives.at(0).material;
-    if(!matId) return nullptr;
+    if (!matId)
+      return nullptr;
     const auto matItem = m_gltfSpec.materials->GetItems().at(*matId);
 
     return new Files::Materials::Item(matItem);
@@ -258,7 +268,8 @@ namespace mtEngine
   auto Mesh::FindMaterialItem(const int primitiveId) -> Files::Materials::Item *const
   {
     const auto matId = m_meshItem.primitives.at(primitiveId).material;
-    if(!matId) return nullptr;
+    if (!matId)
+      return nullptr;
     const auto matItem = m_gltfSpec.materials->GetItems().at(*matId);
 
     return new Files::Materials::Item(matItem);
@@ -274,10 +285,12 @@ namespace mtEngine
   auto Mesh::CleanResources() -> void
   {
     const auto matItemFound = FindMaterialItem();
-    if(matItemFound) ResourcesManager::Get()->remove(*matItemFound->name);
+    if (matItemFound)
+      ResourcesManager::Get()->remove(*matItemFound->name);
 
     const auto imgs = m_gltfSpec.images->GetItems();
-    for(const auto &i : *imgs) {
+    for (const auto &i : *imgs)
+    {
       ResourcesManager::Get()->remove(*i.name);
     }
 

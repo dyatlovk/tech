@@ -15,7 +15,7 @@ help:
 compile:
 	cd $$pwd
 	cmake --build build
-	notify-send "Tech demo compiled"
+	# notify-send "Tech demo compiled"
 configure:
 	cd $$pwd
 	# cmake --configure build
@@ -23,7 +23,7 @@ configure:
 install:
 	cd $$pwd
 	cmake --install build
-	notify-send "Tech demo installed"
+	# notify-send "Tech demo installed"
 rebuild:
 	cd $$pwd
 	# cmake --configure build
@@ -33,7 +33,7 @@ run:
 	cd $$pwd
 	cmake --build build
 	cmake --install build
-	notify-send "Tech demo installed"
+	# notify-send "Tech demo installed"
 	/home/calisto/Games/tech2/bin/game
 test:
 	cd /home/calisto/.local/usr/src/tech

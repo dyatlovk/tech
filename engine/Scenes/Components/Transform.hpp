@@ -26,6 +26,8 @@ namespace mtEngine
     const glm::vec4 &GetRotation() { return m_rotation; };
     const glm::vec3 &GetScale() { return m_scale; };
 
+    auto SetTranslation(const double x = 0, const double y = 0, const double z = 0) -> void;
+
   private:
     glm::vec3 m_translation{};
     glm::vec4 m_rotation{};

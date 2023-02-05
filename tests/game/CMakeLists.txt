@@ -4,11 +4,12 @@ project(GameUnitTests)
 file(GLOB SOURCES
         main.cpp
         Scenes/World/Gui/HUD/HUDLayoutTest.cpp
-        Fixtures/HUDLayoutFixture.hpp
-        ../../game/App/Scenes/World/Gui/HUD/HUDLayout.hpp
-        ../../game/App/Scenes/World/Gui/HUD/HUDLayout.cpp
-        ../../game/App/Scenes/World/Gui/HUD/SlotsLayout.cpp
-        ../../game/App/Scenes/World/Gui/HUD/SlotsLayout.hpp
+        Scenes/World/Client/CommunicationTest.cpp
+        # Fixtures/HUDLayoutFixture.hpp
+        # ../../game/App/Scenes/World/Gui/HUD/HUDLayout.hpp
+        # ../../game/App/Scenes/World/Gui/HUD/HUDLayout.cpp
+        # ../../game/App/Scenes/World/Gui/HUD/SlotsLayout.cpp
+        # ../../game/App/Scenes/World/Gui/HUD/SlotsLayout.hpp
         )
 set(TEST_INCLUDE .)
 

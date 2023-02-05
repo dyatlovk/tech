@@ -7,7 +7,10 @@
 #include "Graphics/Texture.hpp"
 #include "Gui/Notify.hpp"
 #include "Guis/Gui.hpp"
+#include "Scenes/Components/Transform.hpp"
 #include "Scenes/EntityManager.hpp"
+#include "Scenes/World/Client/Communication.hpp"
+#include "Scenes/World/Events/WorldEvents.hpp"
 #include "Scenes/World/Vars/Entities.hpp"
 
 namespace Game
@@ -79,24 +82,8 @@ namespace Game
           notify->Add({text, duration});
         });
 
-    Gui::Get()->GetConsole()->OnShow().Add(
-        []()
-        {
-          Mouse::Get()->ShowCursor();
-          auto camera = mtEngine::Scenes::Get()->GetCamera();
-          if (camera)
-            camera->SetMoveIsPaused(true);
-        });
-
-    Gui::Get()->GetConsole()->OnClose().Add(
-        []()
-        {
-          Mouse::Get()->HideCursor();
-          auto camera = mtEngine::Scenes::Get()->GetCamera();
-          if (camera)
-            camera->SetMoveIsPaused(false);
-          Mouse::Get()->SetCenterPosition();
-        });
+    ::World::Events::onConsoleShow();
+    ::World::Events::onConsoleClose();
 
     Engine::Get()->GetApp()->GetThreadPool().Enqueue(
         []()
@@ -113,6 +100,67 @@ namespace Game
 
     const std::string p(RESOURCES);
     EntityManager::CreateFromFile(p + "/Game/scenes/World.json");
+
+    // send to client
+    {
+      auto _e = mtEngine::Scenes::Get()->GetStructure()->QueryAll();
+      json j;
+      for (const auto &e : _e)
+      {
+        const auto matrix = e->GetComponent<Transform>()->GetTranslation();
+        j["scene_info"]["entities"][e->GetName()]["transform"]["x"] = matrix.x;
+        j["scene_info"]["entities"][e->GetName()]["transform"]["y"] = matrix.y;
+        j["scene_info"]["entities"][e->GetName()]["transform"]["z"] = matrix.z;
+      }
+      auto camera = mtEngine::Scenes::Get()->GetCamera();
+      j["scene_info"]["camera"]["transform"]["x"] = camera->GetPosition().x;
+      j["scene_info"]["camera"]["transform"]["y"] = camera->GetPosition().y;
+      j["scene_info"]["camera"]["transform"]["z"] = camera->GetPosition().z;
+      j["scene_info"]["camera"]["dir"]["x"] = camera->GetRotation().x;
+      j["scene_info"]["camera"]["dir"]["y"] = camera->GetRotation().y;
+      j["scene_info"]["camera"]["dir"]["z"] = camera->GetRotation().z;
+      ServerSocket::Get()->emit(j.dump());
+    }
+
+    // recieve from client
+    {
+      ServerSocket::Get()->OnRecieve().Add(
+          [](std::string msg)
+          {
+            const auto isValid = json::accept(msg.c_str());
+            if (!isValid)
+            {
+              PLOGD << "json is not valid";
+              return;
+            }
+            json j;
+            const auto parsed = j.parse(msg.c_str());
+            if (parsed.find("object_info") != parsed.end())
+            {
+              PLOGI << "client send: object_info";
+              const auto recieved = Game::Client::MakeObject(&parsed);
+              const auto _e = mtEngine::Scenes::Get()->GetStructure()->GetEntity(recieved->entity.name);
+              if (!_e)
+                return;
+              const auto entity = recieved->entity;
+              auto transform = _e->GetComponent<Transform>();
+              transform->SetTranslation(entity.transform->translate->x, entity.transform->translate->y, entity.transform->translate->z);
+              return;
+            }
+            if (parsed.find("scene_info") != parsed.end())
+            {
+              PLOGI << "client send: scene_info";
+              const auto recieved = Game::Client::MakeScene(&parsed);
+              for (const auto &e : recieved->entities)
+              {
+                const auto _e = mtEngine::Scenes::Get()->GetStructure()->GetEntity(e->name);
+                auto transform = _e->GetComponent<Transform>();
+                transform->SetTranslation(e->transform->translate->x, e->transform->translate->y, e->transform->translate->z);
+              }
+              return;
+            }
+          });
+    }
 
     PLOGD << "world started";
   }
