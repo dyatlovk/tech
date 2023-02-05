@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Engine Docs</title>
+    <meta name="charset" content="utf8">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+  </head> 
+  <body>
+    <main class="main wrapper">
+      <div class="header">
+        <h1>Network API</h1>
+        <p>This API standartizes communication engine with other
+        clients via sockets(UDS, TCP...).</p>
+        <p>Manipulating objects on Blender and sync with engine; sending single
+        commands to engine from cli, etc...</p>
+        <div class="code">
+          <p class="section_title">All messages must be starting with this
+          structure:</p>
+          <pre>{ "&lt;command&gt;": "{...}" }</pre>
+        </div>
+      </div>
+
+      <div id="sections" class="sections">
+        <section class="section">
+          <p class="section_title">Object</p>
+          <p>Store information about single object</p>
+          <div class="code"><span class="pseudo_link code-toggle-collapse">Example</span>
+            <pre id="object_info_code"></pre>
+          </div>
+          <script>
+            const objectData = {
+              "object_info": {
+              "name": "build",
+              "transform": {
+                  "translation": [15.0, 1.0, 2.0],
+                  "rotation": [0.0, 0.0, 0.0, 1.0],
+                  "scale": [1.0, 1.0, 1.0]	
+                }
+              }
+            } 
+            const objectInfoCode = document.getElementById('object_info_code')
+            objectInfoCode.textContent = JSON.stringify(objectData, 'undefined', 2)
+          </script>
+        </section>
+
+        <section class="section">
+          <p class="section_title">Scene</p>
+          <p>Contains all entities and object environments</p>
+          <div class="code"><span class="pseudo_link code-toggle-collapse">Example</span>
+            <pre id="scene_info_code"></pre>
+          </div>
+          <script>
+            const sceneInfoData = {
+                "scene_info": {
+                  "entities": [
+                    {
+                      "name": "build",
+                      "transform": {
+                          "translation": [15.0, 1.0, 2.0],
+                          "rotation": [0.0, 0.0, 0.0, 1.0],
+                          "scale": [1.0, 1.0, 1.0]	
+                      }
+                    }
+                  ],
+                  "environment": {
+                    "lights": [
+                      {
+                        "size": 12,
+                        "type": "Sun",
+                        "color": [1.0, 1.0, 1.0],
+                        "strength": 2.0,
+                        "direction": [0.0, 0.0, 0.0],
+                        "transform": {
+                          "translation": [10.0, 1.0, 0.0],
+                          "rotation": [0.0, 0.0, 0.0, 1.0],
+                          "scale": [1.0, 1.0, 1.0]	
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            const sceneInfoCode = document.getElementById('scene_info_code')
+            sceneInfoCode.textContent = JSON.stringify(sceneInfoData, 'undefined', 2)
+          </script>
+        </div>
+      </div>
+    </main>
+    <script src="js/main.js"></script>
+  </body>
+</html>

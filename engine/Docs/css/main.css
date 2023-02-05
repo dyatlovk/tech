@@ -1,0 +1,94 @@
+:root {
+  --link: #0070ff;
+  --bg: #efefef;
+  --fg: #1b1b1b;
+}
+
+body, html {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  font: 17px/1.5 "Helvetica", "Arial", sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+p {
+  margin: 7px 0;
+}
+
+.pseudo_link {
+  color: var(--link);
+  border-bottom: 1px dashed;
+  cursor: pointer;
+  user-select: none;
+}
+
+.header {
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.main {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+pre {
+  font-family: Monospace;
+  background-color: black;
+  color: white;
+  padding: 10px;
+}
+
+.section pre {
+  height: 0;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+}
+
+.code > span {
+  margin-left: 3px;
+}
+
+.section .code:before {
+  content: "+";
+  display: inline-block;
+}
+
+.code-opened pre {
+  height: auto;
+  overflow: auto;
+  margin-top: 10px;
+  padding: 10px;
+}
+
+code > p {
+  margin: 0;
+  padding: 10px;
+}
+
+.sections {
+  border-top: 1px solid #c2c2c2;
+}
+
+.sections, .section {
+  display: flex;
+  flex-direction: column;
+}
+
+.section {
+  box-sizing: border-box;
+  border-bottom: 1px solid #c2c2c2;
+  padding: 20px;
+}
+
+.section_title {
+  margin-top: 0;
+  font-weight: 700;
+}
+
+.section_title + p {
+  margin-top: 0;
+}
