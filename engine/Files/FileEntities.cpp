@@ -238,6 +238,12 @@ namespace mtEngine::Files
       dir.z = (float)_dir.at(2);
       transform.dir = dir;
 
+      cam->speed = (float)c.at("speed");
+      cam->sensitivity = (float)c.at("sensitivity");
+      cam->nearPlane = (float)c.at("nearPlane");
+      cam->farPlane = (float)c.at("farPlane");
+      cam->fov = (float)c.at("fov");
+
       cam->transform = transform;
 
       m_cameras.push_back(cam);

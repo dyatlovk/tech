@@ -74,5 +74,10 @@ namespace EngineTest
 
     EXPECT_EQ(2, cams.size());
     EXPECT_EQ("player", cam->name);
+    EXPECT_FLOAT_EQ(10.0, cam->speed);
+    EXPECT_FLOAT_EQ(0.05, cam->sensitivity);
+    EXPECT_FLOAT_EQ(0.1, cam->nearPlane);
+    EXPECT_FLOAT_EQ(1000.0, cam->farPlane);
+    EXPECT_FLOAT_EQ(45.0, cam->fov);
   }
 } // namespace EngineTest

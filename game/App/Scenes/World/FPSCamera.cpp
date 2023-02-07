@@ -8,7 +8,7 @@ namespace Game
       , MouseSensitivity(0.05f)
       , Right(glm::vec3(1.0f, 0.0f, 0.0f))
       , Up(glm::vec3(0.0f, 1.0f, 0.0f))
-      , Front(0.0f, 0.0f, -1.0f)
+      , Front(0.0f, 0.0f, 0.0f)
       , WorldUp(Up)
       , Yaw(-90.0f)
       , Pitch(0.0f)

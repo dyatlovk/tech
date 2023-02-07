@@ -168,6 +168,11 @@ namespace mtEngine::Files
     {
       std::string name;
       TransformCam transform;
+      float speed;
+      float sensitivity;
+      float nearPlane;
+      float farPlane;
+      float fov;
     };
 
   private:
