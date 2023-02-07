@@ -186,6 +186,8 @@ namespace mtEngine::Files
         _e->skybox = s_skybox;
       }
       spec.environment = _e;
+
+      ParseCameras(&json);
     }
     catch (nlohmann::json::parse_error &e)
     {
@@ -209,5 +211,38 @@ namespace mtEngine::Files
     spec.description.clear();
     spec.entities.clear();
     spec.environment->lights.clear();
+  }
+
+  auto FileEntities::ParseCameras(const nlohmann::json *json) -> void
+  {
+    const auto cameras = json->find("cameras");
+    for (const auto &c : *cameras)
+    {
+      const auto cam = new Camera;
+      const auto name = c["name"];
+      cam->name = name;
+      TransformCam transform;
+      const auto tr = c["transform"];
+
+      Vector3 translation;
+      auto _translate = tr.at("translation");
+      translation.x = (float)_translate.at(0);
+      translation.y = (float)_translate.at(1);
+      translation.z = (float)_translate.at(2);
+      transform.translation = translation;
+
+      Vector3 dir;
+      auto _dir = tr.at("dir");
+      dir.x = (float)_dir.at(0);
+      dir.y = (float)_dir.at(1);
+      dir.z = (float)_dir.at(2);
+      transform.dir = dir;
+
+      cam->transform = transform;
+
+      m_cameras.push_back(cam);
+    }
+
+    spec.cameras = m_cameras;
   }
 } // namespace mtEngine::Files

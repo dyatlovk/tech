@@ -49,5 +49,21 @@
 			},
 			"size": 500
 		}
-	}
+	},
+  "cameras": [
+    {
+      "name": "player",
+      "transform": {
+        "translation": [0.0, 0.0, 0.0],
+        "dir": [0.0, 0.0, 0.0]
+      }
+    },
+    {
+      "name": "free",
+      "transform": {
+        "translation": [1.0, 2.0, 1.0],
+        "dir": [1.0, 1.0, 0.5]
+      }
+    }
+  ]
 }

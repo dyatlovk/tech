@@ -64,4 +64,15 @@ namespace EngineTest
 
     EXPECT_FLOAT_EQ(2.0, light->strength);
   }
+
+  TEST_F(FileEntitiesFixture, cams)
+  {
+    const auto s = instance->GetSpecification();
+    const auto cams = s.cameras;
+
+    const auto cam = cams.front();
+
+    EXPECT_EQ(2, cams.size());
+    EXPECT_EQ("player", cam->name);
+  }
 } // namespace EngineTest

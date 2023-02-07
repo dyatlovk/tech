@@ -17,6 +17,7 @@ namespace mtEngine::Files
     struct Rotation;
     struct Scale;
     struct Translation;
+
     // environment
     struct Environment;
     struct Light;
@@ -26,6 +27,15 @@ namespace mtEngine::Files
     struct Skybox;
     struct SkyboxFaces;
 
+    // camera
+    struct Camera;
+    struct Dir;
+    struct TransformCam;
+    using Cameras = std::vector<Camera *>;
+
+    struct Vector3;
+    struct Vector4;
+
     struct Spec
     {
       std::string name;
@@ -34,6 +44,7 @@ namespace mtEngine::Files
       std::string version;
       EntityItems entities;
       Environment *environment;
+      Cameras cameras;
     } spec;
 
   public:
@@ -42,6 +53,21 @@ namespace mtEngine::Files
 
     static auto Create(const std::filesystem::path &path) -> std::shared_ptr<FileEntities>;
     const Spec &GetSpecification() { return static_cast<Spec &>(spec); };
+
+    struct Vector3
+    {
+      float x = 0;
+      float y = 0;
+      float z = 0;
+    };
+
+    struct Vector4
+    {
+      float x = 0;
+      float y = 0;
+      float z = 0;
+      float w = 0;
+    };
 
     struct Entity
     {
@@ -73,6 +99,13 @@ namespace mtEngine::Files
     };
 
     struct Translation
+    {
+      float x = 0;
+      float y = 0;
+      float z = 0;
+    };
+
+    struct Dir
     {
       float x = 0;
       float y = 0;
@@ -125,14 +158,30 @@ namespace mtEngine::Files
       Transform *transform;
     };
 
+    struct TransformCam
+    {
+      Vector3 translation;
+      Vector3 dir;
+    };
+
+    struct Camera
+    {
+      std::string name;
+      TransformCam transform;
+    };
+
   private:
     std::string _buffer;
     nlohmann::json _jsonParser;
 
     Lights m_lights;
+    Cameras m_cameras;
 
     std::string LoadFromFile(const std::filesystem::path &path) const;
     void CreateSpec();
     void CleanSpec();
+
+  private:
+    auto ParseCameras(const nlohmann::json *json) -> void;
   };
 } // namespace mtEngine::Files
