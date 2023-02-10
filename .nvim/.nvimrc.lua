@@ -7,6 +7,7 @@ if lsp_present then
   vim.cmd('luafile ' .. projectDir .. "/.nvim/dap.lua")
   vim.cmd('luafile ' .. projectDir .. "/.nvim/null_ls.lua")
   vim.cmd('luafile ' .. projectDir .. "/.nvim/keymaps.lua")
+  --vim.cmd('luafile ' .. projectDir .. "/.nvim/fold.lua")
 end
 
 local notify = vim.notify
@@ -18,3 +19,8 @@ local notify = vim.notify
 --     notify(msg, ...)
 -- end
 
+require'nvim-treesitter.configs'.setup {
+  indent = {
+    enable = false,
+  }
+}
