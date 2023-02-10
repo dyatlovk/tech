@@ -1,5 +1,9 @@
 #include "FileEntities.hpp"
 
+#include <type_traits>
+
+#include "Utils/String.hpp"
+
 namespace mtEngine::Files
 {
   FileEntities::FileEntities() = default;
@@ -22,203 +26,78 @@ namespace mtEngine::Files
   // PRIVATE
   //////////////////////////////////////////////////////////////////////////////
 
+  // ---------------------------------------------------------------------------
   void FileEntities::CreateSpec()
   {
-    try
+    const auto isValid = _jsonParser.accept(_buffer);
+    if (!isValid)
     {
-      auto json = _jsonParser.parse(_buffer);
-      if (json.contains("name"))
-      {
-        spec.name = json["name"];
-      }
-      if (json.contains("author"))
-      {
-        spec.author = json["author"];
-      }
-      if (json.contains("description"))
-      {
-        spec.description = json["description"];
-      }
-      if (json.contains("version"))
-      {
-        spec.version = json["version"];
-      }
-
-      // entities
-      auto ent = json["entities"];
-      auto ent_json = ent.get<nlohmann::json::array_t *>();
-      for (const auto &p : *ent_json)
-      {
-        Entity entity;
-        if (p.contains("name"))
-        {
-          entity.name = std::string(p["name"]);
-        }
-        if (p.contains("model"))
-        {
-          entity.model = std::string(p["model"]);
-        }
-        // transform
-        if (p.contains("transform"))
-        {
-          const auto transform = p.at("transform");
-          Transform *s_transform = new Transform();
-          if (transform.contains("translation"))
-          {
-            Translation *s_translation = new Translation();
-            s_translation->x = (float)transform.at("translation")[0];
-            s_translation->y = (float)transform.at("translation")[1];
-            s_translation->z = (float)transform.at("translation")[2];
-            s_transform->translation = s_translation;
-          }
-          if (transform.contains("rotation"))
-          {
-            Rotation *s_rotation = new Rotation();
-            s_rotation->x = (float)transform.at("rotation")[0];
-            s_rotation->y = (float)transform.at("rotation")[1];
-            s_rotation->z = (float)transform.at("rotation")[2];
-            s_rotation->w = (float)transform.at("rotation")[3];
-            s_transform->rotation = s_rotation;
-          }
-          if (transform.contains("scale"))
-          {
-            Scale *s_scale = new Scale();
-            s_scale->x = (float)transform.at("scale")[0];
-            s_scale->y = (float)transform.at("scale")[1];
-            s_scale->z = (float)transform.at("scale")[2];
-            s_transform->scale = s_scale;
-          }
-          entity.transform = s_transform;
-        }
-        spec.entities.push_back(entity);
-      }
-
-      // environment
-      auto env = json["environment"];
-      auto env_json = env.get<nlohmann::json::object_t *>();
-      Environment *_e = new Environment();
-      if (env_json->find("lights") != env_json->end())
-      {
-        auto lights_json = env_json->at("lights");
-        for (const auto &l : lights_json)
-        {
-          auto _l = new Light();
-          _l->size = (int)l["size"];
-          _l->type = std::string(l["type"]);
-          if (l.contains("transform"))
-          {
-            const auto transform = l.at("transform");
-            Transform *s_transform = new Transform();
-            if (transform.contains("translation"))
-            {
-              Translation *s_translation = new Translation();
-              s_translation->x = (float)transform.at("translation")[0];
-              s_translation->y = (float)transform.at("translation")[1];
-              s_translation->z = (float)transform.at("translation")[2];
-              s_transform->translation = s_translation;
-            }
-            if (transform.contains("rotation"))
-            {
-              Rotation *s_rotation = new Rotation();
-              s_rotation->x = (float)transform.at("rotation")[0];
-              s_rotation->y = (float)transform.at("rotation")[1];
-              s_rotation->z = (float)transform.at("rotation")[2];
-              s_rotation->w = (float)transform.at("rotation")[3];
-              s_transform->rotation = s_rotation;
-            }
-            if (transform.contains("scale"))
-            {
-              Scale *s_scale = new Scale();
-              s_scale->x = (float)transform.at("scale")[0];
-              s_scale->y = (float)transform.at("scale")[1];
-              s_scale->z = (float)transform.at("scale")[2];
-              s_transform->scale = s_scale;
-            }
-            _l->transform = s_transform;
-          }
-          if (l.contains("direction"))
-          {
-            const auto light_dir_json = l["direction"];
-            LightDirection s_lightDir;
-            s_lightDir.x = (float)light_dir_json[0];
-            s_lightDir.y = (float)light_dir_json[1];
-            s_lightDir.z = (float)light_dir_json[2];
-            _l->direction = s_lightDir;
-          }
-          if (l.contains("color"))
-          {
-            const auto light_color_json = l["color"];
-            Color s_light_color;
-            s_light_color.r = (float)light_color_json[0];
-            s_light_color.g = (float)light_color_json[1];
-            s_light_color.b = (float)light_color_json[2];
-            _l->color = s_light_color;
-          }
-          if (l.contains("strength"))
-          {
-            _l->strength = (float)l["strength"];
-          }
-          m_lights.push_back(_l);
-        }
-        _e->lights = m_lights;
-      }
-
-      if (env_json->find("skybox") != env_json->end())
-      {
-        auto skybox_json = env_json->at("skybox");
-        Skybox s_skybox;
-        if (skybox_json.contains("size"))
-        {
-          s_skybox.size = skybox_json["size"];
-        }
-        if (skybox_json.contains("textures"))
-        {
-          SkyboxFaces s_faces;
-          auto skybox_faces = skybox_json["textures"];
-          s_faces.positiveX = skybox_faces["positiveX"];
-          s_faces.negativeX = skybox_faces["negativeX"];
-          s_faces.positiveY = skybox_faces["positiveY"];
-          s_faces.negativeY = skybox_faces["negativeY"];
-          s_faces.positiveZ = skybox_faces["positiveZ"];
-          s_faces.negativeZ = skybox_faces["negativeZ"];
-          s_skybox.faces = s_faces;
-        }
-        _e->skybox = s_skybox;
-      }
-      spec.environment = _e;
-
-      ParseCameras(&json);
+      PLOGD << "scene file is not valid";
+      return;
     }
-    catch (nlohmann::json::parse_error &e)
+
+    _validJson = _jsonParser.parse(_buffer);
+    if (_validJson.contains("name"))
     {
-      PLOGE << e.what();
+      spec.name = _validJson["name"];
     }
+    if (_validJson.contains("author"))
+    {
+      spec.author = _validJson["author"];
+    }
+    if (_validJson.contains("description"))
+    {
+      spec.description = _validJson["description"];
+    }
+    if (_validJson.contains("version"))
+    {
+      spec.version = _validJson["version"];
+    }
+
+    // cameras
+    auto cam = _validJson["cameras"];
+    const auto camJson = cam.get<Json::array_t *>();
+    ParseCameras(camJson);
+
+    // environment
+    auto env = _validJson["environment"];
+    auto env_json = env.get<Json::object_t *>();
+    ParseEnvironment(env_json);
+
+    // entities
+    auto ent = _validJson["entities"];
+    auto ent_json = ent.get<Json::array_t *>();
+    ParseEntities(ent_json);
   }
 
+  // ---------------------------------------------------------------------------
   std::string FileEntities::LoadFromFile(const std::filesystem::path &path) const
   {
     auto file = new File();
     file->Load(path);
     auto buf = file->GetBuffer();
     file = nullptr;
+    delete file;
 
     return buf;
   }
 
+  // ---------------------------------------------------------------------------
   void FileEntities::CleanSpec()
   {
     spec.author.clear();
     spec.description.clear();
     spec.entities.clear();
     spec.environment->lights.clear();
+    spec.cameras.clear();
   }
 
-  auto FileEntities::ParseCameras(const nlohmann::json *json) -> void
+  // ---------------------------------------------------------------------------
+  auto FileEntities::ParseCameras(const Json::array_t *json) -> void
   {
-    const auto cameras = json->find("cameras");
-    for (const auto &c : *cameras)
+    for (const auto &c : *json)
     {
-      const auto cam = new Camera;
+      Camera *cam = new Camera;
       const auto name = c["name"];
       cam->name = name;
       TransformCam transform;
@@ -246,9 +125,241 @@ namespace mtEngine::Files
 
       cam->transform = transform;
 
-      m_cameras.push_back(cam);
+      spec.cameras.push_back(cam);
+      cam = nullptr;
+      delete cam;
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  auto FileEntities::ParseEntities(const Json::array_t *json) -> void
+  {
+    int idx = 0;
+    for (const auto &p : *json)
+    {
+      Entity entity;
+      if (p.contains("name"))
+      {
+        entity.name = std::string(p["name"]);
+      }
+      if (p.contains("model"))
+      {
+        entity.model = std::string(p["model"]);
+      }
+      // transform
+      if (p.contains("transform"))
+      {
+        const auto transform = p.at("transform");
+        Transform *s_transform = new Transform();
+        if (transform.contains("translation"))
+        {
+          Translation *s_translation = new Translation();
+          s_translation->x = (float)transform.at("translation")[0];
+          s_translation->y = (float)transform.at("translation")[1];
+          s_translation->z = (float)transform.at("translation")[2];
+          s_transform->translation = s_translation;
+          s_translation = nullptr;
+          delete s_translation;
+        }
+        if (transform.contains("rotation"))
+        {
+          Rotation *s_rotation = new Rotation();
+          s_rotation->x = (float)transform.at("rotation")[0];
+          s_rotation->y = (float)transform.at("rotation")[1];
+          s_rotation->z = (float)transform.at("rotation")[2];
+          s_rotation->w = (float)transform.at("rotation")[3];
+          s_transform->rotation = s_rotation;
+          s_rotation = nullptr;
+          delete s_rotation;
+        }
+        if (transform.contains("scale"))
+        {
+          Scale *s_scale = new Scale();
+          s_scale->x = (float)transform.at("scale")[0];
+          s_scale->y = (float)transform.at("scale")[1];
+          s_scale->z = (float)transform.at("scale")[2];
+          s_transform->scale = s_scale;
+          s_scale = nullptr;
+          delete s_scale;
+        }
+        entity.transform = s_transform;
+        s_transform = nullptr;
+        delete s_transform;
+      }
+      spec.entities.push_back(entity);
+
+      if (p.contains("childs"))
+      {
+        auto childs = p.at("childs");
+        auto chJson = childs.get<Json::array_t *>();
+        ParseChilds(chJson, idx);
+      }
+      idx++;
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  auto FileEntities::ParseEnvironment(const Json::object_t *json) -> void
+  {
+    Environment *_e = new Environment();
+    if (json->find("lights") != json->end())
+    {
+      auto lights_json = json->at("lights");
+      for (const auto &l : lights_json)
+      {
+        auto _l = new Light();
+        _l->size = (int)l["size"];
+        _l->type = std::string(l["type"]);
+        if (l.contains("transform"))
+        {
+          const auto transform = l.at("transform");
+          Transform *s_transform = new Transform();
+          if (transform.contains("translation"))
+          {
+            Translation *s_translation = new Translation();
+            s_translation->x = (float)transform.at("translation")[0];
+            s_translation->y = (float)transform.at("translation")[1];
+            s_translation->z = (float)transform.at("translation")[2];
+            s_transform->translation = s_translation;
+          }
+          if (transform.contains("rotation"))
+          {
+            Rotation *s_rotation = new Rotation();
+            s_rotation->x = (float)transform.at("rotation")[0];
+            s_rotation->y = (float)transform.at("rotation")[1];
+            s_rotation->z = (float)transform.at("rotation")[2];
+            s_rotation->w = (float)transform.at("rotation")[3];
+            s_transform->rotation = s_rotation;
+          }
+          if (transform.contains("scale"))
+          {
+            Scale *s_scale = new Scale();
+            s_scale->x = (float)transform.at("scale")[0];
+            s_scale->y = (float)transform.at("scale")[1];
+            s_scale->z = (float)transform.at("scale")[2];
+            s_transform->scale = s_scale;
+          }
+          _l->transform = s_transform;
+        }
+        if (l.contains("direction"))
+        {
+          const auto light_dir_json = l["direction"];
+          LightDirection s_lightDir;
+          s_lightDir.x = (float)light_dir_json[0];
+          s_lightDir.y = (float)light_dir_json[1];
+          s_lightDir.z = (float)light_dir_json[2];
+          _l->direction = s_lightDir;
+        }
+        if (l.contains("color"))
+        {
+          const auto light_color_json = l["color"];
+          Color s_light_color;
+          s_light_color.r = (float)light_color_json[0];
+          s_light_color.g = (float)light_color_json[1];
+          s_light_color.b = (float)light_color_json[2];
+          _l->color = s_light_color;
+        }
+        if (l.contains("strength"))
+        {
+          _l->strength = (float)l["strength"];
+        }
+        _e->lights.push_back(_l);
+      }
     }
 
-    spec.cameras = m_cameras;
+    if (json->find("skybox") != json->end())
+    {
+      auto skybox_json = json->at("skybox");
+      Skybox s_skybox;
+      if (skybox_json.contains("size"))
+      {
+        s_skybox.size = skybox_json["size"];
+      }
+      if (skybox_json.contains("textures"))
+      {
+        SkyboxFaces s_faces;
+        auto skybox_faces = skybox_json["textures"];
+        s_faces.positiveX = skybox_faces["positiveX"];
+        s_faces.negativeX = skybox_faces["negativeX"];
+        s_faces.positiveY = skybox_faces["positiveY"];
+        s_faces.negativeY = skybox_faces["negativeY"];
+        s_faces.positiveZ = skybox_faces["positiveZ"];
+        s_faces.negativeZ = skybox_faces["negativeZ"];
+        s_skybox.faces = s_faces;
+      }
+      _e->skybox = s_skybox;
+    }
+
+    spec.environment = _e;
+    _e = nullptr;
+    delete _e;
+  }
+
+  auto FileEntities::ParseChilds(const Json::array_t *json, int idx) -> void
+  {
+    for (const auto &link : *json)
+    {
+      const auto foundEntity = SearchInEntities(link);
+      if (foundEntity)
+      {
+        spec.entities.at(idx).childs.push_back(foundEntity);
+      }
+
+      const auto foundCams = SearchInCameras(link);
+      if (foundCams)
+      {
+        spec.entities.at(idx).childs.push_back(foundCams);
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  auto FileEntities::SearchInEntities(const std::string &name) -> const Entity *
+  {
+    const auto tokens = mtEngine::String::Split(name, ".");
+    if (tokens.size() == 0)
+    {
+      return nullptr;
+    }
+    const auto section = tokens.at(0);
+    const auto findName = tokens.at(1);
+
+    if (section == "entities")
+    {
+      for (const auto &entity : spec.entities)
+      {
+        if (entity.name.compare(findName) == 0)
+        {
+          return &entity;
+        }
+      }
+    }
+
+    return nullptr;
+  }
+
+  // ---------------------------------------------------------------------------
+  auto FileEntities::SearchInCameras(const std::string &name) -> const Camera *
+  {
+    const auto tokens = mtEngine::String::Split(name, ".");
+    if (tokens.size() == 0)
+    {
+      return nullptr;
+    }
+    const auto section = tokens.at(0);
+    const auto findName = tokens.at(1);
+
+    if (section == "cameras")
+    {
+      for (const auto &cam : spec.cameras)
+      {
+        if (cam->name.compare(findName) == 0)
+        {
+          return cam;
+        }
+      }
+    }
+
+    return nullptr;
   }
 } // namespace mtEngine::Files

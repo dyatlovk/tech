@@ -32,6 +32,17 @@ namespace EngineTest
     EXPECT_FLOAT_EQ(1.0, transform->scale->z);
   }
 
+  TEST_F(FileEntitiesFixture, childs)
+  {
+    auto s = instance->GetSpecification();
+    auto entities = s.entities;
+    auto childs = entities.at(0).childs;
+    EXPECT_EQ(2, childs.size());
+
+    auto nochild = entities.at(1).childs;
+    EXPECT_EQ(0, nochild.size());
+  }
+
   TEST_F(FileEntitiesFixture, environment_lights)
   {
     auto s = instance->GetSpecification();

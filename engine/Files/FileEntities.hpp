@@ -1,5 +1,7 @@
 #pragma once
 
+#include <any>
+
 #include <Engine/Log.hpp>
 
 #include "Files/File.hpp"
@@ -9,6 +11,8 @@ namespace mtEngine::Files
 {
   class FileEntities
   {
+    using Json = nlohmann::json;
+
   public:
     // entity
     struct Entity;
@@ -32,6 +36,10 @@ namespace mtEngine::Files
     struct Dir;
     struct TransformCam;
     using Cameras = std::vector<Camera *>;
+
+    struct Child;
+
+    using Childs = std::vector<std::any>;
 
     struct Vector3;
     struct Vector4;
@@ -74,6 +82,7 @@ namespace mtEngine::Files
       std::string name;
       std::string model;
       Transform *transform;
+      Childs childs;
     };
 
     struct Transform
@@ -152,6 +161,7 @@ namespace mtEngine::Files
     {
       int size;
       std::string type;
+      std::string name;
       float strength = 1.0;
       Color color;
       LightDirection direction;
@@ -175,18 +185,27 @@ namespace mtEngine::Files
       float fov;
     };
 
+    struct Child
+    {
+      std::string link;
+    };
+
   private:
     std::string _buffer;
-    nlohmann::json _jsonParser;
-
-    Lights m_lights;
-    Cameras m_cameras;
+    Json _jsonParser;
+    Json _validJson;
 
     std::string LoadFromFile(const std::filesystem::path &path) const;
     void CreateSpec();
     void CleanSpec();
 
   private:
-    auto ParseCameras(const nlohmann::json *json) -> void;
+    auto ParseCameras(const Json::array_t *json) -> void;
+    auto ParseEntities(const Json::array_t *json) -> void;
+    auto ParseEnvironment(const Json::object_t *json) -> void;
+    auto ParseChilds(const Json::array_t *json, int idx) -> void;
+
+    auto SearchInEntities(const std::string &name) -> const Entity *;
+    auto SearchInCameras(const std::string &name) -> const Camera *;
   };
 } // namespace mtEngine::Files
