@@ -20,7 +20,8 @@ namespace mtEngine
   Model::~Model()
   {
     ResourcesManager::Get()->remove(m_name);
-    for(auto &m :m_meshes) {
+    for (auto &m : m_meshes)
+    {
       ResourcesManager::Get()->remove(m->GetName());
     }
     m_meshes.clear();
@@ -99,6 +100,7 @@ namespace mtEngine
 
     auto binFile = new File(path);
     const auto buffer = std::string(binFile->GetBuffer());
+    binFile = nullptr;
     delete binFile;
 
     return buffer;

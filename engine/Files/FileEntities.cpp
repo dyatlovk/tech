@@ -264,6 +264,8 @@ namespace mtEngine::Files
           _l->strength = (float)l["strength"];
         }
         _e->lights.push_back(_l);
+        _l = nullptr;
+        delete _l;
       }
     }
 

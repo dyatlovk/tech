@@ -44,6 +44,7 @@ namespace mtEngine::SceneManager
       auto mesh = gltfSpec.meshes->FindBy(meshId);
       auto node = new Node(nodeJsonItem, mesh);
       scene.nodes.push_back(*node);
+      node = nullptr;
       delete node;
     }
   }
@@ -75,6 +76,7 @@ namespace mtEngine::SceneManager
     auto binPath = p + *gltfSpec.extras->GetSection().gameScenesRelativePath + "/" + binFileName;
     auto buffer = new File(binPath);
     _fileTmpBuf = buffer->GetBuffer();
+    buffer = nullptr;
     delete buffer;
 
     return _fileTmpBuf;
@@ -103,6 +105,7 @@ namespace mtEngine::SceneManager
     node.name = *_item.name;
     auto mesh = new Mesh(_meshItem);
     node.meshes.push_back(*mesh);
+    mesh = nullptr;
     delete mesh;
   }
 }
