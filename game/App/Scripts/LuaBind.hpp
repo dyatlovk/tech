@@ -33,17 +33,26 @@ namespace Game
     auto Execute(const std::string &file) -> void;
 
     // ---------------------------------------------------------------------------
-    // Register user type and bind to lua
+    // Register user type on global space and bind to lua
     template<typename Class>
     auto Register(const std::string &name) -> sol::usertype<Class>
     {
       auto type = m_state->new_usertype<Class>(name);
-      // for (const auto &m : methods)
-      // {
-      //   type[m.first] = m.second;
-      // }
       auto instance = std::make_shared<Class>();
       m_state->set(name, std::move(instance));
+
+      return type;
+    }
+
+    // ---------------------------------------------------------------------------
+    // Register user type in namespace and bind to lua
+    template<typename Class>
+    auto Register(const std::string &ns, const std::string &name) -> sol::usertype<Class>
+    {
+      auto namesp = m_state->set(ns).get_or(ns, m_state->create_table(ns));
+      auto type = namesp.new_usertype<Class>(name);
+      auto instance = std::make_shared<Class>();
+      namesp.set(name, std::move(instance));
 
       return type;
     }

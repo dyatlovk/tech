@@ -61,4 +61,12 @@ namespace Game::LuaBind
     int exitCode = lua->GetState()->get<int>("testExitCode");
     EXPECT_EQ(1, exitCode);
   }
+
+  TEST_F(LuaBindFixture, registerWithNamespace)
+  {
+    lua->Register<TestRegister>("Utils", "Test").set("foo", &TestRegister::foo);
+    lua->Execute("namespace.lua");
+    int exitCode = lua->GetState()->get<int>("testExitCode");
+    EXPECT_EQ(1, exitCode);
+  }
 } // namespace Game::LuaBind
