@@ -38,3 +38,6 @@ run:
 test:
 	cd /home/calisto/.local/usr/src/tech
 	make compile && cd ./build && ctest -VV
+test-game:
+	cd /home/calisto/.local/usr/src/tech
+	make compile && ./build/tests/game/GameUnitTests 

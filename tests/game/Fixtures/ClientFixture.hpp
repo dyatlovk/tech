@@ -20,13 +20,13 @@ namespace WorldTest
 
     auto SetUp() -> void override
     {
-      const std::string root = "../../..";
+      std::string root(GameTests::ROOT_DIR);
       const auto file = std::make_unique<File>();
-      file->Load(root + "/tests/game/Fixtures/scene_info.json");
+      file->Load(root + "/Fixtures/scene_info.json");
       _str = file->GetBuffer();
 
       const auto fileObject = std::make_unique<File>();
-      fileObject->Load(root + "/tests/game/Fixtures/object_info.json");
+      fileObject->Load(root + "/Fixtures/object_info.json");
       _str_object_info = fileObject->GetBuffer();
     }
 

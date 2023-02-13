@@ -1,11 +1,10 @@
 #include "app.hpp"
 
-#include <third_party/json/json.hpp>
-
 #include "Guis/Font.hpp"
 #include "Guis/IconsFontAwesome6.h"
 #include "Inputs/Input.hpp"
 #include "Render/GameRender.hpp"
+#include "Scripts/GameLog.hpp"
 
 namespace Game
 {
@@ -14,6 +13,7 @@ namespace Game
   GameApp::GameApp()
       : App("Game")
       , commands(std::make_unique<AppCommands>())
+      , m_lua(Lua::Init())
   {
   }
 
@@ -22,14 +22,28 @@ namespace Game
     Graphics::Get()->SetRenderer(nullptr);
     mtEngine::Scenes::Get()->SetScene(nullptr);
     commands = nullptr;
-    PLOGI << "app terminated";
+    Lua::Get()->RunFunction("onDestroy");
   }
 
   void GameApp::Start()
   {
-    PLOGD << "app start";
     std::string p(RESOURCES);
     Input::Get()->LoadConfig(p + "/Game/keysmap.ini");
+
+    Lua::Get()->GetState()->open_libraries(sol::lib::base, sol::lib::os, sol::lib::package);
+    Lua::Get()->SetPackageRoot(p + "/Game/scripts/");
+    Lua::Get()
+        ->Register<GameLog>("Log")
+        .set("Info", &GameLog::info)
+        .set("Error", &GameLog::error)
+        .set("Debug", &GameLog::debug)
+        .set("Fatal", &GameLog::fatal);
+    Lua::Get()->Execute("app.lua");
+    Lua::Get()->RunFunction("onStart");
+
+    GetThreadPool().Enqueue([]() {
+        Lua::Get()->RunFunction("onThread");
+    });
 
     ImFontConfig config;
     config.GlyphMinAdvanceX = 17.0f;

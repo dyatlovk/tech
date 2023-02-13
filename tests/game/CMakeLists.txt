@@ -1,15 +1,13 @@
 cmake_minimum_required(VERSION 3.18)
 project(GameUnitTests)
 
+configure_file(Config.hpp.in "${PROJECT_SOURCE_DIR}/Config.hpp" @ONLY)
+
 file(GLOB SOURCES
         main.cpp
         Scenes/World/Gui/HUD/HUDLayoutTest.cpp
         Scenes/World/Client/CommunicationTest.cpp
-        # Fixtures/HUDLayoutFixture.hpp
-        # ../../game/App/Scenes/World/Gui/HUD/HUDLayout.hpp
-        # ../../game/App/Scenes/World/Gui/HUD/HUDLayout.cpp
-        # ../../game/App/Scenes/World/Gui/HUD/SlotsLayout.cpp
-        # ../../game/App/Scenes/World/Gui/HUD/SlotsLayout.hpp
+        Scripts/LuaBindTest.cpp
         )
 set(TEST_INCLUDE .)
 
