@@ -9,3 +9,4 @@ vim.api.nvim_set_keymap("n", "<F12>", ":ClangdSwitchSourceHeader<CR>", { desc = 
 vim.api.nvim_set_keymap('n', "<F3>", ":lua require('nvterm.terminal').send('make test', 'vertical')<CR>", {desc = "Make: test"});
 vim.api.nvim_set_keymap('n', "<F2>", ":lua require('nvterm.terminal').send('make rebuild', 'vertical')<CR>", {desc = "Make: rebuild"});
 vim.api.nvim_set_keymap('n', "<leader>wp", ":lua require('nvim-window').pick()<CR>", {desc = "Window: pick"});
+vim.api.nvim_set_keymap('n', "<leader>gl", ":LazyGit<CR>", {desc = "LazyGit open"});
