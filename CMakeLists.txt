@@ -45,7 +45,6 @@ execute_process(
 )
 
 add_subdirectory(engine)
-# add_subdirectory(editor)
 add_subdirectory(game)
 
 option(BUILD_TESTS "Build unit tests" ON)
