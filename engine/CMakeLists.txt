@@ -14,6 +14,8 @@ find_package(GLEW REQUIRED)
 configure_file(Config.hpp.in "${PROJECT_SOURCE_DIR}/Config.hpp" @ONLY)
 configure_file(Settings.in "${RESOURCES_DIR}/Engine/Settings.ini" @ONLY)
 
+add_subdirectory(third_party/lua)
+
 add_library(${PROJECT_NAME} SHARED 
   Engine/Engine.cpp
   Engine/CVars.cpp
@@ -58,12 +60,13 @@ add_library(${PROJECT_NAME} SHARED
   Light/Light.cpp
   Network/Sockets/ServerSocket.cpp
   Network/Sockets/ClientSocket.cpp
+  Scripts/Lua/LuaBind.cpp
   )
 set(ENGINE_INCLUDE ${PROJECT_SOURCE_DIR})
 set(ENGINE_INCLUDE ${ENGINE_INCLUDE} PARENT_SCOPE)
 add_library(mt::engine ALIAS ${PROJECT_NAME})
-target_include_directories(${PROJECT_NAME} PUBLIC ${ENGINE_INCLUDE} ${FREETYPE_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} OpenGL::GL GLEW glfw Threads::Threads ${FREETYPE_LIBRARIES})
+target_include_directories(${PROJECT_NAME} PUBLIC ${ENGINE_INCLUDE} ${FREETYPE_INCLUDE_DIRS} {$LUA_INCLUDE})
+target_link_libraries(${PROJECT_NAME} OpenGL::GL GLEW glfw Threads::Threads ${FREETYPE_LIBRARIES} mt::engine::lua)
 install(
   TARGETS 
   ${PROJECT_NAME} 

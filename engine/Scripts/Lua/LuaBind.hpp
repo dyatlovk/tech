@@ -1,28 +1,25 @@
 #pragma once
 
-#include <any>
-#include <memory>
-
 #include "Utils/NonCopyable.hpp"
 #define SOL_ALL_SAFETIES_ON 1
-#include "sol/sol.hpp"
 
-namespace Game
+#include <third_party/sol/sol.hpp>
+
+namespace mtEngine
 {
-  using namespace mtEngine;
-  class Lua : public NonCopyable
+  class LuaBind : public NonCopyable
   {
   public:
-    Lua();
-    ~Lua() override;
+    LuaBind();
+    ~LuaBind() override;
 
     // ---------------------------------------------------------------------------
-    auto static Get() -> Lua * { return Instance; };
+    auto static Get() -> LuaBind * { return Instance; };
 
     auto GetState() -> sol::state *;
 
     // ---------------------------------------------------------------------------
-    auto static Init() -> std::unique_ptr<Lua>;
+    auto static Init() -> std::unique_ptr<LuaBind>;
 
     // ---------------------------------------------------------------------------
     // Where scripts stored
@@ -73,6 +70,6 @@ namespace Game
 
     // where is game root
     std::string m_root;
-    static Lua *Instance;
+    static LuaBind *Instance;
   };
-} // namespace Game
+} // namespace mtEngine

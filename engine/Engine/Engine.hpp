@@ -14,6 +14,7 @@
 #include "Maths/Time.hpp"
 #include "Module.hpp"
 #include "Network/Sockets/ServerSocket.hpp"
+#include "Scripts/Lua/LuaBind.hpp"
 #include "Utils/NonCopyable.hpp"
 
 namespace mtEngine
@@ -153,6 +154,7 @@ namespace mtEngine
     std::unique_ptr<Commands> commands;
     std::unique_ptr<IniParser> iniParser;
     std::unique_ptr<ServerSocket> server;
+    std::unique_ptr<LuaBind> lua;
 
     Delta deltaUpdate, deltaRender;
     ElapsedTime elapsedUpdate, elapsedRender;

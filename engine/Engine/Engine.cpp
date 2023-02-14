@@ -15,6 +15,7 @@ namespace mtEngine
     Instance = this;
 
     log       = Log::Init();
+    lua      = LuaBind::Init();
     PLOGD << "starting engine...";
     cvars     = CVars::Init();
     commands  = Commands::Init();

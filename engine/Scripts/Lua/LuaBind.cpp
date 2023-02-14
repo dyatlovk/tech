@@ -1,37 +1,37 @@
 #include "LuaBind.hpp"
 
-#include <functional>
+#include <memory>
 
 #include "third_party/plog/Log.h"
 
-namespace Game
+namespace mtEngine
 {
-  Lua *Lua::Instance = nullptr;
-  Lua::Lua()
+  LuaBind *LuaBind::Instance = nullptr;
+  LuaBind::LuaBind()
       : m_state(new sol::state())
       , m_scriptsPath("")
   {
     Instance = this;
   }
-  Lua::~Lua()
+  LuaBind::~LuaBind()
   {
     m_state = nullptr;
     delete m_state;
   }
 
-  auto Lua::GetState() -> sol::state *
+  auto LuaBind::GetState() -> sol::state *
   {
     return m_state;
   }
 
-  auto Lua::Init() -> std::unique_ptr<Lua>
+  auto LuaBind::Init() -> std::unique_ptr<LuaBind>
   {
-    auto s = std::make_unique<Lua>();
+    auto s = std::make_unique<LuaBind>();
 
     return s;
   }
 
-  auto Lua::SetPackageRoot(const std::string &path) -> void
+  auto LuaBind::SetPackageRoot(const std::string &path) -> void
   {
     m_scriptsPath = path;
     const std::string package_path = m_state->get<sol::table>("package").get<std::string>("path");
@@ -40,7 +40,7 @@ namespace Game
     package.set("path", newPath);
   }
 
-  auto Lua::Execute(const std::string &file) -> void
+  auto LuaBind::Execute(const std::string &file) -> void
   {
     auto result = m_state->load_file(m_scriptsPath + file);
 
@@ -52,4 +52,4 @@ namespace Game
 
     result();
   }
-} // namespace Game
+} // namespace mtEngine

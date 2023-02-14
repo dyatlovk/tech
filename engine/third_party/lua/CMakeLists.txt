@@ -36,7 +36,7 @@ add_library(
 	lapi.c
 	luac.c
 	)
-add_library(Game::lua ALIAS ${PROJECT_NAME})
+add_library(mt::engine::lua ALIAS ${PROJECT_NAME})
 
 set(LUA_INCLUDE ${PROJECT_SOURCE_DIR})
 target_include_directories(

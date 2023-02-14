@@ -7,7 +7,6 @@ file(GLOB SOURCES
         main.cpp
         Scenes/World/Gui/HUD/HUDLayoutTest.cpp
         Scenes/World/Client/CommunicationTest.cpp
-        Scripts/LuaBindTest.cpp
         )
 set(TEST_INCLUDE .)
 

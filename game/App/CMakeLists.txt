@@ -14,13 +14,12 @@ add_library(${PROJECT_NAME} SHARED
     Scenes/World/Gui/HUD/SlotsLayout.hpp
     Scenes/World/Gui/HUD/SlotsContent.cpp
     Scenes/World/FPSCamera.cpp
-    Scripts/LuaBind.cpp
   )
 set(GAME_INCLUDE ${PROJECT_SOURCE_DIR})
 set(GAME_INCLUDE ${GAME_INCLUDE} PARENT_SCOPE)
 add_library(mt::game ALIAS ${PROJECT_NAME})
-target_include_directories(${PROJECT_NAME} PUBLIC ${GAME_INCLUDE} ${LUA_INCLUDE} ${APP_LIB_DIR})
-target_link_libraries(${PROJECT_NAME} mt::engine Game::lua)
+target_include_directories(${PROJECT_NAME} PUBLIC ${GAME_INCLUDE} ${APP_LIB_DIR})
+target_link_libraries(${PROJECT_NAME} mt::engine)
 install(
   TARGETS 
   ${PROJECT_NAME} 

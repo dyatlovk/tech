@@ -41,3 +41,6 @@ test:
 test-game:
 	cd /home/calisto/.local/usr/src/tech
 	make compile && ./build/tests/game/GameUnitTests 
+test-engine:
+	cd /home/calisto/.local/usr/src/tech
+	make compile && ./build/tests/engine/EngineUnitTests 

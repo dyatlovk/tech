@@ -1,0 +1,8 @@
+#pragma once
+
+#include <string_view>
+
+namespace EngineTest
+{
+  constexpr std::string_view ROOT_DIR = "@PROJECT_SOURCE_DIR@";
+} // namespace EngineTests

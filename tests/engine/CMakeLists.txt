@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.18)
 project(EngineUnitTests)
 
+configure_file(TestConfig.hpp.in "${PROJECT_SOURCE_DIR}/TestConfig.hpp" @ONLY)
+
 file(GLOB SOURCES
         main.cpp
         Engine/CVarsTest.cpp
@@ -11,6 +13,7 @@ file(GLOB SOURCES
         Engine/Maths/TransformationTest.cpp
         Engine/Network/Sockets/ServerSocketTest.cpp
         Engine/Network/Sockets/RequestTest.cpp
+        Engine/Scripts/LuaBindTest.cpp
         )
 set(TEST_INCLUDE .)
 

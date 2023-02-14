@@ -1,11 +1,12 @@
-#include "Scripts/LuaBind.hpp"
+#include "Scripts/Lua/LuaBind.hpp"
 
 #include <gtest/gtest.h>
 
-#include "Config.hpp"
+#include "TestConfig.hpp"
 
-namespace Game::LuaBind
+namespace EngineTest
 {
+  using namespace mtEngine;
   class LuaBindFixture : public ::testing::Test
   {
   protected:
@@ -14,13 +15,14 @@ namespace Game::LuaBind
 
     auto SetUp() -> void override
     {
-      const std::string r(GameTests::ROOT_DIR);
-      lua = Lua::Init();
+      const std::string r(ROOT_DIR);
+      std::cout << r << std::endl;
+      lua = LuaBind::Init();
       lua->GetState()->open_libraries(sol::lib::base, sol::lib::package, sol::lib::os);
       lua->SetPackageRoot(r + "/Fixtures/lua/");
     }
 
-    std::unique_ptr<Lua> lua;
+    std::unique_ptr<LuaBind> lua;
   };
 
   class TestRegister
@@ -35,14 +37,14 @@ namespace Game::LuaBind
   TEST_F(LuaBindFixture, init)
   {
     lua->Execute("game.lua");
-    int exitCode = Lua::Get()->GetState()->get<int>("testExitCode");
+    int exitCode = LuaBind::Get()->GetState()->get<int>("testExitCode");
     EXPECT_EQ(1, exitCode);
   }
 
   TEST_F(LuaBindFixture, badLuaCode)
   {
     lua->Execute("bad.lua");
-    int exitCode = Lua::Get()->GetState()->get_or("testExitCode", 0);
+    int exitCode = LuaBind::Get()->GetState()->get_or("testExitCode", 0);
     EXPECT_EQ(0, exitCode);
   }
 
@@ -50,7 +52,7 @@ namespace Game::LuaBind
   {
     lua->Execute("function.lua");
     lua->RunFunction("onTest");
-    int exitCode = Lua::Get()->GetState()->get<int>("testExitCode");
+    int exitCode = LuaBind::Get()->GetState()->get<int>("testExitCode");
     EXPECT_EQ(1, exitCode);
   }
 
@@ -69,4 +71,4 @@ namespace Game::LuaBind
     int exitCode = lua->GetState()->get<int>("testExitCode");
     EXPECT_EQ(1, exitCode);
   }
-} // namespace Game::LuaBind
+} // namespace EngineTest
