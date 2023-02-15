@@ -5,6 +5,7 @@
 #include <third_party/json/json.hpp>
 
 #include "Graphics/Texture.hpp"
+#include "Gui/GameGui.hpp"
 #include "Gui/Notify.hpp"
 #include "Guis/Gui.hpp"
 #include "Scenes/Components/Transform.hpp"
@@ -84,6 +85,10 @@ namespace Game
 
     ::World::Events::onConsoleShow();
     ::World::Events::onConsoleClose();
+
+    GameGui::Get()->appendListener(GUI::Events::OnStatsToggle, [this]() {
+      notify->Add({"stats toggled", 2000});
+    });
 
     Engine::Get()->GetApp()->GetThreadPool().Enqueue(
         []()

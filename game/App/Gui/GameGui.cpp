@@ -34,7 +34,7 @@ namespace Game
       if(flag == 0) {
         showStats = false;
       }
-      enqueue(GUI::Events::OnStatsToggle);
+      OnStatsToggleCallback();
     });
 
     CVars::Get()->Add("app", "ui_debug", {"0"}, "Show windows rectangles", "app ui_debug <1|0>", [this](CVarParam &args, Input &input, bool &isValid) {
@@ -127,5 +127,11 @@ namespace Game
     }
     ImGui::PopFont();
     ImGui::End();
+  }
+
+  auto GameGui::OnStatsToggleCallback() -> void
+  {
+    enqueue(GUI::Events::OnStatsToggle);
+    LuaBind::Get()->RunFunction("onStatsToggle");
   }
 }

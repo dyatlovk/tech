@@ -32,6 +32,8 @@ namespace Game
 
     void Debug();
 
+    auto OnStatsToggleCallback() -> void;
+
   private:
     bool showStats = true;
     bool showUIDebug = false;
