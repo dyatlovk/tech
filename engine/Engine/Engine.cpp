@@ -15,7 +15,8 @@ namespace mtEngine
     Instance = this;
 
     log       = Log::Init();
-    lua      = LuaBind::Init();
+    events    = Events::Init();
+    lua       = LuaBind::Init();
     PLOGD << "starting engine...";
     cvars     = CVars::Init();
     commands  = Commands::Init();
@@ -76,6 +77,7 @@ namespace mtEngine
     while (running)
     {
       Window::Get()->ActivateContext();
+
       if (app)
       {
         if (!app->started)
@@ -87,6 +89,11 @@ namespace mtEngine
         app->BeforeUpdate();
         PreUpdate();
         app->Update();
+      }
+
+      if (!events->started) {
+        events->RunTasks();
+        events->started = true;
       }
 
       // Always-Update.

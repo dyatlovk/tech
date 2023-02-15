@@ -1,6 +1,7 @@
 #include "MainMenu.hpp"
 #include <third_party/json/json.hpp>
 #include "Engine/Engine.hpp"
+#include "Gui/GameGui.hpp"
 #include "Scenes/Scene.hpp"
 
 namespace Game
@@ -26,6 +27,10 @@ namespace Game
     Engine::Get()->GetApp()->GetThreadPool().Enqueue([]() {
       const std::string p(RESOURCES);
       Texture::Create("bg", p + "/Game/textures/Menu/tayga.jpg");
+    });
+
+    GameGui::Get()->appendListener(GUI::Events::OnStatsToggle, []() {
+      PLOGI << "main menu subscriber";
     });
     PLOGD << "main menu started";
   }

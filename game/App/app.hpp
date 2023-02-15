@@ -23,8 +23,8 @@ namespace Game
     void AfterUpdate() override;
 
   private:
-    std::unique_ptr<GameGui> gameGui;
     std::unique_ptr<Scene> scene;
     std::unique_ptr<AppCommands> commands;
+    std::unique_ptr<GameGui> gameGui;
   };
 } // namespace Game

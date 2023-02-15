@@ -22,6 +22,7 @@ add_library(${PROJECT_NAME} SHARED
   Engine/Log.cpp
   Engine/Commands.cpp
   Engine/IniParser.cpp
+  Engine/Events.cpp
   Devices/Window.cpp
   Devices/Keyboard.cpp
   Devices/Mouse.cpp

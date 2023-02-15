@@ -1,4 +1,5 @@
 #include "app.hpp"
+#include <unistd.h>
 
 #include "Guis/Font.hpp"
 #include "Guis/IconsFontAwesome6.h"
@@ -13,6 +14,8 @@ namespace Game
   using json = nlohmann::json;
   GameApp::GameApp()
       : App("Game")
+      , scene(nullptr)
+      , gameGui(GameGui::Init())
       , commands(std::make_unique<AppCommands>())
   {
   }
@@ -68,20 +71,21 @@ namespace Game
             PLOGI << j.dump();
             ServerSocket::Get()->emit(j.dump());
           }
+        });
+    GameGui::Get()->appendListener(GUI::Events::OnStatsToggle, [](){
+      PLOGI << "app subscribed";
     });
   }
 
   void GameApp::BeforeUpdate() {}
 
-  void GameApp::Update() {}
+  void GameApp::Update()
+  {
+  }
 
   void GameApp::AfterUpdate()
   {
-    if (gameGui == nullptr)
-    {
-      gameGui = std::make_unique<GameGui>();
-    }
-    gameGui->Stats();
-    gameGui->Debug();
+    GameGui::Get()->Stats();
+    GameGui::Get()->Debug();
   }
 } // namespace Game

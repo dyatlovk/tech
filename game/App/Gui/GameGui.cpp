@@ -1,14 +1,19 @@
 #include "GameGui.hpp"
+#include "Engine/Events.hpp"
 #include "Scenes/Scenes.hpp"
 
 using namespace mtEngine;
 
 namespace Game
 {
+  GameGui *GameGui::Instance = nullptr;
+
   GameGui::GameGui()
   {
+    Instance = this;
     using CVarParam = std::vector<std::string>;
     using Input = std::vector<std::string>;
+    Events::Get()->GetCallBackList()->append([this](){process();});
     CVars::Get()->Add("app", "stats", {"1"}, "Show stats", "app stats <1|0>", [this](CVarParam &args, Input &input, bool &isValid) {
       if(input.empty()) {
         isValid = false;
@@ -29,6 +34,7 @@ namespace Game
       if(flag == 0) {
         showStats = false;
       }
+      enqueue(GUI::Events::OnStatsToggle);
     });
 
     CVars::Get()->Add("app", "ui_debug", {"0"}, "Show windows rectangles", "app ui_debug <1|0>", [this](CVarParam &args, Input &input, bool &isValid) {
@@ -53,6 +59,15 @@ namespace Game
       }
     });
   };
+
+  GameGui::~GameGui() = default;
+
+  auto GameGui::Init() -> std::unique_ptr<GameGui>
+  {
+    auto s = std::make_unique<GameGui>();
+
+    return s;
+  }
 
   void GameGui::Update() {
   }

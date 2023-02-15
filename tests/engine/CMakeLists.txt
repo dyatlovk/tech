@@ -14,6 +14,7 @@ file(GLOB SOURCES
         Engine/Network/Sockets/ServerSocketTest.cpp
         Engine/Network/Sockets/RequestTest.cpp
         Engine/Scripts/LuaBindTest.cpp
+        Engine/Events/EventsTest.cpp
         )
 set(TEST_INCLUDE .)
 

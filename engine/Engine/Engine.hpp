@@ -8,6 +8,7 @@
 #include "CVars.hpp"
 #include "Commands.hpp"
 #include "Config.hpp"
+#include "Engine/Events.hpp"
 #include "IniParser.hpp"
 #include "Log.hpp"
 #include "Maths/ElapsedTime.hpp"
@@ -150,11 +151,12 @@ namespace mtEngine
     float fpsLimit;
     bool running;
     std::unique_ptr<Log> log;
+    std::unique_ptr<Events> events;
+    std::unique_ptr<LuaBind> lua;
     std::unique_ptr<CVars> cvars;
     std::unique_ptr<Commands> commands;
     std::unique_ptr<IniParser> iniParser;
     std::unique_ptr<ServerSocket> server;
-    std::unique_ptr<LuaBind> lua;
 
     Delta deltaUpdate, deltaRender;
     ElapsedTime elapsedUpdate, elapsedRender;
